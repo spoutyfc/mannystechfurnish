@@ -4,7 +4,8 @@ import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { LogOut, Trash2, Mail, Check, RefreshCw, Inbox, LinkIcon } from 'lucide-react'
+import { LogOut, Trash2, Mail, Check, RefreshCw, Inbox, LinkIcon, PenSquare } from 'lucide-react'
+import { ComposeEmail, type ComposePrefill } from '@/components/admin/compose-email'
 
 type Submission = {
   id: string
@@ -24,6 +25,13 @@ export default function AdminSubmissionsPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([])
   const [active, setActive] = useState<string | null>(null)
   const [busy, setBusy] = useState<string | null>(null)
+  const [composeOpen, setComposeOpen] = useState(false)
+  const [composePrefill, setComposePrefill] = useState<ComposePrefill>({})
+
+  const openCompose = (prefill: ComposePrefill = {}) => {
+    setComposePrefill(prefill)
+    setComposeOpen(true)
+  }
 
   const loadSubmissions = useCallback(async () => {
     const res = await fetch('/api/admin/submissions')
@@ -110,6 +118,9 @@ export default function AdminSubmissionsPage() {
             <p className="text-neutral-500 text-sm mt-1">Logged in as {admin?.email}</p>
           </div>
           <div className="flex items-center gap-2">
+            <Button size="sm" onClick={() => openCompose()} className="gap-2 bg-accent text-black hover:opacity-90">
+              <PenSquare className="w-4 h-4" /> Compose
+            </Button>
             <Button variant="outline" size="sm" onClick={loadSubmissions} className="gap-2 border-neutral-700 bg-transparent">
               <RefreshCw className="w-4 h-4" /> Refresh
             </Button>
@@ -180,11 +191,13 @@ export default function AdminSubmissionsPage() {
                       <p className="text-neutral-200 text-sm leading-relaxed whitespace-pre-wrap">{s.message}</p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2 pt-1">
-                      <a href={`mailto:${s.email}?subject=Re: ${encodeURIComponent(s.subject)}`}>
-                        <Button size="sm" className="gap-2 bg-accent text-black hover:opacity-90">
-                          <Mail className="w-4 h-4" /> Reply
-                        </Button>
-                      </a>
+                      <Button
+                        size="sm"
+                        onClick={() => openCompose({ to: s.email, subject: `Re: ${s.subject}` })}
+                        className="gap-2 bg-accent text-black hover:opacity-90"
+                      >
+                        <Mail className="w-4 h-4" /> Reply
+                      </Button>
                       {s.status === 'new' ? (
                         <Button size="sm" variant="outline" disabled={busy === s.id} onClick={() => setStatus(s.id, 'read')} className="gap-2 border-neutral-700 bg-transparent">
                           <Check className="w-4 h-4" /> Mark read
@@ -205,6 +218,12 @@ export default function AdminSubmissionsPage() {
           </div>
         )}
       </div>
+
+      <ComposeEmail
+        open={composeOpen}
+        prefill={composePrefill}
+        onClose={() => setComposeOpen(false)}
+      />
     </div>
   )
 }

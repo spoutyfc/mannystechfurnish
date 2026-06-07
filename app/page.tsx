@@ -135,14 +135,14 @@ export default function Home() {
       <ScrollBlur>
       {/* ---------------- HERO ---------------- */}
       <section className="relative overflow-hidden border-b border-white/15 px-5 pb-16 pt-32 md:px-10 md:pb-24 md:pt-40">
-        {/* 3D WebGL object filling the hero, anchored right */}
+        {/* WebGL liquid-energy field, anchored to the right */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute right-[-30%] top-[14%] h-[42%] w-[75%] -translate-y-0 sm:right-[-12%] sm:top-1/2 sm:h-[90%] sm:w-[60%] sm:-translate-y-1/2 md:right-[-6%] md:h-[120%] md:w-[58%]">
+          <div className="absolute right-[-20%] top-[-10%] h-[55%] w-[110%] sm:right-[-8%] sm:top-1/2 sm:h-[120%] sm:w-[70%] sm:-translate-y-1/2 md:right-[-4%] md:w-[62%]">
             <HeroOrb />
           </div>
           {/* contrast scrims so headline stays razor-sharp */}
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/55 to-transparent md:via-black/30" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black sm:via-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black sm:via-transparent" />
         </div>
         <div className="relative z-10 mx-auto max-w-[1500px]">
           <motion.div
