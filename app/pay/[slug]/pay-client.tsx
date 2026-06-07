@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { createClientCheckoutSession, PLAN_DETAILS, type PlanType } from '@/app/actions/payment'
+import { createClientCheckoutSession } from '@/app/actions/payment'
+import { PLAN_DETAILS, type PlanType } from '@/lib/plans'
 import { Check, Loader2, ShieldCheck, ArrowRight, AlertCircle } from 'lucide-react'
 
 type Plan = (typeof PLAN_DETAILS)[PlanType]

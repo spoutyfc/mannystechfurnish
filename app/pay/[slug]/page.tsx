@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
-import { getClientBySlug, PLAN_DETAILS, type PlanType } from '@/app/actions/payment'
+import { getClientBySlug } from '@/app/actions/payment'
+import { PLAN_DETAILS, type PlanType } from '@/lib/plans'
 import PayClient from './pay-client'
 
 export const dynamic = 'force-dynamic'
