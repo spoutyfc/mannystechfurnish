@@ -5,17 +5,39 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { SiteNav } from '@/components/site/site-nav'
 import { AnimatedHeading, FadeUp, Magnetic } from '@/components/site/motion'
+import { Turnstile } from '@/components/site/turnstile'
 import { motion } from 'framer-motion'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { ArrowUpRight, Mail, Calendar, Clock, ArrowLeft, Phone, Check } from 'lucide-react'
+import {
+  ArrowUpRight,
+  Mail,
+  MessageSquareText,
+  Clock,
+  ArrowLeft,
+  Phone,
+  Check,
+} from 'lucide-react'
 
-// TODO: replace with your real Cal.com booking link, e.g. https://cal.com/mansoor-mtf/consultation
-const CAL_LINK = 'https://cal.com/mansoor-mtf/consultation'
-// TODO: replace with your real WhatsApp number link, e.g. https://wa.me/15551234567
-const WHATSAPP_LINK = ''
+const PHONE_DISPLAY = '(925) 278-9059'
+const PHONE_E164 = '+19252789059'
+
+// Pre-written text the visitor sends. Questions are plain-language and only ask
+// things a non-technical client can answer — including photos & logo.
+const SMS_TEMPLATE = `Hi Mansoor! I'd like a website built. Here's a quick rundown:
+
+- Name / business:
+- What my business does:
+- Type of site I want (e.g. simple info page, online store, booking, portfolio):
+- A website whose style I like (optional):
+- Photos: I'll send my own / please use stock photos
+- Logo: I already have one / I need one designed
+- Rough budget:
+- When I'd like it ready by:`
+
+// sms: with "?&body=" works across both iOS and Android.
+const SMS_LINK = `sms:${PHONE_E164}?&body=${encodeURIComponent(SMS_TEMPLATE)}`
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -25,20 +47,26 @@ export default function ContactPage() {
     message: '',
     company: '', // honeypot
   })
+  const [token, setToken] = useState('')
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
     setError('')
 
+    if (!token) {
+      setError('Please complete the verification below before sending.')
+      return
+    }
+
+    setLoading(true)
     try {
       const res = await fetch('/api/public/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, turnstileToken: token }),
       })
 
       const data = await res.json().catch(() => ({}))
@@ -65,8 +93,9 @@ export default function ContactPage() {
 
       {/* ---------------- HEADER ---------------- */}
       <section className="relative overflow-hidden border-b border-white/15 px-5 pb-16 pt-32 md:px-10 md:pb-20 md:pt-40">
-        {/* soft accent glow, melts into black */}
-        <div className="pointer-events-none absolute right-[-15%] top-[-20%] h-[60%] w-[60%] rounded-full bg-accent/15 blur-[120px]" />
+        {/* layered accent glows for depth + color */}
+        <div className="pointer-events-none absolute right-[-15%] top-[-25%] h-[70%] w-[55%] rounded-full bg-accent/20 blur-[130px]" />
+        <div className="pointer-events-none absolute left-[-10%] bottom-[-40%] h-[60%] w-[45%] rounded-full bg-accent/10 blur-[120px]" />
         <div className="relative z-10 mx-auto max-w-[1500px]">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -80,7 +109,10 @@ export default function ContactPage() {
             >
               <ArrowLeft className="h-3.5 w-3.5" /> Back to home
             </Link>
-            <span className="hidden sm:block">( Get in touch )</span>
+            <span className="hidden items-center gap-2 sm:flex">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-accent" />
+              Taking on new projects
+            </span>
           </motion.div>
 
           <h1 className="font-display text-[14vw] font-semibold uppercase leading-[0.88] tracking-tight md:text-[10.5vw] lg:text-[9rem]">
@@ -109,7 +141,7 @@ export default function ContactPage() {
             <FadeUp index={1}>
               <p className="max-w-2xl text-pretty text-xl leading-snug text-white md:text-2xl">
                 Tell me about your project and I&apos;ll get back to you within 24&ndash;48 hours.
-                Prefer to talk it through? Book a free call.
+                Want it faster? Shoot me a text and I&apos;ll reply right away.
               </p>
             </FadeUp>
           </div>
@@ -122,56 +154,56 @@ export default function ContactPage() {
           {/* Left column — info */}
           <div>
             <FadeUp>
-              <p className="font-mono text-xs uppercase tracking-widest text-white/55">
-                ( 01 — Direct )
+              <p className="font-mono text-xs uppercase tracking-widest text-accent">
+                Fastest way to reach me
               </p>
             </FadeUp>
 
+            {/* TEXT BUTTON — opens their messaging app with a pre-written brief */}
             <FadeUp index={1}>
               <Magnetic strength={0.15}>
                 <a
-                  href={CAL_LINK}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group mt-8 flex items-center justify-between border border-white/15 p-6 transition-colors hover:border-accent/50 hover:bg-white/[0.03]"
+                  href={SMS_LINK}
+                  className="group mt-6 flex items-center justify-between overflow-hidden rounded-sm border border-accent/40 bg-accent/10 p-6 transition-colors hover:bg-accent/20"
                 >
                   <div className="flex items-center gap-5">
-                    <Calendar className="h-7 w-7 text-accent" />
+                    <span className="flex h-12 w-12 items-center justify-center rounded-sm bg-accent text-black">
+                      <MessageSquareText className="h-6 w-6" />
+                    </span>
                     <div>
                       <p className="font-display text-2xl font-semibold uppercase tracking-tight">
-                        Book a call
+                        Text me
                       </p>
-                      <p className="font-mono text-xs uppercase tracking-widest text-white/55">
-                        30-min free consultation
+                      <p className="font-mono text-xs uppercase tracking-widest text-white/65">
+                        Opens a ready-to-send message
                       </p>
                     </div>
                   </div>
-                  <ArrowUpRight className="h-6 w-6 text-white/30 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent" />
+                  <ArrowUpRight className="h-6 w-6 text-accent transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </a>
               </Magnetic>
+              <p className="mt-3 font-mono text-[11px] leading-relaxed tracking-wide text-white/45">
+                Tap it and your phone opens a text with a few quick questions already typed out &mdash;
+                just fill in the blanks and hit send.
+              </p>
             </FadeUp>
 
             {/* Detail rows */}
             <div className="mt-10 divide-y divide-white/10 border-y border-white/10">
               {[
                 {
+                  icon: Phone,
+                  label: 'Call or text',
+                  value: PHONE_DISPLAY,
+                  href: `tel:${PHONE_E164}`,
+                },
+                {
                   icon: Mail,
                   label: 'Email',
                   value: 'mansoor.buspro@gmail.com',
                   href: 'mailto:mansoor.buspro@gmail.com',
                 },
-                { icon: Phone, label: 'Phone', value: '(925) 278-9059' },
                 { icon: Clock, label: 'Response time', value: 'Within 24–48 hours' },
-                ...(WHATSAPP_LINK
-                  ? [
-                      {
-                        icon: Phone,
-                        label: 'WhatsApp',
-                        value: 'Message me directly',
-                        href: WHATSAPP_LINK,
-                      },
-                    ]
-                  : []),
               ].map((row, i) => {
                 const Inner = (
                   <div className="group flex items-center gap-5 py-5">
@@ -189,7 +221,11 @@ export default function ContactPage() {
                 return (
                   <FadeUp key={row.label} index={i}>
                     {row.href ? (
-                      <a href={row.href} target={row.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer">
+                      <a
+                        href={row.href}
+                        target={row.href.startsWith('http') ? '_blank' : undefined}
+                        rel="noopener noreferrer"
+                      >
                         {Inner}
                       </a>
                     ) : (
@@ -202,7 +238,7 @@ export default function ContactPage() {
 
             {/* Personal note */}
             <FadeUp index={2}>
-              <div className="mt-10 border border-white/15 p-6">
+              <div className="mt-10 rounded-sm border border-white/15 bg-gradient-to-br from-white/[0.04] to-transparent p-6">
                 <p className="text-pretty leading-relaxed text-white/75">
                   Every project starts with a real conversation about your goals &mdash; no scripts,
                   no pressure. You&apos;ll get weekly updates through the whole build and a site
@@ -225,15 +261,15 @@ export default function ContactPage() {
           <div>
             <FadeUp>
               <p className="font-mono text-xs uppercase tracking-widest text-white/55">
-                ( 02 — Send a message )
+                Prefer email? Send a message
               </p>
             </FadeUp>
 
             <FadeUp index={1}>
-              <div className="mt-8 border border-white/15 p-6 md:p-10">
+              <div className="mt-6 rounded-sm border border-white/15 bg-gradient-to-b from-white/[0.03] to-transparent p-6 md:p-10">
                 {submitted ? (
                   <div className="py-16 text-center">
-                    <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center border border-accent/40 bg-accent/10">
+                    <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-sm border border-accent/40 bg-accent/10">
                       <Check className="h-8 w-8 text-accent" />
                     </div>
                     <h3 className="font-display text-3xl font-semibold uppercase tracking-tight">
@@ -244,7 +280,7 @@ export default function ContactPage() {
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-6">
                     {error && (
-                      <div className="border border-red-500/30 bg-red-500/10 p-4">
+                      <div className="rounded-sm border border-red-500/30 bg-red-500/10 p-4">
                         <p className="text-sm text-red-400">{error}</p>
                       </div>
                     )}
@@ -317,6 +353,11 @@ export default function ContactPage() {
                       />
                     </div>
 
+                    {/* Bot protection */}
+                    <div>
+                      <Turnstile onVerify={setToken} onExpire={() => setToken('')} />
+                    </div>
+
                     <button
                       type="submit"
                       disabled={loading}
@@ -346,7 +387,7 @@ export default function ContactPage() {
             className="h-9 w-auto"
           />
           <p className="font-mono text-xs uppercase tracking-widest text-white/50">
-            © {new Date().getFullYear()} Manny&apos;s Tech Furnish · (925) 278-9059
+            © {new Date().getFullYear()} Manny&apos;s Tech Furnish · {PHONE_DISPLAY}
           </p>
         </div>
       </footer>

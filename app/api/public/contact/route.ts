@@ -3,17 +3,33 @@ import { contactInquiries, user } from '@/lib/db/schema'
 import { NextRequest, NextResponse } from 'next/server'
 import { sendOwnerNotification, sendClientConfirmation } from '@/lib/email'
 import { checkContactRateLimit } from '@/lib/rate-limit'
+import { verifyTurnstile } from '@/lib/turnstile'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { name, email, phone, subject, message, company } = body
+    const { name, email, phone, subject, message, company, turnstileToken } = body
 
     // Honeypot: bots fill hidden "company" field. Pretend success, do nothing.
     if (company) {
       return NextResponse.json({ success: true })
+    }
+
+    const ip =
+      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      request.headers.get('x-real-ip') ||
+      'anonymous'
+
+    // Bot protection: verify the Cloudflare Turnstile token server-side. A
+    // missing/invalid token is rejected, so the check cannot be bypassed.
+    const captcha = await verifyTurnstile(turnstileToken, ip)
+    if (!captcha.success && !captcha.notConfigured) {
+      return NextResponse.json(
+        { error: 'Verification failed. Please complete the challenge and try again.' },
+        { status: 400 }
+      )
     }
 
     // Validation
@@ -28,10 +44,6 @@ export async function POST(request: NextRequest) {
     }
 
     // Rate limiting per IP
-    const ip =
-      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-      request.headers.get('x-real-ip') ||
-      'anonymous'
     const { success: allowed } = await checkContactRateLimit(ip)
     if (!allowed) {
       return NextResponse.json(

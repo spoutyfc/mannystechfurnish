@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, boolean, integer, varchar } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, boolean, integer, varchar, serial } from 'drizzle-orm/pg-core'
 
 // --- Better Auth required tables -------------------------------------------
 // Column names are camelCase to match Better Auth's defaults. Do not rename.
@@ -152,8 +152,7 @@ export const siteSettings = pgTable('site_settings', {
 
 // --- Client Payment Links ---
 export const clients = pgTable('clients', {
-  id: text('id').primaryKey(),
-  userId: text('userId').notNull(),
+  id: serial('id').primaryKey(),
   slug: varchar('slug', { length: 100 }).unique().notNull(),
   name: varchar('name', { length: 255 }).notNull(),
   email: varchar('email', { length: 255 }).notNull(),
