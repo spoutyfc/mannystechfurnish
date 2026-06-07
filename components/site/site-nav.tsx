@@ -4,6 +4,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Menu, X, ArrowUpRight } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { useEffect, useState } from 'react'
+import { Magnetic } from '@/components/site/motion'
 import {
   Sheet,
   SheetContent,
@@ -13,14 +16,32 @@ import {
 } from '@/components/ui/sheet'
 
 const links = [
-  { href: '#work', label: 'Work' },
-  { href: '#services', label: 'Services' },
-  { href: '#pricing', label: 'Pricing' },
+  { href: '/#work', label: 'Work' },
+  { href: '/#services', label: 'Services' },
+  { href: '/#pricing', label: 'Pricing' },
 ]
 
 export function SiteNav() {
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   return (
-    <nav className="fixed top-0 z-50 w-full border-b border-white/15 bg-black/80 backdrop-blur-xl">
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      className={`fixed top-0 z-50 w-full border-b transition-colors duration-300 ${
+        scrolled
+          ? 'border-white/15 bg-black/85 backdrop-blur-xl'
+          : 'border-transparent bg-gradient-to-b from-black/70 to-transparent backdrop-blur-sm'
+      }`}
+    >
       <div className="mx-auto flex max-w-[1500px] items-center justify-between px-5 py-4 md:px-10">
         <Link href="/" className="flex items-center" aria-label="Manny's Tech Furnish home">
           <Image
@@ -33,27 +54,32 @@ export function SiteNav() {
           />
         </Link>
 
-        <div className="hidden items-center gap-10 md:flex">
+        <div className="hidden items-center gap-9 md:flex">
           {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
-              className="font-mono text-xs uppercase tracking-widest text-white/70 transition-colors hover:text-white"
+              className="group relative font-mono text-xs uppercase tracking-widest text-white/70 transition-colors hover:text-white"
             >
               {l.label}
+              <span className="absolute -bottom-1 left-0 h-px w-0 bg-accent transition-all duration-300 group-hover:w-full" />
             </a>
           ))}
+          <span className="hidden h-4 w-px bg-white/20 lg:block" />
           <span className="hidden font-mono text-xs uppercase tracking-widest text-white/70 lg:inline">
             (925) 278-9059
           </span>
-          <Link href="/contact">
-            <Button
-              size="sm"
-              className="rounded-none border-0 bg-accent px-6 font-mono text-xs uppercase tracking-wider text-black hover:opacity-90"
-            >
-              Get Started
-            </Button>
-          </Link>
+          <Magnetic strength={0.3}>
+            <Link href="/contact">
+              <Button
+                size="sm"
+                className="group rounded-none border-0 bg-accent px-6 font-mono text-xs uppercase tracking-wider text-black hover:opacity-90"
+              >
+                Get Started
+                <ArrowUpRight className="ml-1.5 h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </Button>
+            </Link>
+          </Magnetic>
         </div>
 
         <Sheet>
@@ -133,6 +159,6 @@ export function SiteNav() {
           </SheetContent>
         </Sheet>
       </div>
-    </nav>
+    </motion.nav>
   )
 }
