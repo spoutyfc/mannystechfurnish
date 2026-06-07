@@ -102,23 +102,24 @@ export function HeroOrb() {
 
         // radial core glow, drifts slightly with cursor
         float d = length(uv - m * 0.6);
-        float core = smoothstep(1.05, 0.0, d);
+        float core = smoothstep(1.35, 0.0, d);
 
         // brand palette
-        vec3 black = vec3(0.02, 0.0, 0.02);
-        vec3 mag   = vec3(0.92, 0.10, 0.58);
-        vec3 pink  = vec3(1.0, 0.52, 0.86);
-        vec3 deep  = vec3(0.32, 0.02, 0.22);
+        vec3 black = vec3(0.04, 0.0, 0.05);
+        vec3 mag   = vec3(0.95, 0.12, 0.60);
+        vec3 pink  = vec3(1.0, 0.55, 0.88);
+        vec3 deep  = vec3(0.45, 0.03, 0.30);
 
-        vec3 col = mix(black, deep, clamp(f * 1.5, 0.0, 1.0));
-        col = mix(col, mag, smoothstep(0.35, 0.85, f) * core);
+        vec3 col = mix(black, deep, clamp(f * 1.8, 0.0, 1.0));
+        col = mix(col, mag, smoothstep(0.25, 0.80, f) * core);
         // bright filaments where the warp folds
-        float fil = smoothstep(0.55, 0.62, abs(r.x - r.y));
-        col = mix(col, pink, fil * core * 0.9);
-        col += pink * pow(core, 3.0) * 0.5;
+        float fil = smoothstep(0.50, 0.60, abs(r.x - r.y));
+        col = mix(col, pink, fil * core);
+        col += mag * smoothstep(0.4, 1.0, f) * core * 0.5;
+        col += pink * pow(core, 2.5) * 0.8;
 
         // vignette / alpha so it melts into the black hero
-        float alpha = core * (0.35 + f * 0.65);
+        float alpha = core * (0.55 + f * 0.75);
         alpha = clamp(alpha, 0.0, 1.0);
         gl_FragColor = vec4(col, alpha);
       }

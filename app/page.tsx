@@ -137,7 +137,7 @@ export default function Home() {
       <section className="relative overflow-hidden border-b border-white/15 px-5 pb-16 pt-32 md:px-10 md:pb-24 md:pt-40">
         {/* WebGL liquid-energy field, anchored to the right */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute right-[-20%] top-[-10%] h-[55%] w-[110%] sm:right-[-8%] sm:top-1/2 sm:h-[120%] sm:w-[70%] sm:-translate-y-1/2 md:right-[-4%] md:w-[62%]">
+          <div className="absolute right-[-20%] top-[-10%] h-[55%] w-[110%] sm:right-[-10%] sm:top-1/2 sm:h-[150%] sm:w-[85%] sm:-translate-y-1/2 md:right-[-6%] md:w-[72%]">
             <HeroOrb />
           </div>
           {/* contrast scrims so headline stays razor-sharp */}
