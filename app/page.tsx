@@ -457,7 +457,7 @@ export default function Home() {
                   href="/contact"
                   className="inline-flex w-full items-center justify-center gap-2 border border-white/30 px-8 py-4 text-sm font-semibold uppercase tracking-wider text-white transition-colors hover:bg-white hover:text-black"
                 >
-                  Learn more <ArrowUpRight className="h-4 w-4" />
+                  Lets Do This One <ArrowUpRight className="h-4 w-4" />
                 </Link>
               </Magnetic>
             </FadeUp>
