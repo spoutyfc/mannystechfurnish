@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { SiteNav } from '@/components/site/site-nav'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -252,7 +253,13 @@ export default function ContactPage() {
       {/* Footer */}
       <footer className="border-t border-white/15 py-8 px-5 md:px-10">
         <div className="max-w-[1500px] mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-          <span className="font-display text-lg font-semibold uppercase">Manny&apos;s <span className="text-accent">Tech Furnish</span></span>
+          <Image
+            src="/images/logo.png"
+            alt="Manny's Tech Furnish"
+            width={684}
+            height={180}
+            className="h-9 w-auto"
+          />
           <p className="text-neutral-500 text-sm">© {new Date().getFullYear()} Manny&apos;s Tech Furnish</p>
         </div>
       </footer>

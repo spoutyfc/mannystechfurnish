@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Menu } from 'lucide-react'
 import {
@@ -21,11 +22,15 @@ export function SiteNav() {
   return (
     <nav className="fixed top-0 z-50 w-full border-b border-white/15 bg-black/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-[1500px] items-center justify-between px-5 py-4 md:px-10">
-        <Link
-          href="/"
-          className="font-display text-lg font-semibold uppercase tracking-tight text-white"
-        >
-          Manny&apos;s <span className="text-accent">Tech Furnish</span>
+        <Link href="/" className="flex items-center" aria-label="Manny's Tech Furnish home">
+          <Image
+            src="/images/logo.png"
+            alt="Manny's Tech Furnish"
+            width={684}
+            height={180}
+            priority
+            className="h-9 w-auto md:h-10"
+          />
         </Link>
 
         <div className="hidden items-center gap-10 md:flex">
@@ -56,8 +61,14 @@ export function SiteNav() {
             </Button>
           </SheetTrigger>
           <SheetContent side="right" className="border-white/15 bg-black text-white">
-            <SheetTitle className="text-left font-display text-lg font-semibold uppercase">
-              Manny&apos;s <span className="text-accent">Tech Furnish</span>
+            <SheetTitle className="text-left">
+              <Image
+                src="/images/logo.png"
+                alt="Manny's Tech Furnish"
+                width={684}
+                height={180}
+                className="h-9 w-auto"
+              />
             </SheetTitle>
             <div className="mt-8 flex flex-col gap-6">
               {links.map((l) => (
