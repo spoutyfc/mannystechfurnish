@@ -1,9 +1,34 @@
-import CheckoutForm from '@/app/components/checkout-form'
+import { notFound } from 'next/navigation'
+import { getClientBySlug, PLAN_DETAILS, type PlanType } from '@/app/actions/payment'
+import PayClient from './pay-client'
 
-export default function ClientCheckoutPage({ 
-  params 
-}: { 
-  params: Promise<{ slug: string }> 
+export const dynamic = 'force-dynamic'
+
+export default async function ClientCheckoutPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>
+  searchParams: Promise<{ canceled?: string }>
 }) {
-  return <CheckoutForm />
+  const { slug } = await params
+  const { canceled } = await searchParams
+  const client = await getClientBySlug(slug)
+
+  if (!client) notFound()
+
+  const planType = client.planType as PlanType
+  const plan = PLAN_DETAILS[planType]
+
+  return (
+    <PayClient
+      slug={client.slug}
+      name={client.name}
+      companyName={client.companyName}
+      planType={planType}
+      plan={plan}
+      alreadyPaid={client.paymentStatus === 'completed'}
+      canceled={canceled === 'true'}
+    />
+  )
 }

@@ -2,112 +2,124 @@
 
 import { db } from '@/lib/db'
 import { clients } from '@/lib/db/schema'
-import { eq } from 'drizzle-orm'
-import { v4 as uuidv4 } from 'uuid'
+import { eq, desc } from 'drizzle-orm'
 import Stripe from 'stripe'
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-04-10',
-})
+import { getAdminEmail } from '@/lib/admin-auth'
+import { stripe } from '@/lib/stripe'
 
 // Price IDs from Stripe
 const STRIPE_PRICES = {
   option1: 'price_1TdITWK40rUg2ebUcW26SvsI', // $1,299 one-time
   careplan: 'price_1TdJBwK40rUg2ebUgPWlzsfX', // $70/mo
   option2_build: 'price_1TdITeK40rUg2ebU93d0nMVp', // $700 one-time
-  option2_monthly: 'price_1TdJC4K40rUg2ebUYdZy9zsl', // $120/mo (3 billing cycles only)
+  option2_monthly: 'price_1TdJC4K40rUg2ebUYdZy9zsl', // $120/mo
+}
+
+export const PLAN_DETAILS = {
+  option1: {
+    title: 'Complete Digital Asset',
+    subtitle: 'One-time investment — you own everything',
+    price: '$1,299',
+    priceValue: 1299,
+    cadence: 'one-time',
+    features: [
+      'Custom full-stack development',
+      'Complete codebase ownership',
+      'Advanced SEO & analytics setup',
+      'Fully responsive across all devices',
+      'Optional $70/mo care plan',
+    ],
+  },
+  option2: {
+    title: 'Managed Website Plan',
+    subtitle: 'Lower upfront cost, fully managed for you',
+    price: '$700 + $120/mo',
+    priceValue: 700,
+    cadence: 'build + monthly',
+    features: [
+      'Website build ($700 one-time)',
+      'Monthly management ($120/mo)',
+      'Hosting & maintenance included',
+      'Ongoing updates & security',
+      'Basic SEO check-ins',
+    ],
+  },
+} as const
+
+export type PlanType = keyof typeof PLAN_DETAILS
+
+/** Throws if the caller is not an authenticated admin. */
+async function requireAdmin(): Promise<string> {
+  const email = await getAdminEmail()
+  if (!email) throw new Error('Unauthorized')
+  return email
+}
+
+function resolveBaseUrl(): string {
+  return (
+    process.env.NEXT_PUBLIC_APP_URL ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : 'http://localhost:3000')
+  )
 }
 
 export async function createClientCheckoutSession(
-  clientId: string,
-  planType: 'option1' | 'option2',
+  slug: string,
   includeCareplan: boolean,
 ) {
-  try {
-    // Get client details
-    const client = await db
-      .select()
-      .from(clients)
-      .where(eq(clients.id, clientId))
-      .limit(1)
+  // Public action (the client clicks "pay"), so we look up by slug and trust
+  // only the server-stored plan — the amount can never be tampered with.
+  const found = await db.select().from(clients).where(eq(clients.slug, slug)).limit(1)
+  if (!found.length) throw new Error('Client not found')
 
-    if (!client.length) {
-      throw new Error('Client not found')
-    }
+  const clientData = found[0]
+  const planType = clientData.planType as PlanType
 
-    const clientData = client[0]
+  const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = []
 
-    // Build line items based on plan selection
-    const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = []
-
-    if (planType === 'option1') {
-      // Option 1: $1,299 one-time
-      lineItems.push({
-        price: STRIPE_PRICES.option1,
-        quantity: 1,
-      })
-
-      // Add care plan if selected
-      if (includeCareplan) {
-        lineItems.push({
-          price: STRIPE_PRICES.careplan,
-          quantity: 1,
-        })
-      }
-    } else if (planType === 'option2') {
-      // Option 2: $700 build fee (one-time) + $120/mo subscription (3 months only)
-      lineItems.push({
-        price: STRIPE_PRICES.option2_build,
-        quantity: 1,
-      })
-      lineItems.push({
-        price: STRIPE_PRICES.option2_monthly,
-        quantity: 1,
-        billing_cycles: 3, // Only charge for 3 months, then auto-cancel
-      })
-    }
-
-    // Create Stripe checkout session
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      mode: planType === 'option2' ? 'subscription' : 'payment',
-      line_items: lineItems,
-      customer_email: clientData.email,
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pay/${clientData.slug}?canceled=true`,
-      metadata: {
-        clientId: clientData.id,
-        planType,
-        includeCareplan: includeCareplan.toString(),
-      },
-    })
-
-    // Save session ID to client
-    await db
-      .update(clients)
-      .set({ stripeCheckoutSessionId: session.id })
-      .where(eq(clients.id, clientId))
-
-    return { sessionId: session.id, clientSlug: clientData.slug }
-  } catch (error) {
-    console.error('Error creating checkout session:', error)
-    throw error
+  if (planType === 'option1') {
+    lineItems.push({ price: STRIPE_PRICES.option1, quantity: 1 })
+    if (includeCareplan) lineItems.push({ price: STRIPE_PRICES.careplan, quantity: 1 })
+  } else {
+    lineItems.push({ price: STRIPE_PRICES.option2_build, quantity: 1 })
+    lineItems.push({ price: STRIPE_PRICES.option2_monthly, quantity: 1 })
   }
+
+  // option2 always has a recurring item; option1 only when the care plan is added.
+  const isSubscription = planType === 'option2' || includeCareplan
+  const baseUrl = resolveBaseUrl()
+
+  const session = await stripe.checkout.sessions.create({
+    mode: isSubscription ? 'subscription' : 'payment',
+    line_items: lineItems,
+    customer_email: clientData.email,
+    success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${baseUrl}/pay/${clientData.slug}?canceled=true`,
+    metadata: {
+      clientId: String(clientData.id),
+      planType,
+      includeCareplan: includeCareplan.toString(),
+    },
+    ...(isSubscription
+      ? { subscription_data: { metadata: { clientId: String(clientData.id) } } }
+      : { payment_intent_data: { metadata: { clientId: String(clientData.id) } } }),
+  })
+
+  await db
+    .update(clients)
+    .set({ stripeCheckoutSessionId: session.id, updatedAt: new Date() })
+    .where(eq(clients.id, clientData.id))
+
+  if (!session.url) throw new Error('Stripe did not return a checkout URL')
+  return { url: session.url }
 }
 
 export async function getClientBySlug(slug: string) {
-  try {
-    const result = await db
-      .select()
-      .from(clients)
-      .where(eq(clients.slug, slug))
-      .limit(1)
-
-    return result.length ? result[0] : null
-  } catch (error) {
-    console.error('Error fetching client:', error)
-    throw error
-  }
+  const result = await db.select().from(clients).where(eq(clients.slug, slug)).limit(1)
+  return result.length ? result[0] : null
 }
 
 export async function createClient(data: {
@@ -118,16 +130,21 @@ export async function createClient(data: {
   website?: string
   projectDescription?: string
   timeline?: string
-  planType: 'option1' | 'option2'
+  planType: PlanType
   includeCareplan?: boolean
 }) {
-  try {
-    const slug = `${data.name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`
-    const clientId = uuidv4()
+  await requireAdmin()
 
-    await db.insert(clients).values({
-      id: clientId,
-      userId: 'admin', // You'll need to update this with actual user context
+  const baseSlug = data.name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 40) || 'client'
+  const slug = `${baseSlug}-${Math.random().toString(36).slice(2, 7)}`
+
+  const [inserted] = await db
+    .insert(clients)
+    .values({
       slug,
       name: data.name,
       email: data.email,
@@ -140,25 +157,51 @@ export async function createClient(data: {
       includeCareplan: data.includeCareplan || false,
       paymentStatus: 'pending',
     })
+    .returning({ id: clients.id })
 
-    return { clientId, slug }
-  } catch (error) {
-    console.error('Error creating client:', error)
-    throw error
+  return { clientId: inserted.id, slug }
+}
+
+export async function getAllClients() {
+  await requireAdmin()
+  return db.select().from(clients).orderBy(desc(clients.createdAt))
+}
+
+export async function getDashboardStats() {
+  await requireAdmin()
+  const all = await db.select().from(clients)
+
+  const paid = all.filter((c) => c.paymentStatus === 'completed')
+  const pending = all.filter((c) => c.paymentStatus === 'pending')
+
+  // Estimate collected revenue from plan type (server source of truth).
+  const revenue = paid.reduce((sum, c) => {
+    const base = c.planType === 'option1' ? 1299 : 700
+    return sum + base
+  }, 0)
+
+  return {
+    totalClients: all.length,
+    paidCount: paid.length,
+    pendingCount: pending.length,
+    revenue,
   }
 }
 
+export async function deleteClient(clientId: number) {
+  await requireAdmin()
+  await db.delete(clients).where(eq(clients.id, clientId))
+  return { success: true }
+}
+
 export async function updateClientPaymentStatus(
-  clientId: string,
+  clientId: number,
   status: 'pending' | 'completed' | 'failed',
 ) {
-  try {
-    await db
-      .update(clients)
-      .set({ paymentStatus: status })
-      .where(eq(clients.id, clientId))
-  } catch (error) {
-    console.error('Error updating payment status:', error)
-    throw error
-  }
+  await requireAdmin()
+  await db
+    .update(clients)
+    .set({ paymentStatus: status, updatedAt: new Date() })
+    .where(eq(clients.id, clientId))
+  return { success: true }
 }

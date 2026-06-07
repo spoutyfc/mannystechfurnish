@@ -4,18 +4,16 @@ import Stripe from 'stripe'
 import { eq } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { clients } from '@/lib/db/schema'
+import { stripe } from '@/lib/stripe'
 
-// Initialize Stripe
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
 
-if (!stripeSecretKey) {
-  console.error('STRIPE_SECRET_KEY is not set')
+/** Metadata clientId is stored as a string; the DB id is a serial integer. */
+function parseClientId(raw: string | undefined | null): number | null {
+  if (!raw) return null
+  const n = Number(raw)
+  return Number.isInteger(n) ? n : null
 }
-
-const stripe = new Stripe(stripeSecretKey || 'sk_test_', {
-  apiVersion: '2024-04-10',
-})
 
 export async function POST(req: Request) {
   const body = await req.text()
@@ -42,14 +40,12 @@ export async function POST(req: Request) {
     )
   }
 
-  // Handle the event
   switch (event.type) {
     case 'checkout.session.completed': {
       const session = event.data.object as Stripe.Checkout.Session
-      const clientId = session.metadata?.clientId
-      
-      // Update client payment status to completed
-      if (clientId) {
+      const clientId = parseClientId(session.metadata?.clientId)
+
+      if (clientId !== null) {
         try {
           await db
             .update(clients)
@@ -57,11 +53,11 @@ export async function POST(req: Request) {
               paymentStatus: 'completed',
               stripeCustomerId: session.customer as string,
               stripeCheckoutSessionId: session.id,
-              stripeSubscriptionId: session.subscription as string | undefined,
+              stripeSubscriptionId: (session.subscription as string) || null,
               updatedAt: new Date(),
             })
             .where(eq(clients.id, clientId))
-          
+
           console.log(`Payment completed for client: ${clientId}`)
         } catch (error) {
           console.error('Failed to update client:', error)
@@ -72,16 +68,13 @@ export async function POST(req: Request) {
 
     case 'checkout.session.expired': {
       const session = event.data.object as Stripe.Checkout.Session
-      const clientId = session.metadata?.clientId
-      
-      if (clientId) {
+      const clientId = parseClientId(session.metadata?.clientId)
+
+      if (clientId !== null) {
         try {
           await db
             .update(clients)
-            .set({
-              paymentStatus: 'failed',
-              updatedAt: new Date(),
-            })
+            .set({ paymentStatus: 'failed', updatedAt: new Date() })
             .where(eq(clients.id, clientId))
         } catch (error) {
           console.error('Failed to update expired client:', error)
@@ -92,13 +85,13 @@ export async function POST(req: Request) {
 
     case 'customer.subscription.created': {
       const subscription = event.data.object as Stripe.Subscription
-      const clientId = subscription.metadata?.clientId
+      const clientId = parseClientId(subscription.metadata?.clientId)
 
-      if (clientId) {
+      if (clientId !== null) {
         try {
           await db
             .update(clients)
-            .set({ stripeSubscriptionId: subscription.id })
+            .set({ stripeSubscriptionId: subscription.id, updatedAt: new Date() })
             .where(eq(clients.id, clientId))
         } catch (error) {
           console.error('Failed to save subscription:', error)
@@ -121,13 +114,13 @@ export async function POST(req: Request) {
 
     case 'payment_intent.payment_failed': {
       const paymentIntent = event.data.object as Stripe.PaymentIntent
-      const clientId = paymentIntent.metadata?.clientId
-      
-      if (clientId) {
+      const clientId = parseClientId(paymentIntent.metadata?.clientId)
+
+      if (clientId !== null) {
         try {
           await db
             .update(clients)
-            .set({ paymentStatus: 'failed' })
+            .set({ paymentStatus: 'failed', updatedAt: new Date() })
             .where(eq(clients.id, clientId))
         } catch (error) {
           console.error('Failed to update failed payment:', error)
@@ -138,7 +131,6 @@ export async function POST(req: Request) {
     }
 
     default:
-      // Unexpected event type
       console.log(`Unhandled event type: ${event.type}`)
   }
 
