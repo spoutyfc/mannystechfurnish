@@ -254,7 +254,7 @@ export default function Home() {
               className="max-w-[8ch] font-display text-5xl font-semibold uppercase leading-[0.9] tracking-tight md:text-8xl"
             />
             <p className="font-mono text-xs uppercase tracking-widest text-white/55">
-              ( 01 — Case Studies )
+              ( Case Studies )
             </p>
           </div>
 
@@ -265,11 +265,8 @@ export default function Home() {
                   href={client.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group grid items-start gap-6 border-b border-white/15 py-10 transition-colors hover:bg-white/[0.03] md:grid-cols-[6rem_1fr_auto] md:gap-12 md:py-14"
+                  className="group grid items-start gap-6 border-b border-white/15 py-10 transition-colors hover:bg-white/[0.03] md:grid-cols-[1fr_auto] md:gap-12 md:py-14"
                 >
-                  <span className="font-display text-3xl font-semibold text-white/40 transition-colors group-hover:text-accent md:text-5xl">
-                    {client.index}
-                  </span>
                   <div className="max-w-2xl">
                     <p className="mb-3 font-mono text-xs uppercase tracking-widest text-accent">
                       {client.tag}
@@ -327,8 +324,7 @@ export default function Home() {
                   i !== 0 ? 'md:border-l md:pl-10' : 'md:pr-10'
                 } ${i === 1 ? 'md:px-10' : ''} ${i === 2 ? 'md:pl-10' : ''}`}
               >
-                <span className="font-display text-2xl font-semibold text-accent">{service.num}</span>
-                <h3 className="mt-6 font-display text-3xl font-semibold uppercase tracking-tight">
+                <h3 className="font-display text-3xl font-semibold uppercase tracking-tight">
                   {service.title}
                 </h3>
                 <p className="mt-4 flex-1 text-lg leading-relaxed text-white/75">{service.desc}</p>

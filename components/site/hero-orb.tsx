@@ -1,13 +1,14 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { Renderer, Camera, Transform, Program, Mesh, Sphere, Vec2 } from 'ogl'
+import { Renderer, Camera, Transform, Program, Mesh, Geometry, Vec2 } from 'ogl'
 
 /**
- * Interactive WebGL 3D hero object: an organically morphing sphere lit with a
- * magenta fresnel rim against deep black. Rotates on its own and eases toward
- * the cursor. Pure OGL (tiny) so it stays fast. Falls back to nothing on
- * unsupported devices / reduced-motion.
+ * Interactive WebGL particle energy sphere. Thousands of GPU points are
+ * distributed on a sphere and displaced by layered simplex noise, producing a
+ * living, breathing "data core" with magenta->pink additive glow against black.
+ * Rotates on its own and eases toward the cursor. Pure OGL + GL_POINTS, so it
+ * stays extremely fast. Degrades gracefully on reduced-motion / no WebGL.
  */
 export function HeroOrb() {
   const ref = useRef<HTMLDivElement>(null)
@@ -31,6 +32,9 @@ export function HeroOrb() {
 
     const gl = renderer.gl
     gl.clearColor(0, 0, 0, 0)
+    // additive blending for glow
+    gl.enable(gl.BLEND)
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE)
     mount.appendChild(gl.canvas)
     gl.canvas.style.width = '100%'
     gl.canvas.style.height = '100%'
@@ -40,23 +44,38 @@ export function HeroOrb() {
     camera.position.set(0, 0, 7)
 
     const scene = new Transform()
-    const geometry = new Sphere(gl, { radius: 1.6, widthSegments: 128, heightSegments: 128 })
+
+    // ---- Build a fibonacci-sphere point cloud ----
+    const COUNT = reduceMotion ? 6000 : 14000
+    const positions = new Float32Array(COUNT * 3)
+    const randoms = new Float32Array(COUNT)
+    const golden = Math.PI * (3 - Math.sqrt(5))
+    for (let i = 0; i < COUNT; i++) {
+      const y = 1 - (i / (COUNT - 1)) * 2
+      const r = Math.sqrt(1 - y * y)
+      const theta = golden * i
+      positions[i * 3] = Math.cos(theta) * r * 1.6
+      positions[i * 3 + 1] = y * 1.6
+      positions[i * 3 + 2] = Math.sin(theta) * r * 1.6
+      randoms[i] = Math.random()
+    }
+
+    const geometry = new Geometry(gl, {
+      position: { size: 3, data: positions },
+      aRandom: { size: 1, data: randoms },
+    })
 
     const vertex = /* glsl */ `
       precision highp float;
       attribute vec3 position;
-      attribute vec3 normal;
-      attribute vec2 uv;
+      attribute float aRandom;
       uniform mat4 modelViewMatrix;
       uniform mat4 projectionMatrix;
-      uniform mat3 normalMatrix;
       uniform float uTime;
       uniform float uAmp;
-      varying vec3 vNormal;
-      varying vec3 vView;
-      varying float vDisp;
+      uniform float uSize;
+      varying float vGlow;
 
-      // classic 3D simplex noise (Ashima)
       vec4 permute(vec4 x){ return mod(((x*34.0)+1.0)*x, 289.0); }
       vec4 taylorInvSqrt(vec4 r){ return 1.79284291400159 - 0.85373472095314 * r; }
       float snoise(vec3 v){
@@ -103,58 +122,53 @@ export function HeroOrb() {
       }
 
       void main(){
-        float n = snoise(position * 0.9 + uTime * 0.25);
-        float n2 = snoise(position * 2.2 - uTime * 0.15);
-        float disp = (n * 0.55 + n2 * 0.2) * uAmp;
-        vec3 pos = position + normal * disp;
-        vDisp = disp;
-        vNormal = normalize(normalMatrix * normal);
+        vec3 dir = normalize(position);
+        float n = snoise(position * 0.9 + uTime * 0.22);
+        float n2 = snoise(position * 2.3 - uTime * 0.12);
+        float disp = (n * 0.6 + n2 * 0.25) * uAmp;
+        vec3 pos = position + dir * disp;
+
+        vGlow = smoothstep(-0.2, 0.5, n) * (0.5 + aRandom * 0.5);
+
         vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-        vView = -mv.xyz;
         gl_Position = projectionMatrix * mv;
+        // size attenuates with depth; tiny twinkle
+        float tw = 0.7 + 0.3 * sin(uTime * 2.0 + aRandom * 30.0);
+        gl_PointSize = uSize * tw * (1.0 / -mv.z);
       }
     `
 
     const fragment = /* glsl */ `
       precision highp float;
-      varying vec3 vNormal;
-      varying vec3 vView;
-      varying float vDisp;
-      uniform float uTime;
-
+      varying float vGlow;
       void main(){
-        vec3 N = normalize(vNormal);
-        vec3 V = normalize(vView);
-        float fres = pow(1.0 - max(dot(N, V), 0.0), 1.8);
+        // round soft point
+        vec2 uv = gl_PointCoord - 0.5;
+        float d = length(uv);
+        if (d > 0.5) discard;
+        float alpha = smoothstep(0.5, 0.0, d);
 
-        // key light from upper-left for 3D form readability
-        vec3 L = normalize(vec3(-0.5, 0.8, 0.6));
-        float diff = max(dot(N, L), 0.0);
-
-        vec3 base = vec3(0.07, 0.03, 0.10);
         vec3 mag  = vec3(0.95, 0.13, 0.62);
-        vec3 pink = vec3(1.0, 0.5, 0.88);
+        vec3 pink = vec3(1.0, 0.55, 0.9);
+        vec3 col = mix(mag, pink, vGlow);
 
-        vec3 col = base;
-        col += mag * diff * 0.55;                       // soft body shading
-        col = mix(col, mag, fres);                      // magenta fresnel rim
-        col += pink * smoothstep(0.45, 1.0, fres) * 1.1; // bright rim highlight
-        col += mag * max(vDisp, 0.0) * 0.7;             // glow on ridges
-
-        gl_FragColor = vec4(col, 1.0);
+        gl_FragColor = vec4(col, alpha * (0.35 + vGlow * 0.65));
       }
     `
 
     const program = new Program(gl, {
       vertex,
       fragment,
+      transparent: true,
+      depthTest: false,
       uniforms: {
         uTime: { value: 0 },
-        uAmp: { value: reduceMotion ? 0.12 : 0.32 },
+        uAmp: { value: reduceMotion ? 0.18 : 0.42 },
+        uSize: { value: Math.min(window.devicePixelRatio, 2) * 130 },
       },
     })
 
-    const mesh = new Mesh(gl, { geometry, program })
+    const mesh = new Mesh(gl, { geometry, program, mode: gl.POINTS })
     mesh.setParent(scene)
 
     const target = new Vec2(0, 0)
@@ -188,7 +202,7 @@ export function HeroOrb() {
 
       current.x += (target.x - current.x) * 0.05
       current.y += (target.y - current.y) * 0.05
-      mesh.rotation.y = current.x * 0.6 + (reduceMotion ? 0 : t * 0.15)
+      mesh.rotation.y = current.x * 0.6 + (reduceMotion ? 0 : t * 0.12)
       mesh.rotation.x = current.y * 0.45
 
       renderer.render({ scene, camera })

@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, ArrowUpRight } from 'lucide-react'
 import {
   Sheet,
   SheetContent,
@@ -92,18 +92,16 @@ export function SiteNav() {
                   Menu
                 </p>
                 <div className="flex flex-col">
-                  {links.map((l, i) => (
+                  {links.map((l) => (
                     <SheetClose asChild key={l.href}>
                       <a
                         href={l.href}
-                        className="group flex items-baseline justify-between border-b border-white/10 py-5 transition-colors"
+                        className="group flex items-center justify-between border-b border-white/10 py-5 transition-colors"
                       >
-                        <span className="font-display text-3xl font-semibold uppercase tracking-tight text-white/80 transition-colors group-hover:text-white">
+                        <span className="font-display text-3xl font-semibold uppercase tracking-tight text-white/80 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white">
                           {l.label}
                         </span>
-                        <span className="font-mono text-xs text-white/30 transition-colors group-hover:text-accent">
-                          {`0${i + 1}`}
-                        </span>
+                        <ArrowUpRight className="h-5 w-5 text-white/25 transition-colors group-hover:text-accent" />
                       </a>
                     </SheetClose>
                   ))}
