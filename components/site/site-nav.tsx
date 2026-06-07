@@ -43,6 +43,9 @@ export function SiteNav() {
               {l.label}
             </a>
           ))}
+          <span className="hidden font-mono text-xs uppercase tracking-widest text-white/70 lg:inline">
+            (925) 278-9059
+          </span>
           <Link href="/contact">
             <Button
               size="sm"

@@ -519,6 +519,12 @@ export default function Home() {
               </a>
             </Magnetic>
           </FadeUp>
+          <FadeUp index={3} className="mt-6">
+            <p className="font-mono text-xs uppercase tracking-widest text-white/60">
+              Or call / text{' '}
+              <span className="text-white">(925) 278-9059</span>
+            </p>
+          </FadeUp>
         </div>
       </section>
 
@@ -531,6 +537,7 @@ export default function Home() {
               <a href="mailto:mansoor.buspro@gmail.com" className="hover:text-accent">
                 mansoor.buspro@gmail.com
               </a>
+              <p className="mt-2">(925) 278-9059</p>
             </div>
             <div className="flex gap-10 font-mono text-xs uppercase tracking-widest text-white/55">
               <a href="#work" className="hover:text-white">

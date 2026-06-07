@@ -117,6 +117,15 @@ export default function ContactPage() {
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-full bg-neutral-900 flex items-center justify-center shrink-0">
+                    <Phone className="text-neutral-400" size={18} />
+                  </div>
+                  <div>
+                    <p className="text-xs text-neutral-500 uppercase tracking-wider">Phone</p>
+                    <p className="text-white">(925) 278-9059</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-neutral-900 flex items-center justify-center shrink-0">
                     <Clock className="text-neutral-400" size={18} />
                   </div>
                   <div>
@@ -260,7 +269,7 @@ export default function ContactPage() {
             height={180}
             className="h-9 w-auto"
           />
-          <p className="text-neutral-500 text-sm">© {new Date().getFullYear()} Manny&apos;s Tech Furnish</p>
+          <p className="text-neutral-500 text-sm">© {new Date().getFullYear()} Manny&apos;s Tech Furnish · (925) 278-9059</p>
         </div>
       </footer>
     </div>
