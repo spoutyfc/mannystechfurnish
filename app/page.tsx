@@ -8,6 +8,10 @@ import { SmoothScroll } from '@/components/site/smooth-scroll'
 import { ScrollProgress } from '@/components/site/scroll-progress'
 import { MediaBackdrop } from '@/components/site/media-backdrop'
 import { HeroOrb } from '@/components/site/hero-orb'
+import { Testimonials } from '@/components/site/testimonials'
+import { WhyChooseMe } from '@/components/site/why-choose-me'
+import { FAQ } from '@/components/site/faq'
+import { ScrollToTop } from '@/components/site/scroll-to-top'
 import {
   AnimatedHeading,
   FadeUp,
@@ -101,6 +105,27 @@ const marqueeItems = [
 export default function Home() {
   return (
     <div className="min-h-screen bg-black text-white">
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'ProfessionalService',
+            name: "Manny's Tech Furnish",
+            description:
+              'Custom website design and development for growing businesses, with SEO optimization, Google Ads, and ongoing support.',
+            url: 'https://mannystechfurnish.com',
+            email: 'mansoor.buspro@gmail.com',
+            image: 'https://mannystechfurnish.com/og-image.png',
+            priceRange: '$$',
+            founder: { '@type': 'Person', name: 'Mansoor Arif' },
+            areaServed: 'US',
+            serviceType: ['Web Design', 'Web Development', 'SEO', 'Google Ads'],
+            sameAs: ['https://oaktownengineers.com', 'https://unitedflexauto.com'],
+          }),
+        }}
+      />
       <Preloader />
       <SmoothScroll />
       <ScrollProgress />
@@ -273,6 +298,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ---------------- TESTIMONIALS ---------------- */}
+      <Testimonials />
+
       {/* ---------------- SERVICES ---------------- */}
       <section id="services" className="relative overflow-hidden border-b border-white/15 px-5 py-20 md:px-10 md:py-28">
         <MediaBackdrop src="/images/showcase-code.png" alt="Code on screen" intensity={0.8} />
@@ -348,6 +376,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ---------------- WHY CHOOSE ME ---------------- */}
+      <WhyChooseMe />
 
       {/* ---------------- PRICING ---------------- */}
       <section id="pricing" className="border-b border-white/15 px-5 py-20 md:px-10 md:py-28">
@@ -434,6 +465,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ---------------- FAQ ---------------- */}
+      <FAQ />
+
       {/* ---------------- CTA ---------------- */}
       <section className="overflow-hidden border-b border-white/15 px-5 py-24 md:px-10 md:py-32">
         <div className="mx-auto max-w-[1500px]">
@@ -459,7 +493,16 @@ export default function Home() {
               </span>
             </span>
           </h2>
-          <FadeUp index={1} className="mt-12 flex flex-col gap-4 sm:flex-row">
+          <FadeUp index={1} className="mt-10 flex items-center gap-3">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-accent" />
+            </span>
+            <p className="font-mono text-xs uppercase tracking-widest text-white/80">
+              Currently accepting 2 new clients this month
+            </p>
+          </FadeUp>
+          <FadeUp index={2} className="mt-8 flex flex-col gap-4 sm:flex-row">
             <Magnetic strength={0.35}>
               <Link
                 href="/contact"
@@ -471,10 +514,10 @@ export default function Home() {
             </Magnetic>
             <Magnetic strength={0.35}>
               <a
-                href="mailto:mansoor.dvc@gmail.com"
+                href="mailto:mansoor.buspro@gmail.com"
                 className="inline-flex w-full items-center justify-center gap-2 border border-white/30 px-10 py-5 text-sm font-semibold uppercase tracking-wider text-white transition-colors hover:bg-white hover:text-black sm:w-auto"
               >
-                mansoor.dvc@gmail.com
+                mansoor.buspro@gmail.com
               </a>
             </Magnetic>
           </FadeUp>
@@ -487,8 +530,8 @@ export default function Home() {
           <div className="flex flex-wrap items-end justify-between gap-8 border-b border-white/15 pb-12">
             <div className="font-mono text-xs uppercase tracking-widest text-white/55">
               <p className="mb-3 text-white">Contact</p>
-              <a href="mailto:mansoor.dvc@gmail.com" className="hover:text-accent">
-                mansoor.dvc@gmail.com
+              <a href="mailto:mansoor.buspro@gmail.com" className="hover:text-accent">
+                mansoor.buspro@gmail.com
               </a>
             </div>
             <div className="flex gap-10 font-mono text-xs uppercase tracking-widest text-white/55">
@@ -517,6 +560,7 @@ export default function Home() {
           </div>
         </div>
       </footer>
+      <ScrollToTop />
     </div>
   )
 }
