@@ -1,16 +1,11 @@
 import { NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
 import { db } from '@/lib/db'
 import { contactInquiries } from '@/lib/db/schema'
 import { desc } from 'drizzle-orm'
-
-async function isAdmin() {
-  const cookieStore = await cookies()
-  return Boolean(cookieStore.get('admin_session'))
-}
+import { getAdminEmail } from '@/lib/admin-auth'
 
 export async function GET() {
-  if (!(await isAdmin())) {
+  if (!(await getAdminEmail())) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

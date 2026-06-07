@@ -23,3 +23,20 @@ export async function checkContactRateLimit(identifier: string) {
   const { success, remaining } = await limiter.limit(identifier)
   return { success, remaining }
 }
+
+// Stricter limiter for admin login: 8 attempts per 10 minutes per IP to slow
+// brute-force / credential-stuffing attacks.
+const loginLimiter = redis
+  ? new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(8, '10 m'),
+      prefix: 'ratelimit:adminlogin',
+      analytics: false,
+    })
+  : null
+
+export async function checkLoginRateLimit(identifier: string) {
+  if (!loginLimiter) return { success: true, remaining: 999 }
+  const { success, remaining } = await loginLimiter.limit(identifier)
+  return { success, remaining }
+}

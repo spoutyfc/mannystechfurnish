@@ -122,6 +122,9 @@ export function SiteNav() {
                 >
                   mansoor.buspro@gmail.com
                 </a>
+                <p className="mt-2 font-mono text-xs uppercase tracking-widest text-white/50">
+                  (925) 278-9059
+                </p>
               </div>
             </div>
           </SheetContent>

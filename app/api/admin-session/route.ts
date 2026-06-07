@@ -1,16 +1,12 @@
-import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
+import { getAdminEmail } from '@/lib/admin-auth'
 
 export async function GET() {
-  const cookieStore = await cookies()
-  const session = cookieStore.get('admin_session')
+  const email = await getAdminEmail()
 
-  if (!session) {
+  if (!email) {
     return NextResponse.json({ authenticated: false }, { status: 401 })
   }
 
-  return NextResponse.json({ 
-    authenticated: true, 
-    email: session.value 
-  })
+  return NextResponse.json({ authenticated: true, email })
 }
