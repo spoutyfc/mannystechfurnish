@@ -169,6 +169,7 @@ export function HeroOrb() {
     window.addEventListener('pointermove', onMove, { passive: true })
 
     function resize() {
+      if (!mount) return
       const w = mount.clientWidth
       const h = mount.clientHeight
       renderer.setSize(w, h)
