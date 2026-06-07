@@ -1,20 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
 import { db } from '@/lib/db'
 import { contactInquiries } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
-
-async function isAdmin() {
-  const cookieStore = await cookies()
-  return Boolean(cookieStore.get('admin_session'))
-}
+import { getAdminEmail } from '@/lib/admin-auth'
 
 // Update status (mark read / new / resolved)
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  if (!(await isAdmin())) {
+  if (!(await getAdminEmail())) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   const { id } = await params
@@ -37,7 +32,7 @@ export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  if (!(await isAdmin())) {
+  if (!(await getAdminEmail())) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   const { id } = await params

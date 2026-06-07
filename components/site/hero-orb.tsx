@@ -1,13 +1,15 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { Renderer, Camera, Transform, Program, Mesh, Sphere, Vec2 } from 'ogl'
+import { Renderer, Program, Mesh, Triangle, Vec2 } from 'ogl'
 
 /**
- * Interactive WebGL 3D hero object: an organically morphing sphere lit with a
- * magenta fresnel rim against deep black. Rotates on its own and eases toward
- * the cursor. Pure OGL (tiny) so it stays fast. Falls back to nothing on
- * unsupported devices / reduced-motion.
+ * Fullscreen WebGL "liquid energy" field. A single screen-filling triangle is
+ * shaded with domain-warped fractal noise, producing a slow, premium magenta
+ * plasma flow with bright pink filaments and a soft volumetric core. It's a
+ * single draw call with zero geometry, so it's extremely fast. The flow eases
+ * toward the cursor and freezes under prefers-reduced-motion. Degrades silently
+ * if WebGL is unavailable.
  */
 export function HeroOrb() {
   const ref = useRef<HTMLDivElement>(null)
@@ -22,7 +24,7 @@ export function HeroOrb() {
     try {
       renderer = new Renderer({
         alpha: true,
-        antialias: true,
+        antialias: false,
         dpr: Math.min(window.devicePixelRatio, 2),
       })
     } catch {
@@ -36,134 +38,113 @@ export function HeroOrb() {
     gl.canvas.style.height = '100%'
     gl.canvas.style.display = 'block'
 
-    const camera = new Camera(gl, { fov: 35 })
-    camera.position.set(0, 0, 7)
-
-    const scene = new Transform()
-    const geometry = new Sphere(gl, { radius: 1.6, widthSegments: 128, heightSegments: 128 })
+    const geometry = new Triangle(gl)
 
     const vertex = /* glsl */ `
-      precision highp float;
-      attribute vec3 position;
-      attribute vec3 normal;
       attribute vec2 uv;
-      uniform mat4 modelViewMatrix;
-      uniform mat4 projectionMatrix;
-      uniform mat3 normalMatrix;
-      uniform float uTime;
-      uniform float uAmp;
-      varying vec3 vNormal;
-      varying vec3 vView;
-      varying float vDisp;
-
-      // classic 3D simplex noise (Ashima)
-      vec4 permute(vec4 x){ return mod(((x*34.0)+1.0)*x, 289.0); }
-      vec4 taylorInvSqrt(vec4 r){ return 1.79284291400159 - 0.85373472095314 * r; }
-      float snoise(vec3 v){
-        const vec2 C = vec2(1.0/6.0, 1.0/3.0);
-        const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
-        vec3 i  = floor(v + dot(v, C.yyy));
-        vec3 x0 = v - i + dot(i, C.xxx);
-        vec3 g = step(x0.yzx, x0.xyz);
-        vec3 l = 1.0 - g;
-        vec3 i1 = min(g.xyz, l.zxy);
-        vec3 i2 = max(g.xyz, l.zxy);
-        vec3 x1 = x0 - i1 + C.xxx;
-        vec3 x2 = x0 - i2 + C.yyy;
-        vec3 x3 = x0 - D.yyy;
-        i = mod(i, 289.0);
-        vec4 p = permute(permute(permute(
-                 i.z + vec4(0.0, i1.z, i2.z, 1.0))
-               + i.y + vec4(0.0, i1.y, i2.y, 1.0))
-               + i.x + vec4(0.0, i1.x, i2.x, 1.0));
-        float n_ = 1.0/7.0;
-        vec3 ns = n_ * D.wyz - D.xzx;
-        vec4 j = p - 49.0 * floor(p * ns.z *ns.z);
-        vec4 x_ = floor(j * ns.z);
-        vec4 y_ = floor(j - 7.0 * x_);
-        vec4 x = x_ *ns.x + ns.yyyy;
-        vec4 y = y_ *ns.x + ns.yyyy;
-        vec4 h = 1.0 - abs(x) - abs(y);
-        vec4 b0 = vec4(x.xy, y.xy);
-        vec4 b1 = vec4(x.zw, y.zw);
-        vec4 s0 = floor(b0)*2.0 + 1.0;
-        vec4 s1 = floor(b1)*2.0 + 1.0;
-        vec4 sh = -step(h, vec4(0.0));
-        vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
-        vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
-        vec3 p0 = vec3(a0.xy, h.x);
-        vec3 p1 = vec3(a0.zw, h.y);
-        vec3 p2 = vec3(a1.xy, h.z);
-        vec3 p3 = vec3(a1.zw, h.w);
-        vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
-        p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
-        vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
-        m = m * m;
-        return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
-      }
-
+      attribute vec2 position;
+      varying vec2 vUv;
       void main(){
-        float n = snoise(position * 0.9 + uTime * 0.25);
-        float n2 = snoise(position * 2.2 - uTime * 0.15);
-        float disp = (n * 0.55 + n2 * 0.2) * uAmp;
-        vec3 pos = position + normal * disp;
-        vDisp = disp;
-        vNormal = normalize(normalMatrix * normal);
-        vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-        vView = -mv.xyz;
-        gl_Position = projectionMatrix * mv;
+        vUv = uv;
+        gl_Position = vec4(position, 0.0, 1.0);
       }
     `
 
     const fragment = /* glsl */ `
       precision highp float;
-      varying vec3 vNormal;
-      varying vec3 vView;
-      varying float vDisp;
+      varying vec2 vUv;
       uniform float uTime;
+      uniform vec2 uResolution;
+      uniform vec2 uMouse;
+
+      // -- 2D simplex-ish value noise --
+      float hash(vec2 p){
+        p = fract(p * vec2(123.34, 456.21));
+        p += dot(p, p + 45.32);
+        return fract(p.x * p.y);
+      }
+      float noise(vec2 p){
+        vec2 i = floor(p);
+        vec2 f = fract(p);
+        float a = hash(i);
+        float b = hash(i + vec2(1.0, 0.0));
+        float c = hash(i + vec2(0.0, 1.0));
+        float d = hash(i + vec2(1.0, 1.0));
+        vec2 u = f * f * (3.0 - 2.0 * f);
+        return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+      }
+      float fbm(vec2 p){
+        float v = 0.0;
+        float amp = 0.5;
+        for(int i = 0; i < 5; i++){
+          v += amp * noise(p);
+          p *= 2.02;
+          amp *= 0.5;
+        }
+        return v;
+      }
 
       void main(){
-        vec3 N = normalize(vNormal);
-        vec3 V = normalize(vView);
-        float fres = pow(1.0 - max(dot(N, V), 0.0), 1.8);
+        // aspect-correct, centered coords
+        vec2 uv = (vUv - 0.5);
+        uv.x *= uResolution.x / uResolution.y;
 
-        // key light from upper-left for 3D form readability
-        vec3 L = normalize(vec3(-0.5, 0.8, 0.6));
-        float diff = max(dot(N, L), 0.0);
+        float t = uTime * 0.08;
+        vec2 m = uMouse * 0.35;
 
-        vec3 base = vec3(0.07, 0.03, 0.10);
-        vec3 mag  = vec3(0.95, 0.13, 0.62);
-        vec3 pink = vec3(1.0, 0.5, 0.88);
+        // domain warping for liquid flow
+        vec2 q = vec2(fbm(uv * 1.6 + t + m), fbm(uv * 1.6 - t + 4.3));
+        vec2 r = vec2(
+          fbm(uv * 1.6 + 1.7 * q + vec2(8.3, 2.8) + t * 1.3),
+          fbm(uv * 1.6 + 1.7 * q + vec2(1.2, 6.5) - t * 1.1)
+        );
+        float f = fbm(uv * 1.6 + 2.2 * r);
 
-        vec3 col = base;
-        col += mag * diff * 0.55;                       // soft body shading
-        col = mix(col, mag, fres);                      // magenta fresnel rim
-        col += pink * smoothstep(0.45, 1.0, fres) * 1.1; // bright rim highlight
-        col += mag * max(vDisp, 0.0) * 0.7;             // glow on ridges
+        // radial core glow, drifts slightly with cursor
+        float d = length(uv - m * 0.6);
+        float core = smoothstep(1.35, 0.0, d);
 
-        gl_FragColor = vec4(col, 1.0);
+        // brand palette
+        vec3 black = vec3(0.04, 0.0, 0.05);
+        vec3 mag   = vec3(0.95, 0.12, 0.60);
+        vec3 pink  = vec3(1.0, 0.55, 0.88);
+        vec3 deep  = vec3(0.45, 0.03, 0.30);
+
+        vec3 col = mix(black, deep, clamp(f * 1.8, 0.0, 1.0));
+        col = mix(col, mag, smoothstep(0.25, 0.80, f) * core);
+        // bright filaments where the warp folds
+        float fil = smoothstep(0.50, 0.60, abs(r.x - r.y));
+        col = mix(col, pink, fil * core);
+        col += mag * smoothstep(0.4, 1.0, f) * core * 0.5;
+        col += pink * pow(core, 2.5) * 0.8;
+
+        // vignette / alpha so it melts into the black hero
+        float alpha = core * (0.55 + f * 0.75);
+        alpha = clamp(alpha, 0.0, 1.0);
+        gl_FragColor = vec4(col, alpha);
       }
     `
 
     const program = new Program(gl, {
       vertex,
       fragment,
+      transparent: true,
       uniforms: {
         uTime: { value: 0 },
-        uAmp: { value: reduceMotion ? 0.12 : 0.32 },
+        uResolution: { value: new Vec2(1, 1) },
+        uMouse: { value: new Vec2(0, 0) },
       },
     })
 
     const mesh = new Mesh(gl, { geometry, program })
-    mesh.setParent(scene)
 
     const target = new Vec2(0, 0)
     const current = new Vec2(0, 0)
     const onMove = (e: PointerEvent) => {
-      const r = mount.getBoundingClientRect()
+      const rect = mount.getBoundingClientRect()
       target.set(
-        ((e.clientX - r.left) / r.width) * 2 - 1,
-        ((e.clientY - r.top) / r.height) * 2 - 1,
+        ((e.clientX - rect.left) / rect.width) * 2 - 1,
+        -(((e.clientY - rect.top) / rect.height) * 2 - 1),
       )
     }
     window.addEventListener('pointermove', onMove, { passive: true })
@@ -173,7 +154,7 @@ export function HeroOrb() {
       const w = mount.clientWidth
       const h = mount.clientHeight
       renderer.setSize(w, h)
-      camera.perspective({ aspect: w / h })
+      program.uniforms.uResolution.value.set(w, h)
     }
     const ro = new ResizeObserver(resize)
     ro.observe(mount)
@@ -186,12 +167,11 @@ export function HeroOrb() {
       const t = (performance.now() - start) / 1000
       program.uniforms.uTime.value = reduceMotion ? 0 : t
 
-      current.x += (target.x - current.x) * 0.05
-      current.y += (target.y - current.y) * 0.05
-      mesh.rotation.y = current.x * 0.6 + (reduceMotion ? 0 : t * 0.15)
-      mesh.rotation.x = current.y * 0.45
+      current.x += (target.x - current.x) * 0.04
+      current.y += (target.y - current.y) * 0.04
+      program.uniforms.uMouse.value.set(current.x, current.y)
 
-      renderer.render({ scene, camera })
+      renderer.render({ scene: mesh })
     }
     update()
 

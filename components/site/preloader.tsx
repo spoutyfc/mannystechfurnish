@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 
 const EASE = [0.76, 0, 0.24, 1] as const
@@ -58,11 +59,16 @@ export function Preloader() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: EASE }}
-            className="mb-6 overflow-hidden"
+            className="mb-8 overflow-hidden"
           >
-            <span className="font-display text-sm font-medium uppercase tracking-[0.4em] text-neutral-400">
-              Manny&apos;s Tech Furnish
-            </span>
+            <Image
+              src="/images/logo.png"
+              alt="Manny's Tech Furnish"
+              width={684}
+              height={180}
+              priority
+              className="h-12 w-auto md:h-16"
+            />
           </motion.div>
 
           {/* Giant counter */}
