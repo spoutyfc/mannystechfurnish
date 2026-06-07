@@ -12,6 +12,7 @@ import { Testimonials } from '@/components/site/testimonials'
 import { WhyChooseMe } from '@/components/site/why-choose-me'
 import { FAQ } from '@/components/site/faq'
 import { ScrollToTop } from '@/components/site/scroll-to-top'
+import { ScrollBlur } from '@/components/site/scroll-blur'
 import {
   AnimatedHeading,
   FadeUp,
@@ -131,16 +132,17 @@ export default function Home() {
       <ScrollProgress />
       <SiteNav />
 
+      <ScrollBlur>
       {/* ---------------- HERO ---------------- */}
       <section className="relative overflow-hidden border-b border-white/15 px-5 pb-16 pt-32 md:px-10 md:pb-24 md:pt-40">
         {/* 3D WebGL object filling the hero, anchored right */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute right-[-18%] top-1/2 h-[120%] w-[80%] -translate-y-1/2 md:right-[-6%] md:w-[58%]">
+          <div className="absolute right-[-30%] top-[14%] h-[42%] w-[75%] -translate-y-0 sm:right-[-12%] sm:top-1/2 sm:h-[90%] sm:w-[60%] sm:-translate-y-1/2 md:right-[-6%] md:h-[120%] md:w-[58%]">
             <HeroOrb />
           </div>
           {/* contrast scrims so headline stays razor-sharp */}
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/55 to-transparent md:via-black/30" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black sm:via-transparent" />
         </div>
         <div className="relative z-10 mx-auto max-w-[1500px]">
           <motion.div
@@ -560,6 +562,7 @@ export default function Home() {
           </div>
         </div>
       </footer>
+      </ScrollBlur>
       <ScrollToTop />
     </div>
   )

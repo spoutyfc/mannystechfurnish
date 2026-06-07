@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { Menu } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import {
   Sheet,
   SheetContent,
@@ -60,34 +60,71 @@ export function SiteNav() {
               <span className="sr-only">Open menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="border-white/15 bg-black text-white">
-            <SheetTitle className="text-left">
-              <Image
-                src="/images/logo.png"
-                alt="Manny's Tech Furnish"
-                width={684}
-                height={180}
-                className="h-9 w-auto"
-              />
-            </SheetTitle>
-            <div className="mt-8 flex flex-col gap-6">
-              {links.map((l) => (
-                <SheetClose asChild key={l.href}>
-                  <a
-                    href={l.href}
-                    className="text-lg text-white/80 transition-colors hover:text-white"
+          <SheetContent
+            side="right"
+            className="w-[88vw] max-w-sm border-l border-white/10 bg-black p-0 text-white [&>button]:hidden"
+          >
+            <div className="flex h-full flex-col">
+              <div className="flex items-center justify-between border-b border-white/10 px-6 py-5">
+                <SheetTitle className="text-left">
+                  <Image
+                    src="/images/logo.png"
+                    alt="Manny's Tech Furnish"
+                    width={684}
+                    height={180}
+                    className="h-8 w-auto"
+                  />
+                </SheetTitle>
+                <SheetClose asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-white/70 hover:bg-white/10 hover:text-white"
                   >
-                    {l.label}
-                  </a>
-                </SheetClose>
-              ))}
-              <SheetClose asChild>
-                <Link href="/contact">
-                  <Button className="w-full rounded-none border-0 bg-accent text-black hover:opacity-90">
-                    Get Started
+                    <X className="h-5 w-5" />
+                    <span className="sr-only">Close menu</span>
                   </Button>
-                </Link>
-              </SheetClose>
+                </SheetClose>
+              </div>
+
+              <nav className="flex flex-1 flex-col px-6 py-8">
+                <p className="mb-6 font-mono text-[10px] uppercase tracking-[0.3em] text-white/40">
+                  Menu
+                </p>
+                <div className="flex flex-col">
+                  {links.map((l, i) => (
+                    <SheetClose asChild key={l.href}>
+                      <a
+                        href={l.href}
+                        className="group flex items-baseline justify-between border-b border-white/10 py-5 transition-colors"
+                      >
+                        <span className="font-display text-3xl font-semibold uppercase tracking-tight text-white/80 transition-colors group-hover:text-white">
+                          {l.label}
+                        </span>
+                        <span className="font-mono text-xs text-white/30 transition-colors group-hover:text-accent">
+                          {`0${i + 1}`}
+                        </span>
+                      </a>
+                    </SheetClose>
+                  ))}
+                </div>
+              </nav>
+
+              <div className="border-t border-white/10 px-6 py-6">
+                <SheetClose asChild>
+                  <Link href="/contact" className="block">
+                    <Button className="h-12 w-full rounded-none border-0 bg-accent font-mono text-xs uppercase tracking-wider text-black hover:opacity-90">
+                      Get Started
+                    </Button>
+                  </Link>
+                </SheetClose>
+                <a
+                  href="mailto:mansoor.buspro@gmail.com"
+                  className="mt-5 block font-mono text-xs uppercase tracking-widest text-white/50 transition-colors hover:text-white"
+                >
+                  mansoor.buspro@gmail.com
+                </a>
+              </div>
             </div>
           </SheetContent>
         </Sheet>

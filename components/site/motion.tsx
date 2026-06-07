@@ -34,7 +34,7 @@ export function AnimatedHeading({
   delay?: number
 }) {
   const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, margin: '0px 0px -10% 0px' })
+  const inView = useInView(ref, { margin: '0px 0px -8% 0px' })
   const words = text.split(' ')
 
   return (
@@ -44,8 +44,12 @@ export function AnimatedHeading({
           <span key={i} className="inline-block overflow-hidden align-bottom">
             <motion.span
               className="inline-block"
-              initial={{ y: '110%' }}
-              animate={inView ? { y: 0 } : { y: '110%' }}
+              initial={{ y: '110%', filter: 'blur(6px)' }}
+              animate={
+                inView
+                  ? { y: 0, filter: 'blur(0px)' }
+                  : { y: '110%', filter: 'blur(6px)' }
+              }
               transition={{ duration: 0.7, ease: EASE, delay: delay + i * 0.07 }}
             >
               {word}
@@ -60,11 +64,12 @@ export function AnimatedHeading({
 
 /* ---------- Generic scroll reveal ---------- */
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 32 },
+  hidden: { opacity: 0, y: 24, filter: 'blur(8px)' },
   show: (i: number = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.7, ease: EASE, delay: i * 0.08 },
+    filter: 'blur(0px)',
+    transition: { duration: 0.8, ease: EASE, delay: i * 0.08 },
   }),
 }
 
@@ -78,7 +83,7 @@ export function FadeUp({
   index?: number
 }) {
   const ref = useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { once: true, margin: '0px 0px -12% 0px' })
+  const inView = useInView(ref, { margin: '0px 0px -10% 0px' })
   return (
     <motion.div
       ref={ref}
