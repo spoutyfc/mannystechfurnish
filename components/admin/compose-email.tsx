@@ -64,13 +64,13 @@ export function ComposeEmail({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-0 backdrop-blur-sm sm:items-center sm:p-4">
-      <div className="w-full max-w-lg overflow-hidden rounded-t-2xl border border-neutral-800 bg-neutral-950 sm:rounded-2xl">
-        <div className="flex items-center justify-between border-b border-neutral-800 px-5 py-4">
-          <h2 className="font-display text-lg font-extrabold uppercase tracking-tight text-white">
-            Compose Email
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-background/70 p-0 backdrop-blur-sm sm:items-center sm:p-4">
+      <div className="w-full max-w-lg overflow-hidden rounded-t-2xl border border-border bg-card sm:rounded-2xl">
+        <div className="flex items-center justify-between border-b border-border px-5 py-4">
+          <h2 className="font-display text-lg font-medium tracking-tight text-foreground">
+            Compose email
           </h2>
-          <button onClick={onClose} className="text-neutral-400 transition-colors hover:text-white" aria-label="Close">
+          <button onClick={onClose} className="text-muted-foreground transition-colors hover:text-foreground" aria-label="Close">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -78,24 +78,24 @@ export function ComposeEmail({
         {sent ? (
           <div className="flex flex-col items-center justify-center gap-3 px-6 py-14 text-center">
             <CheckCircle2 className="h-10 w-10 text-accent" />
-            <p className="font-medium text-white">Email sent</p>
-            <p className="text-sm text-neutral-500">Your message is on its way to {to}.</p>
+            <p className="font-medium text-foreground">Email sent</p>
+            <p className="text-sm text-muted-foreground">Your message is on its way to {to}.</p>
           </div>
         ) : (
           <form onSubmit={submit} className="space-y-4 px-5 py-5">
             <div>
-              <label className="mb-1 block text-xs uppercase tracking-wider text-neutral-500">To</label>
+              <label className="mb-1.5 block font-mono text-[11px] uppercase tracking-widest text-muted-foreground">To</label>
               <input
                 type="email"
                 required
                 value={to}
                 onChange={(e) => setTo(e.target.value)}
                 placeholder="client@email.com"
-                className="w-full rounded-lg border border-neutral-700 bg-black px-3 py-2.5 text-sm text-white outline-none focus:border-accent"
+                className="h-11 w-full rounded-xl border border-border bg-background px-3 text-base text-foreground outline-none focus:border-accent sm:text-sm"
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs uppercase tracking-wider text-neutral-500">Subject</label>
+              <label className="mb-1.5 block font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Subject</label>
               <input
                 type="text"
                 required
@@ -103,12 +103,12 @@ export function ComposeEmail({
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 placeholder="Your website is ready for review"
-                className="w-full rounded-lg border border-neutral-700 bg-black px-3 py-2.5 text-sm text-white outline-none focus:border-accent"
+                className="h-11 w-full rounded-xl border border-border bg-background px-3 text-base text-foreground outline-none focus:border-accent sm:text-sm"
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs uppercase tracking-wider text-neutral-500">
-                Headline <span className="text-neutral-600">(optional, shown large)</span>
+              <label className="mb-1.5 block font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+                Headline <span className="text-muted-foreground/60">(optional, shown large)</span>
               </label>
               <input
                 type="text"
@@ -116,11 +116,11 @@ export function ComposeEmail({
                 value={heading}
                 onChange={(e) => setHeading(e.target.value)}
                 placeholder="Your project update"
-                className="w-full rounded-lg border border-neutral-700 bg-black px-3 py-2.5 text-sm text-white outline-none focus:border-accent"
+                className="h-11 w-full rounded-xl border border-border bg-background px-3 text-base text-foreground outline-none focus:border-accent sm:text-sm"
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs uppercase tracking-wider text-neutral-500">Message</label>
+              <label className="mb-1.5 block font-mono text-[11px] uppercase tracking-widest text-muted-foreground">Message</label>
               <textarea
                 required
                 rows={6}
@@ -128,24 +128,24 @@ export function ComposeEmail({
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Write your message here. Double line breaks create new paragraphs."
-                className="w-full resize-y rounded-lg border border-neutral-700 bg-black px-3 py-2.5 text-sm leading-relaxed text-white outline-none focus:border-accent"
+                className="w-full resize-y rounded-xl border border-border bg-background px-3 py-2.5 text-base leading-relaxed text-foreground outline-none focus:border-accent sm:text-sm"
               />
             </div>
 
             {error && (
-              <p className="rounded-lg border border-red-900/50 bg-red-500/10 px-3 py-2 text-sm text-red-400">{error}</p>
+              <p className="rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</p>
             )}
 
             <div className="flex items-center justify-end gap-2 pt-1">
-              <Button type="button" variant="outline" onClick={onClose} className="border-neutral-700 bg-transparent">
+              <Button type="button" variant="outline" onClick={onClose} className="rounded-full border-border bg-transparent">
                 Cancel
               </Button>
-              <Button type="submit" disabled={sending} className="gap-2 bg-accent text-black hover:opacity-90">
+              <Button type="submit" disabled={sending} className="gap-2 rounded-full bg-foreground text-background hover:opacity-90">
                 {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                {sending ? 'Sending…' : 'Send Email'}
+                {sending ? 'Sending…' : 'Send email'}
               </Button>
             </div>
-            <p className="text-center text-[11px] text-neutral-600">
+            <p className="text-center text-[11px] text-muted-foreground">
               Sends from your branded Manny&#39;s Tech Furnish address via Resend.
             </p>
           </form>
