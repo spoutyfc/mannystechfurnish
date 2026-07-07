@@ -29,9 +29,9 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <section className="border-b border-border bg-card px-5 py-24 md:px-10 md:py-32">
+    <section className="border-b border-border bg-card px-5 py-16 md:px-10 md:py-32">
       <div className="mx-auto max-w-[1400px]">
-        <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-6 md:mb-16">
           <div>
             <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.35em] text-accent">
               Testimonials
@@ -47,7 +47,7 @@ export function Testimonials() {
           </p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
           {testimonials.map((t, i) => (
             <FadeUp key={t.name} index={i}>
               <figure className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-background p-6 transition-all duration-300 hover:border-accent/30 md:p-8">

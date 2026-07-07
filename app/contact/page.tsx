@@ -99,7 +99,7 @@ export default function ContactPage() {
           className="pointer-events-none absolute inset-0 -z-10 opacity-[0.5]"
           style={{
             background:
-              'radial-gradient(55% 50% at 82% 15%, oklch(0.83 0.062 78 / 0.10), transparent 70%)',
+              'radial-gradient(55% 50% at 82% 15%, oklch(0.735 0.148 185 / 0.07), transparent 70%)',
           }}
         />
         <div className="relative z-10 mx-auto max-w-[1400px]">

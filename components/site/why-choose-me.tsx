@@ -28,9 +28,9 @@ const reasons = [
 
 export function WhyChooseMe() {
   return (
-    <section className="border-b border-border px-5 py-24 md:px-10 md:py-32">
+    <section className="border-b border-border px-5 py-16 md:px-10 md:py-32">
       <div className="mx-auto max-w-[1400px]">
-        <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-6 md:mb-16">
           <div>
             <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.35em] text-accent">
               Why me
@@ -51,12 +51,14 @@ export function WhyChooseMe() {
             <FadeUp
               key={r.title}
               index={i}
-              className={`group relative flex flex-col border-b border-border py-10 transition-colors hover:bg-card sm:border-b-0 lg:py-12 ${
-                i !== 0 ? 'lg:border-l lg:pl-8' : 'lg:pr-8'
-              } ${i > 0 && i < 3 ? 'lg:px-8' : ''} ${
-                i === 0 ? 'sm:border-r sm:pr-8' : ''
-              } ${i === 2 ? 'sm:border-r sm:pr-8' : ''} ${
-                i === 1 || i === 3 ? 'sm:pl-8' : ''
+              className={`group relative flex flex-col py-10 transition-colors hover:bg-card lg:py-12 ${
+                i < reasons.length - 1 ? 'border-b border-border' : ''
+              } ${i === 0 ? 'sm:border-b-0 sm:border-r sm:pr-8' : ''} ${
+                i === 1 ? 'sm:border-b-0 sm:pl-8 lg:border-b-0' : ''
+              } ${i === 2 ? 'sm:border-b-0 sm:border-r sm:pr-8' : ''} ${
+                i === 3 ? 'sm:border-b-0 sm:pl-8' : ''
+              } ${i !== 0 ? 'lg:border-l lg:border-b-0 lg:pl-8' : 'lg:border-b-0 lg:pr-8'} ${
+                i > 0 && i < 3 ? 'lg:px-8' : ''
               }`}
             >
               {/* Icon plate */}

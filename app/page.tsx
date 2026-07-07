@@ -136,7 +136,7 @@ export default function Home() {
         {/* ============================================================
             HERO
         ============================================================ */}
-        <section className="relative min-h-screen overflow-hidden px-5 pb-24 pt-36 md:px-10 md:pt-48">
+        <section className="relative min-h-screen overflow-hidden px-5 pb-16 pt-28 md:px-10 md:pb-24 md:pt-48">
 
           {/* Grid background — structural, technical */}
           <div aria-hidden className="pointer-events-none absolute inset-0 -z-20 grid-bg opacity-100" />
@@ -160,7 +160,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: EASE }}
-              className="mb-14 flex items-center gap-3"
+              className="mb-10 flex items-center gap-3 md:mb-14"
             >
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
@@ -208,7 +208,7 @@ export default function Home() {
             </div>
 
             {/* Sub-grid: description + CTAs */}
-            <div className="mt-16 grid items-end gap-10 border-t border-border pt-10 md:grid-cols-[1.5fr_1fr]">
+            <div className="mt-10 grid items-end gap-8 border-t border-border pt-8 md:mt-16 md:grid-cols-[1.5fr_1fr] md:gap-10 md:pt-10">
               <FadeUp index={1}>
                 <p className="max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
                   Premium, hand-built websites that rank on Google and turn visitors into paying
@@ -280,9 +280,13 @@ export default function Home() {
               <FadeUp
                 key={s.label}
                 index={i}
-                className={`group relative border-border px-6 py-12 transition-colors hover:bg-secondary/60 md:px-10 md:py-16 ${
-                  i < 2 ? 'border-b md:border-b-0' : ''
-                } ${i % 2 === 0 ? 'border-r' : ''} ${i !== 3 ? 'md:border-r' : ''}`}
+                className={`group relative border-border px-6 py-10 transition-colors hover:bg-secondary/60 md:px-10 md:py-16 ${
+                  /* bottom border: all top row on mobile (i<2), plus bottom row gets it too so nothing is borderless */
+                  i < 2 ? 'border-b' : 'border-b md:border-b-0'
+                } ${
+                  /* right border: every even index on mobile, every non-last on desktop */
+                  i % 2 === 0 ? 'border-r' : ''
+                } ${i !== 3 ? 'md:border-r' : ''}`}
               >
                 <CountUp
                   value={s.value}
@@ -301,9 +305,9 @@ export default function Home() {
         {/* ============================================================
             WORK
         ============================================================ */}
-        <section id="work" className="border-b border-border px-5 py-24 md:px-10 md:py-32">
+        <section id="work" className="border-b border-border px-5 py-16 md:px-10 md:py-32">
           <div className="mx-auto max-w-[1400px]">
-            <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
+            <div className="mb-10 flex flex-wrap items-end justify-between gap-6 md:mb-16">
               <div>
                 <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.35em] text-accent">
                   Selected Work
@@ -422,9 +426,9 @@ export default function Home() {
         {/* ============================================================
             SERVICES
         ============================================================ */}
-        <section id="services" className="border-b border-border px-5 py-24 md:px-10 md:py-32">
+        <section id="services" className="border-b border-border px-5 py-16 md:px-10 md:py-32">
           <div className="mx-auto max-w-[1400px]">
-            <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
+            <div className="mb-10 flex flex-wrap items-end justify-between gap-6 md:mb-16">
               <div>
                 <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.35em] text-accent">
                   Services
@@ -445,9 +449,9 @@ export default function Home() {
                 <FadeUp
                   key={service.title}
                   index={i}
-                  className={`group relative flex flex-col border-b border-border py-10 transition-colors hover:bg-card md:border-b-0 md:py-12 ${
-                    i !== 0 ? 'md:border-l md:pl-10' : 'md:pr-10'
-                  } ${i === 1 ? 'md:px-10' : ''}`}
+                  className={`group relative flex flex-col border-b border-border py-10 transition-colors hover:bg-card md:py-12 ${
+                    i !== services.length - 1 ? 'md:border-b-0' : 'md:border-b-0'
+                  } ${i !== 0 ? 'md:border-l md:pl-10' : 'md:pr-10'} ${i === 1 ? 'md:px-10' : ''}`}
                 >
                   {/* Number */}
                   <span className="font-mono text-[10px] tracking-[0.3em] text-muted-foreground/50">
@@ -473,9 +477,9 @@ export default function Home() {
         {/* ============================================================
             PROCESS
         ============================================================ */}
-        <section className="border-b border-border bg-card px-5 py-24 md:px-10 md:py-32">
+        <section className="border-b border-border bg-card px-5 py-16 md:px-10 md:py-32">
           <div className="mx-auto max-w-[1400px]">
-            <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
+            <div className="mb-10 flex flex-wrap items-end justify-between gap-6 md:mb-16">
               <div>
                 <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.35em] text-accent">
                   Process
@@ -495,13 +499,22 @@ export default function Home() {
                 <FadeUp
                   key={step.num}
                   index={i}
-                  className={`group relative flex flex-col border-b border-border py-10 sm:border-b-0 lg:py-12 ${
-                    i !== 0 ? 'lg:border-l lg:pl-8' : 'lg:pr-8'
-                  } ${i > 0 && i < 3 ? 'lg:px-8' : ''} ${
-                    i === 0 ? 'sm:border-r sm:pr-8' : ''
-                  } ${i === 2 ? 'sm:border-r sm:pr-8' : ''} ${
-                    i === 1 || i === 3 ? 'sm:pl-8' : ''
-                  }`}
+                  className={`group relative flex flex-col py-10 lg:py-12 ${
+                    /* mobile: border-b on all except last */
+                    i < steps.length - 1 ? 'border-b border-border' : ''
+                  } ${
+                    /* sm: 2-col — right border on cols 0 and 2 (left of each row), bottom cleared */
+                    i === 0 ? 'sm:border-b-0 sm:border-r sm:pr-8' : ''
+                  } ${
+                    i === 1 ? 'sm:border-b-0 sm:border-b sm:pl-8 lg:border-b-0' : ''
+                  } ${
+                    i === 2 ? 'sm:border-b-0 sm:border-r sm:pr-8' : ''
+                  } ${
+                    i === 3 ? 'sm:border-b-0 sm:pl-8' : ''
+                  } ${
+                    /* lg: 4-col — left border and padding */
+                    i !== 0 ? 'lg:border-l lg:border-b-0 lg:pl-8' : 'lg:border-b-0 lg:pr-8'
+                  } ${i > 0 && i < 3 ? 'lg:px-8' : ''}`}
                 >
                   {/* Big ghost number */}
                   <span className="font-display text-6xl font-semibold leading-none text-border transition-colors duration-300 group-hover:text-accent/30 md:text-7xl">
@@ -530,9 +543,9 @@ export default function Home() {
         {/* ============================================================
             PRICING
         ============================================================ */}
-        <section id="pricing" className="border-b border-border px-5 py-24 md:px-10 md:py-32">
+        <section id="pricing" className="border-b border-border px-5 py-16 md:px-10 md:py-32">
           <div className="mx-auto max-w-[1400px]">
-            <div className="mb-16">
+            <div className="mb-10 md:mb-16">
               <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.35em] text-accent">
                 Pricing
               </p>
