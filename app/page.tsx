@@ -186,8 +186,8 @@ export default function Home() {
                     <motion.span
                       className="inline-block"
                       style={{ color: 'var(--accent)' }}
-                      initial={{ y: '110%', filter: 'blur(8px)' }}
-                      animate={{ y: 0, filter: 'blur(0px)' }}
+                      initial={{ y: '110%', opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
                       transition={{ duration: 0.8, ease: EASE, delay: 0.26 }}
                     >
                       business.
@@ -319,52 +319,94 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="border-t border-border">
+            <div className="grid gap-5 md:grid-cols-2">
               {clients.map((client, idx) => (
-                <FadeUp key={client.name}>
+                <FadeUp key={client.name} index={idx}>
                   <a
                     href={client.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group grid items-start gap-6 border-b border-border py-12 transition-colors hover:bg-card md:grid-cols-[auto_1fr_auto] md:gap-12 md:py-16"
+                    className="work-card group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all duration-500 hover:-translate-y-1 hover:border-accent/30 hover:shadow-[0_0_60px_-12px_oklch(0.735_0.148_185_/_0.25)]"
                   >
-                    {/* Index */}
-                    <span className="font-mono text-[11px] tracking-widest text-muted-foreground/40 md:pt-2">
-                      {client.index}
-                    </span>
+                    {/* Colored accent band — unique per project */}
+                    <div
+                      className="relative h-48 w-full overflow-hidden md:h-56"
+                      style={{
+                        background: idx === 0
+                          ? 'linear-gradient(135deg, oklch(0.18 0.04 240) 0%, oklch(0.22 0.06 200) 40%, oklch(0.25 0.10 180) 100%)'
+                          : 'linear-gradient(135deg, oklch(0.18 0.04 280) 0%, oklch(0.20 0.06 260) 40%, oklch(0.15 0.03 220) 100%)',
+                      }}
+                    >
+                      {/* Grid overlay inside the card header */}
+                      <div
+                        aria-hidden
+                        className="absolute inset-0 opacity-20"
+                        style={{
+                          backgroundImage: 'linear-gradient(oklch(0.735 0.148 185 / 0.3) 1px, transparent 1px), linear-gradient(90deg, oklch(0.735 0.148 185 / 0.3) 1px, transparent 1px)',
+                          backgroundSize: '32px 32px',
+                        }}
+                      />
+                      {/* Floating index */}
+                      <span className="absolute left-6 top-6 font-mono text-[10px] tracking-[0.3em] text-foreground/20">
+                        {client.index}
+                      </span>
+                      {/* Year */}
+                      <span className="absolute right-6 top-6 font-mono text-[10px] tracking-[0.25em] text-foreground/30">
+                        {client.year}
+                      </span>
+                      {/* Large ghost project name */}
+                      <div className="absolute bottom-0 left-0 right-0 px-6 pb-5">
+                        <p className="font-display text-5xl font-semibold leading-none tracking-[-0.04em] text-foreground/[0.07] md:text-6xl">
+                          {client.name}
+                        </p>
+                      </div>
+                      {/* Teal glow from bottom-left on hover */}
+                      <div
+                        aria-hidden
+                        className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full opacity-0 blur-3xl transition-opacity duration-700 group-hover:opacity-100"
+                        style={{ background: 'oklch(0.735 0.148 185 / 0.18)' }}
+                      />
+                    </div>
 
-                    <div className="min-w-0">
-                      <div className="flex flex-wrap items-center gap-4 mb-4">
-                        <span className="rounded-full border border-border px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                    {/* Card body */}
+                    <div className="flex flex-1 flex-col p-6 md:p-8">
+                      {/* Tag + arrow row */}
+                      <div className="mb-5 flex items-center justify-between">
+                        <span className="rounded-full border border-border px-3 py-1 font-mono text-[9px] uppercase tracking-[0.25em] text-muted-foreground transition-colors group-hover:border-accent/40 group-hover:text-accent">
                           {client.tag}
                         </span>
-                        <span className="font-mono text-[10px] tracking-widest text-muted-foreground/40">
-                          {client.year}
-                        </span>
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background transition-all duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-accent-foreground">
+                          <ArrowUpRight className="h-4 w-4" />
+                        </div>
                       </div>
-                      <h3 className="font-display text-3xl font-semibold tracking-tight transition-transform duration-300 group-hover:translate-x-2 md:text-5xl">
+
+                      {/* Project name */}
+                      <h3 className="font-display text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
                         {client.name}
                       </h3>
-                      <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
+                      <p className="mt-3 leading-relaxed text-muted-foreground">
                         {client.description}
                       </p>
-                      <div className="mt-6 flex flex-wrap gap-x-6 gap-y-3">
+
+                      {/* Results — the money row */}
+                      <div className="mt-6 flex flex-wrap gap-2 border-t border-border pt-5">
                         {client.points.map((point) => (
                           <span
                             key={point}
-                            className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground"
+                            className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-background/60 px-3 py-1 font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground transition-colors group-hover:border-accent/20 group-hover:text-foreground/70"
                           >
-                            <span className="h-1 w-1 rounded-full bg-accent" />
+                            <span className="h-1 w-1 shrink-0 rounded-full bg-accent" />
                             {point}
                           </span>
                         ))}
                       </div>
                     </div>
 
-                    {/* Arrow circle */}
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-border bg-card transition-all duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-accent-foreground md:self-center">
-                      <ArrowUpRight className="h-5 w-5 transition-transform group-hover:rotate-[360deg] group-hover:duration-500" />
-                    </div>
+                    {/* Teal shimmer sweep on hover — runs left to right */}
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-accent/[0.04] to-transparent transition-transform duration-700 group-hover:translate-x-full"
+                    />
                   </a>
                 </FadeUp>
               ))}
@@ -506,78 +548,115 @@ export default function Home() {
               </FadeUp>
             </div>
 
-            <div className="grid gap-0 border border-border lg:grid-cols-2">
-              {/* Option 1 */}
-              <FadeUp className="relative flex flex-col border-b border-border p-8 lg:border-b-0 lg:border-r lg:p-12">
-                {/* "Popular" tag */}
-                <div className="absolute right-6 top-6 rounded-full bg-accent px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-accent-foreground">
-                  Most Popular
+            <div className="grid gap-5 lg:grid-cols-2">
+              {/* Option 1 — Featured / Most Popular */}
+              <FadeUp className="relative flex flex-col overflow-hidden rounded-2xl border border-accent/40 bg-card shadow-[0_0_80px_-20px_oklch(0.735_0.148_185_/_0.20)]">
+                {/* Teal glow bleeding in from the top */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute -top-16 left-1/2 h-40 w-2/3 -translate-x-1/2 rounded-full blur-3xl"
+                  style={{ background: 'oklch(0.735 0.148 185 / 0.12)' }}
+                />
+                {/* Top accent line */}
+                <div className="h-px w-full bg-gradient-to-r from-transparent via-accent to-transparent" />
+
+                <div className="relative flex flex-1 flex-col p-8 lg:p-10">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-[9px] uppercase tracking-[0.35em] text-accent">
+                      One-time · Full ownership
+                    </span>
+                    <span className="rounded-full bg-accent/10 px-3 py-1 font-mono text-[9px] uppercase tracking-widest text-accent ring-1 ring-accent/30">
+                      Most popular
+                    </span>
+                  </div>
+
+                  <h3 className="mt-6 font-display text-2xl font-semibold tracking-tight md:text-3xl">
+                    Complete Digital Asset
+                  </h3>
+                  <p className="mt-2 leading-relaxed text-muted-foreground">
+                    You own the full codebase the day it ships. No lock-in, no recurring surprises.
+                  </p>
+
+                  <div className="mt-8 flex items-baseline gap-2">
+                    <span className="font-display text-6xl font-semibold tracking-tight md:text-7xl">$1,299</span>
+                    <span className="font-mono text-sm text-muted-foreground">one-time</span>
+                  </div>
+                  <p className="mt-1.5 font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
+                    Save $380+ vs monthly over 3 months
+                  </p>
+
+                  <ul className="mt-8 flex-1 space-y-3 border-t border-border pt-7">
+                    {option1Features.map((f) => (
+                      <li key={f} className="flex items-start gap-3 text-foreground/90">
+                        <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                        <span className="leading-relaxed">{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Magnetic strength={0.2} className="mt-10">
+                    <Link
+                      href="/contact"
+                      className="group inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-accent px-8 py-4 text-sm font-semibold text-accent-foreground transition-all hover:opacity-90 hover:shadow-[0_0_30px_-4px_oklch(0.735_0.148_185_/_0.5)]"
+                    >
+                      Get started
+                      <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </Link>
+                  </Magnetic>
                 </div>
-                <span className="font-mono text-[10px] uppercase tracking-[0.35em] text-accent">
-                  One-time · Full ownership
-                </span>
-                <h3 className="mt-5 font-display text-2xl font-semibold tracking-tight">
-                  Complete Digital Asset
-                </h3>
-                <div className="mt-6">
-                  <span className="font-display text-6xl font-semibold tracking-tight md:text-7xl">$1,299</span>
-                </div>
-                <p className="mt-2 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-                  Save $380+ vs monthly in first 3 months
-                </p>
-                <ul className="mt-10 flex-1 space-y-4 border-t border-border pt-8">
-                  {option1Features.map((f) => (
-                    <li key={f} className="flex items-start gap-3 text-foreground/90">
-                      <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-accent" />
-                      <span className="leading-relaxed">{f}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Magnetic strength={0.2} className="mt-10">
-                  <Link
-                    href="/contact"
-                    className="group inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-accent px-8 py-4 text-sm font-medium text-accent-foreground transition-all hover:opacity-90"
-                  >
-                    Get started
-                    <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  </Link>
-                </Magnetic>
               </FadeUp>
 
-              {/* Option 2 */}
-              <FadeUp index={1} className="flex flex-col p-8 lg:p-12">
-                <span className="font-mono text-[10px] uppercase tracking-[0.35em] text-muted-foreground">
-                  Monthly · Managed for you
-                </span>
-                <h3 className="mt-5 font-display text-2xl font-semibold tracking-tight">
-                  Managed Website Plan
-                </h3>
-                <div className="mt-6 flex items-baseline gap-2">
-                  <span className="font-display text-5xl font-semibold tracking-tight">$700</span>
-                  <span className="font-display text-2xl text-muted-foreground/50">+</span>
-                  <span className="font-display text-3xl font-semibold text-accent">$120</span>
-                  <span className="font-mono text-sm text-muted-foreground">/mo</span>
+              {/* Option 2 — Managed */}
+              <FadeUp index={1} className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all duration-500 hover:border-border/80 hover:shadow-[0_8px_40px_-12px_oklch(0.108_0.012_240_/_0.8)]">
+                {/* Subtle top line — non-teal, secondary feel */}
+                <div className="h-px w-full bg-gradient-to-r from-transparent via-border to-transparent" />
+
+                <div className="relative flex flex-1 flex-col p-8 lg:p-10">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-[9px] uppercase tracking-[0.35em] text-muted-foreground">
+                      Monthly · Managed for you
+                    </span>
+                  </div>
+
+                  <h3 className="mt-6 font-display text-2xl font-semibold tracking-tight md:text-3xl">
+                    Managed Website Plan
+                  </h3>
+                  <p className="mt-2 leading-relaxed text-muted-foreground">
+                    Low upfront cost, everything handled. Hosting, maintenance, SEO check-ins — all in.
+                  </p>
+
+                  <div className="mt-8">
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="font-display text-4xl font-semibold tracking-tight">$700</span>
+                      <span className="font-mono text-sm text-muted-foreground">setup</span>
+                      <span className="mx-2 font-display text-2xl text-border">+</span>
+                      <span className="font-display text-5xl font-semibold tracking-tight text-foreground/80">$120</span>
+                      <span className="font-mono text-sm text-muted-foreground">/mo</span>
+                    </div>
+                    <p className="mt-1.5 font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
+                      3-month minimum — total $1,060
+                    </p>
+                  </div>
+
+                  <ul className="mt-8 flex-1 space-y-3 border-t border-border pt-7">
+                    {option2Features.map((f) => (
+                      <li key={f} className="flex items-start gap-3 text-foreground/75">
+                        <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-muted-foreground/40" />
+                        <span className="leading-relaxed">{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Magnetic strength={0.2} className="mt-10">
+                    <Link
+                      href="/contact"
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border px-8 py-4 text-sm font-medium text-foreground transition-all hover:border-accent/50 hover:bg-secondary"
+                    >
+                      Let&apos;s do this one
+                      <ArrowUpRight className="h-4 w-4" />
+                    </Link>
+                  </Magnetic>
                 </div>
-                <p className="mt-2 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-                  3-month minimum — total $1,060
-                </p>
-                <ul className="mt-10 flex-1 space-y-4 border-t border-border pt-8">
-                  {option2Features.map((f) => (
-                    <li key={f} className="flex items-start gap-3 text-foreground/80">
-                      <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-muted-foreground/50" />
-                      <span className="leading-relaxed">{f}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Magnetic strength={0.2} className="mt-10">
-                  <Link
-                    href="/contact"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border px-8 py-4 text-sm font-medium text-foreground transition-colors hover:border-accent/50 hover:bg-card"
-                  >
-                    Let&apos;s do this one
-                    <ArrowUpRight className="h-4 w-4" />
-                  </Link>
-                </Magnetic>
               </FadeUp>
             </div>
           </div>

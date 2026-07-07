@@ -44,11 +44,11 @@ export function AnimatedHeading({
           <span key={i} className="inline-block overflow-hidden align-bottom">
             <motion.span
               className="inline-block"
-              initial={{ y: '110%', filter: 'blur(6px)' }}
+              initial={{ y: '110%' }}
               animate={
                 inView
-                  ? { y: 0, filter: 'blur(0px)' }
-                  : { y: '110%', filter: 'blur(6px)' }
+                  ? { y: 0 }
+                  : { y: '110%' }
               }
               transition={{ duration: 0.7, ease: EASE, delay: delay + i * 0.07 }}
             >
@@ -64,12 +64,11 @@ export function AnimatedHeading({
 
 /* ---------- Generic scroll reveal ---------- */
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 24, filter: 'blur(8px)' },
+  hidden: { opacity: 0, y: 28 },
   show: (i: number = 0) => ({
     opacity: 1,
     y: 0,
-    filter: 'blur(0px)',
-    transition: { duration: 0.8, ease: EASE, delay: i * 0.08 },
+    transition: { duration: 0.7, ease: EASE, delay: i * 0.08 },
   }),
 }
 
