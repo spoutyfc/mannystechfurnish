@@ -28,25 +28,30 @@ const reasons = [
 
 export function WhyChooseMe() {
   return (
-    <section className="border-b border-white/15 px-5 py-20 md:px-10 md:py-28">
-      <div className="mx-auto max-w-[1500px]">
-        <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
-          <AnimatedHeading
-            as="h2"
-            text="Why Not An Agency"
-            className="max-w-[12ch] font-display text-5xl font-semibold uppercase leading-[0.9] tracking-tight md:text-8xl"
-          />
-          <p className="max-w-xs font-mono text-xs uppercase tracking-widest text-white/55">
+    <section className="border-b border-border px-5 py-24 md:px-10 md:py-32">
+      <div className="mx-auto max-w-[1400px]">
+        <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <p className="mb-4 font-mono text-xs uppercase tracking-[0.25em] text-accent">
+              Why me
+            </p>
+            <AnimatedHeading
+              as="h2"
+              text="Why not an agency."
+              className="max-w-[14ch] font-display text-4xl font-medium leading-[1] tracking-[-0.02em] md:text-6xl"
+            />
+          </div>
+          <p className="max-w-xs font-mono text-xs uppercase tracking-widest text-muted-foreground">
             One dedicated developer beats a faceless agency — every time.
           </p>
         </div>
 
-        <div className="grid border-t border-white/15 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid border-t border-border sm:grid-cols-2 lg:grid-cols-4">
           {reasons.map((r, i) => (
             <FadeUp
               key={r.title}
               index={i}
-              className={`group flex flex-col border-b border-white/15 py-10 transition-colors hover:bg-white/[0.03] sm:border-b-0 lg:py-12 ${
+              className={`group flex flex-col border-b border-border py-10 transition-colors hover:bg-secondary/40 sm:border-b-0 lg:py-12 ${
                 i !== 0 ? 'lg:border-l lg:pl-8' : 'lg:pr-8'
               } ${i > 0 && i < 3 ? 'lg:px-8' : ''} ${i === 3 ? 'lg:pl-8' : ''} ${
                 i === 0 ? 'sm:border-r sm:pr-8' : ''
@@ -54,11 +59,11 @@ export function WhyChooseMe() {
                 i === 3 ? 'sm:pl-8' : ''
               }`}
             >
-              <r.icon className="h-9 w-9 text-accent transition-transform group-hover:-translate-y-1" />
-              <h3 className="mt-6 font-display text-2xl font-semibold uppercase tracking-tight">
+              <r.icon className="h-7 w-7 text-accent transition-transform group-hover:-translate-y-1" />
+              <h3 className="mt-6 font-display text-xl font-medium tracking-tight">
                 {r.title}
               </h3>
-              <p className="mt-3 leading-relaxed text-white/75">{r.desc}</p>
+              <p className="mt-3 leading-relaxed text-muted-foreground">{r.desc}</p>
             </FadeUp>
           ))}
         </div>

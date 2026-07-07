@@ -6,7 +6,7 @@ import './globals.css'
 const archivo = Archivo({
   subsets: ['latin'],
   variable: '--font-archivo',
-  weight: ['400', '500', '600', '700', '800', '900'],
+  weight: ['400', '500', '600', '700'],
   display: 'swap',
 })
 const inter = Inter({
@@ -65,8 +65,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`dark bg-black ${archivo.variable} ${inter.variable}`}>
-      <body className="bg-black font-sans text-neutral-50 antialiased">
+    <html lang="en" className={`dark bg-background ${archivo.variable} ${inter.variable}`}>
+      <body className="bg-background font-sans text-foreground antialiased">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

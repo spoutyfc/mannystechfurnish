@@ -88,24 +88,30 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-background text-foreground">
       <SiteNav />
 
       {/* ---------------- HEADER ---------------- */}
-      <section className="relative overflow-hidden border-b border-white/15 px-5 pb-16 pt-32 md:px-10 md:pb-20 md:pt-40">
-        {/* layered accent glows for depth + color */}
-        <div className="pointer-events-none absolute right-[-15%] top-[-25%] h-[70%] w-[55%] rounded-full bg-accent/20 blur-[130px]" />
-        <div className="pointer-events-none absolute left-[-10%] bottom-[-40%] h-[60%] w-[45%] rounded-full bg-accent/10 blur-[120px]" />
-        <div className="relative z-10 mx-auto max-w-[1500px]">
+      <section className="relative overflow-hidden border-b border-border px-5 pb-16 pt-36 md:px-10 md:pb-20 md:pt-44">
+        {/* single soft accent wash — quiet */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10 opacity-[0.5]"
+          style={{
+            background:
+              'radial-gradient(55% 50% at 82% 15%, oklch(0.83 0.062 78 / 0.10), transparent 70%)',
+          }}
+        />
+        <div className="relative z-10 mx-auto max-w-[1400px]">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-10 flex items-center justify-between font-mono text-xs uppercase tracking-[0.2em] text-white/60"
+            className="mb-12 flex items-center justify-between font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground"
           >
             <Link
               href="/"
-              className="inline-flex items-center gap-2 transition-colors hover:text-white"
+              className="inline-flex items-center gap-2 transition-colors hover:text-foreground"
             >
               <ArrowLeft className="h-3.5 w-3.5" /> Back to home
             </Link>
@@ -115,9 +121,9 @@ export default function ContactPage() {
             </span>
           </motion.div>
 
-          <h1 className="font-display text-[14vw] font-semibold uppercase leading-[0.88] tracking-tight md:text-[10.5vw] lg:text-[9rem]">
+          <h1 className="font-display text-[13vw] font-medium leading-[0.95] tracking-[-0.03em] md:text-[7.5vw] lg:text-[6rem]">
             <AnimatedHeading as="span" text="Let's build" className="block" />
-            <span className="block">
+            <span className="block text-muted-foreground">
               <AnimatedHeading
                 as="span"
                 text="something"
@@ -126,7 +132,7 @@ export default function ContactPage() {
               />{' '}
               <span className="inline-block overflow-hidden align-bottom">
                 <motion.span
-                  className="inline-block text-accent"
+                  className="inline-block text-foreground"
                   initial={{ y: '110%' }}
                   animate={{ y: 0 }}
                   transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.32 }}
@@ -137,9 +143,9 @@ export default function ContactPage() {
             </span>
           </h1>
 
-          <div className="mt-12 border-t border-white/15 pt-10">
+          <div className="mt-12 border-t border-border pt-10">
             <FadeUp index={1}>
-              <p className="max-w-2xl text-pretty text-xl leading-snug text-white md:text-2xl">
+              <p className="max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
                 Tell me about your project and I&apos;ll get back to you within 24&ndash;48 hours.
                 Want it faster? Shoot me a text and I&apos;ll reply right away.
               </p>
@@ -149,32 +155,32 @@ export default function ContactPage() {
       </section>
 
       {/* ---------------- CONTACT ---------------- */}
-      <section className="px-5 py-20 md:px-10 md:py-28">
-        <div className="mx-auto grid max-w-[1500px] grid-cols-1 gap-12 lg:grid-cols-[1fr_1.2fr] lg:gap-20">
+      <section className="px-5 py-24 md:px-10 md:py-32">
+        <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-12 lg:grid-cols-[1fr_1.2fr] lg:gap-20">
           {/* Left column — info */}
           <div>
             <FadeUp>
-              <p className="font-mono text-xs uppercase tracking-widest text-accent">
+              <p className="font-mono text-xs uppercase tracking-[0.25em] text-accent">
                 Fastest way to reach me
               </p>
             </FadeUp>
 
             {/* TEXT BUTTON — opens their messaging app with a pre-written brief */}
             <FadeUp index={1}>
-              <Magnetic strength={0.15}>
+              <Magnetic strength={0.12}>
                 <a
                   href={SMS_LINK}
-                  className="group mt-6 flex items-center justify-between overflow-hidden rounded-sm border border-accent/40 bg-accent/10 p-6 transition-colors hover:bg-accent/20"
+                  className="group mt-6 flex items-center justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 transition-colors hover:border-foreground/30"
                 >
                   <div className="flex items-center gap-5">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-sm bg-accent text-black">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent text-accent-foreground">
                       <MessageSquareText className="h-6 w-6" />
                     </span>
                     <div>
-                      <p className="font-display text-2xl font-semibold uppercase tracking-tight">
+                      <p className="font-display text-xl font-medium tracking-tight">
                         Text me
                       </p>
-                      <p className="font-mono text-xs uppercase tracking-widest text-white/65">
+                      <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
                         Opens a ready-to-send message
                       </p>
                     </div>
@@ -182,14 +188,14 @@ export default function ContactPage() {
                   <ArrowUpRight className="h-6 w-6 text-accent transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </a>
               </Magnetic>
-              <p className="mt-3 font-mono text-[11px] leading-relaxed tracking-wide text-white/45">
+              <p className="mt-3 font-mono text-[11px] leading-relaxed tracking-wide text-muted-foreground/70">
                 Tap it and your phone opens a text with a few quick questions already typed out &mdash;
                 just fill in the blanks and hit send.
               </p>
             </FadeUp>
 
             {/* Detail rows */}
-            <div className="mt-10 divide-y divide-white/10 border-y border-white/10">
+            <div className="mt-10 divide-y divide-border border-y border-border">
               {[
                 {
                   icon: Phone,
@@ -207,12 +213,12 @@ export default function ContactPage() {
               ].map((row, i) => {
                 const Inner = (
                   <div className="group flex items-center gap-5 py-5">
-                    <row.icon className="h-5 w-5 shrink-0 text-white/40 transition-colors group-hover:text-accent" />
+                    <row.icon className="h-5 w-5 shrink-0 text-muted-foreground transition-colors group-hover:text-accent" />
                     <div className="min-w-0">
-                      <p className="font-mono text-[11px] uppercase tracking-widest text-white/50">
+                      <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
                         {row.label}
                       </p>
-                      <p className="break-all text-white transition-colors group-hover:text-accent">
+                      <p className="break-all text-foreground transition-colors group-hover:text-accent">
                         {row.value}
                       </p>
                     </div>
@@ -238,8 +244,8 @@ export default function ContactPage() {
 
             {/* Personal note */}
             <FadeUp index={2}>
-              <div className="mt-10 rounded-sm border border-white/15 bg-gradient-to-br from-white/[0.04] to-transparent p-6">
-                <p className="text-pretty leading-relaxed text-white/75">
+              <div className="mt-10 rounded-2xl border border-border bg-card p-6">
+                <p className="text-pretty leading-relaxed text-muted-foreground">
                   Every project starts with a real conversation about your goals &mdash; no scripts,
                   no pressure. You&apos;ll get weekly updates through the whole build and a site
                   that&apos;s made to bring you customers.
@@ -247,8 +253,8 @@ export default function ContactPage() {
                 <div className="mt-5 flex items-center gap-3">
                   <div className="h-9 w-9 rounded-full bg-accent" />
                   <div>
-                    <p className="text-sm font-medium text-white">Mansoor</p>
-                    <p className="font-mono text-[11px] uppercase tracking-widest text-white/50">
+                    <p className="text-sm font-medium text-foreground">Mansoor</p>
+                    <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
                       Manny&apos;s Tech Furnish
                     </p>
                   </div>
@@ -260,28 +266,28 @@ export default function ContactPage() {
           {/* Right column — form */}
           <div>
             <FadeUp>
-              <p className="font-mono text-xs uppercase tracking-widest text-white/55">
+              <p className="font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground">
                 Prefer email? Send a message
               </p>
             </FadeUp>
 
             <FadeUp index={1}>
-              <div className="mt-6 rounded-sm border border-white/15 bg-gradient-to-b from-white/[0.03] to-transparent p-6 md:p-10">
+              <div className="mt-6 rounded-2xl border border-border bg-card p-6 md:p-10">
                 {submitted ? (
                   <div className="py-16 text-center">
-                    <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-sm border border-accent/40 bg-accent/10">
+                    <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-border bg-accent/10">
                       <Check className="h-8 w-8 text-accent" />
                     </div>
-                    <h3 className="font-display text-3xl font-semibold uppercase tracking-tight">
+                    <h3 className="font-display text-2xl font-medium tracking-tight">
                       Message sent
                     </h3>
-                    <p className="mt-3 text-white/60">I&apos;ll be in touch within 24&ndash;48 hours.</p>
+                    <p className="mt-3 text-muted-foreground">I&apos;ll be in touch within 24&ndash;48 hours.</p>
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-6">
                     {error && (
-                      <div className="rounded-sm border border-red-500/30 bg-red-500/10 p-4">
-                        <p className="text-sm text-red-400">{error}</p>
+                      <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-4">
+                        <p className="text-sm text-destructive">{error}</p>
                       </div>
                     )}
 
@@ -300,7 +306,7 @@ export default function ContactPage() {
 
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                       <div>
-                        <Label className="mb-2 block font-mono text-[11px] uppercase tracking-widest text-white/55">
+                        <Label className="mb-2 block font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
                           Name
                         </Label>
                         <Input
@@ -308,11 +314,11 @@ export default function ContactPage() {
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                           required
                           placeholder="Your name"
-                          className="h-12 rounded-none border-white/15 bg-transparent text-white placeholder:text-white/30 focus-visible:border-accent focus-visible:ring-0"
+                          className="h-12 rounded-xl border-border bg-background text-foreground placeholder:text-muted-foreground/50 focus-visible:border-accent focus-visible:ring-0"
                         />
                       </div>
                       <div>
-                        <Label className="mb-2 block font-mono text-[11px] uppercase tracking-widest text-white/55">
+                        <Label className="mb-2 block font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
                           Email
                         </Label>
                         <Input
@@ -321,13 +327,13 @@ export default function ContactPage() {
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                           required
                           placeholder="you@example.com"
-                          className="h-12 rounded-none border-white/15 bg-transparent text-white placeholder:text-white/30 focus-visible:border-accent focus-visible:ring-0"
+                          className="h-12 rounded-xl border-border bg-background text-foreground placeholder:text-muted-foreground/50 focus-visible:border-accent focus-visible:ring-0"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <Label className="mb-2 block font-mono text-[11px] uppercase tracking-widest text-white/55">
+                      <Label className="mb-2 block font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
                         What do you need?
                       </Label>
                       <Input
@@ -335,12 +341,12 @@ export default function ContactPage() {
                         onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                         required
                         placeholder="New website, landing page, redesign…"
-                        className="h-12 rounded-none border-white/15 bg-transparent text-white placeholder:text-white/30 focus-visible:border-accent focus-visible:ring-0"
+                        className="h-12 rounded-xl border-border bg-background text-foreground placeholder:text-muted-foreground/50 focus-visible:border-accent focus-visible:ring-0"
                       />
                     </div>
 
                     <div>
-                      <Label className="mb-2 block font-mono text-[11px] uppercase tracking-widest text-white/55">
+                      <Label className="mb-2 block font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
                         Tell me more
                       </Label>
                       <Textarea
@@ -349,7 +355,7 @@ export default function ContactPage() {
                         required
                         placeholder="What's your project about? Any timeline or budget in mind?"
                         rows={5}
-                        className="resize-none rounded-none border-white/15 bg-transparent text-white placeholder:text-white/30 focus-visible:border-accent focus-visible:ring-0"
+                        className="resize-none rounded-xl border-border bg-background text-foreground placeholder:text-muted-foreground/50 focus-visible:border-accent focus-visible:ring-0"
                       />
                     </div>
 
@@ -361,7 +367,7 @@ export default function ContactPage() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="group inline-flex w-full items-center justify-center gap-2 bg-accent px-8 py-4 text-sm font-semibold uppercase tracking-wider text-black transition-opacity hover:opacity-90 disabled:opacity-60"
+                      className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-foreground px-8 py-4 text-sm font-medium text-background transition-opacity hover:opacity-90 disabled:opacity-60"
                     >
                       {loading ? 'Sending…' : 'Send message'}
                       {!loading && (
@@ -377,8 +383,8 @@ export default function ContactPage() {
       </section>
 
       {/* ---------------- FOOTER ---------------- */}
-      <footer className="border-t border-white/15 px-5 py-8 md:px-10">
-        <div className="mx-auto flex max-w-[1500px] flex-col items-center justify-between gap-4 md:flex-row">
+      <footer className="border-t border-border px-5 py-8 md:px-10">
+        <div className="mx-auto flex max-w-[1400px] flex-col items-center justify-between gap-4 md:flex-row">
           <Image
             src="/images/logo.png"
             alt="Manny's Tech Furnish"
@@ -386,7 +392,7 @@ export default function ContactPage() {
             height={180}
             className="h-9 w-auto"
           />
-          <p className="font-mono text-xs uppercase tracking-widest text-white/50">
+          <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
             © {new Date().getFullYear()} Manny&apos;s Tech Furnish · {PHONE_DISPLAY}
           </p>
         </div>

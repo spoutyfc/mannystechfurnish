@@ -50,7 +50,7 @@ export function Preloader() {
     <AnimatePresence>
       {!done && (
         <motion.div
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black"
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background"
           exit={{ y: '-100%' }}
           transition={{ duration: 1, ease: EASE }}
         >
@@ -77,17 +77,17 @@ export function Preloader() {
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               transition={{ duration: 0.7, ease: EASE }}
-              className="block font-display text-[22vw] font-extrabold leading-none tracking-tighter text-white md:text-[14rem]"
+              className="block font-display text-[22vw] font-medium leading-none tracking-tighter text-foreground md:text-[14rem]"
             >
               {count}
-              <span className="text-[hsl(var(--accent))] text-fuchsia-500">%</span>
+              <span className="text-accent">%</span>
             </motion.span>
           </div>
 
           {/* Progress line */}
-          <div className="mt-2 h-px w-[60vw] max-w-md overflow-hidden bg-white/10">
+          <div className="mt-2 h-px w-[60vw] max-w-md overflow-hidden bg-border">
             <motion.div
-              className="h-full bg-fuchsia-500"
+              className="h-full bg-accent"
               style={{ width: `${count}%` }}
             />
           </div>
