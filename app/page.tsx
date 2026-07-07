@@ -631,7 +631,7 @@ export default function Home() {
                       <span className="font-mono text-sm text-muted-foreground">setup</span>
                       <span className="mx-2 font-display text-2xl text-border">+</span>
                       <span className="font-display text-5xl font-semibold tracking-tight text-foreground/80">$120</span>
-                      <span className="font-mono text-sm text-muted-foreground">/mo</span>
+                      <span className="font-mono text-sm text-muted-foreground">/ 3 months</span>
                     </div>
                     <p className="mt-1.5 font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
                       3-month minimum — total $1,060
