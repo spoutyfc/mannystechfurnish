@@ -32,16 +32,16 @@ export function WhyChooseMe() {
       <div className="mx-auto max-w-[1400px]">
         <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="mb-4 font-mono text-xs uppercase tracking-[0.25em] text-accent">
+            <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.35em] text-accent">
               Why me
             </p>
             <AnimatedHeading
               as="h2"
               text="Why not an agency."
-              className="max-w-[14ch] font-display text-4xl font-medium leading-[1] tracking-[-0.02em] md:text-6xl"
+              className="max-w-[14ch] font-display text-4xl font-semibold leading-[1] tracking-[-0.03em] md:text-6xl"
             />
           </div>
-          <p className="max-w-xs font-mono text-xs uppercase tracking-widest text-muted-foreground">
+          <p className="max-w-xs font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
             One dedicated developer beats a faceless agency — every time.
           </p>
         </div>
@@ -51,19 +51,24 @@ export function WhyChooseMe() {
             <FadeUp
               key={r.title}
               index={i}
-              className={`group flex flex-col border-b border-border py-10 transition-colors hover:bg-secondary/40 sm:border-b-0 lg:py-12 ${
+              className={`group relative flex flex-col border-b border-border py-10 transition-colors hover:bg-card sm:border-b-0 lg:py-12 ${
                 i !== 0 ? 'lg:border-l lg:pl-8' : 'lg:pr-8'
-              } ${i > 0 && i < 3 ? 'lg:px-8' : ''} ${i === 3 ? 'lg:pl-8' : ''} ${
+              } ${i > 0 && i < 3 ? 'lg:px-8' : ''} ${
                 i === 0 ? 'sm:border-r sm:pr-8' : ''
-              } ${i === 2 ? 'sm:border-r sm:pr-8' : ''} ${i === 1 ? 'sm:pl-8' : ''} ${
-                i === 3 ? 'sm:pl-8' : ''
+              } ${i === 2 ? 'sm:border-r sm:pr-8' : ''} ${
+                i === 1 || i === 3 ? 'sm:pl-8' : ''
               }`}
             >
-              <r.icon className="h-7 w-7 text-accent transition-transform group-hover:-translate-y-1" />
-              <h3 className="mt-6 font-display text-xl font-medium tracking-tight">
+              {/* Icon plate */}
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-secondary transition-all group-hover:border-accent/40 group-hover:bg-accent/10">
+                <r.icon className="h-5 w-5 text-muted-foreground transition-colors group-hover:text-accent" />
+              </div>
+              <h3 className="mt-7 font-display text-xl font-semibold tracking-tight">
                 {r.title}
               </h3>
               <p className="mt-3 leading-relaxed text-muted-foreground">{r.desc}</p>
+              {/* Teal accent bottom line */}
+              <span className="absolute bottom-0 left-0 h-px w-0 bg-accent transition-all duration-500 group-hover:w-full" />
             </FadeUp>
           ))}
         </div>

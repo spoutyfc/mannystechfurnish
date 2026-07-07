@@ -96,7 +96,7 @@ export function Preloader() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="mt-6 font-mono text-[10px] uppercase tracking-[0.3em] text-neutral-500"
+            className="mt-6 font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground"
           >
             Crafting your experience
           </motion.span>

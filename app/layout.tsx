@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
-import { Archivo, Inter } from 'next/font/google'
+import { Space_Grotesk, Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-const archivo = Archivo({
+const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
-  variable: '--font-archivo',
-  weight: ['400', '500', '600', '700'],
+  variable: '--font-space-grotesk',
+  weight: ['300', '400', '500', '600', '700'],
   display: 'swap',
 })
 const inter = Inter({
@@ -65,7 +65,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`dark bg-background ${archivo.variable} ${inter.variable}`}>
+    <html lang="en" className={`dark bg-background ${spaceGrotesk.variable} ${inter.variable}`}>
       <body className="bg-background font-sans text-foreground antialiased">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}

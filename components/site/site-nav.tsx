@@ -73,7 +73,7 @@ export function SiteNav() {
             <Link href="/contact">
               <Button
                 size="sm"
-                className="group rounded-full border-0 bg-foreground px-6 font-mono text-xs uppercase tracking-wider text-background hover:opacity-90"
+                className="group rounded-full border-0 bg-accent px-6 font-mono text-xs uppercase tracking-wider text-accent-foreground hover:opacity-90"
               >
                 Get Started
                 <ArrowUpRight className="ml-1.5 h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -140,7 +140,7 @@ export function SiteNav() {
               <div className="border-t border-border px-6 py-6">
                 <SheetClose asChild>
                   <Link href="/contact" className="block">
-                    <Button className="h-12 w-full rounded-full border-0 bg-foreground font-mono text-xs uppercase tracking-wider text-background hover:opacity-90">
+                    <Button className="h-12 w-full rounded-full border-0 bg-accent font-mono text-xs uppercase tracking-wider text-accent-foreground hover:opacity-90">
                       Get Started
                     </Button>
                   </Link>

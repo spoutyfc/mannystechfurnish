@@ -19,7 +19,9 @@ import {
   Parallax,
 } from '@/components/site/motion'
 import { motion } from 'framer-motion'
-import { ArrowUpRight, ArrowRight } from 'lucide-react'
+import { ArrowUpRight, ArrowRight, Zap, Search, TrendingUp, Code2, Shield, Clock } from 'lucide-react'
+
+const EASE = [0.16, 1, 0.3, 1] as const
 
 const stats = [
   { value: '12+', label: 'Projects shipped' },
@@ -33,8 +35,9 @@ const clients = [
     index: '01',
     tag: 'Structural Engineering',
     name: 'Oaktown Engineers',
+    year: '2024',
     description:
-      'A licensed structural engineering firm serving the Bay Area for 10+ years. We rebuilt their digital presence to match their reputation.',
+      'A licensed structural engineering firm serving the Bay Area for 10+ years. We rebuilt their entire digital presence from the ground up to match their reputation.',
     points: ['500+ projects showcased', 'Ranks #1 for "structural engineer Bay Area"', '3x more consults'],
     url: 'https://oaktownengineers.com',
   },
@@ -42,8 +45,9 @@ const clients = [
     index: '02',
     tag: 'Auto Dealership',
     name: 'United Flex Auto',
+    year: '2024',
     description:
-      'A premium pre-owned dealership that needed a modern site to showcase inventory and drive online leads at scale.',
+      'A premium pre-owned dealership that needed a modern site to showcase their full inventory and drive qualified online leads at scale.',
     points: ['Full inventory system', 'Online test-drive booking', '200% more inquiries'],
     url: 'https://unitedflexauto.com',
   },
@@ -52,18 +56,21 @@ const clients = [
 const services = [
   {
     num: '01',
+    icon: Code2,
     title: 'Design & Build',
-    desc: 'Custom full-stack development from concept to launch. High-performance front-end, secure back-end, fully responsive.',
+    desc: 'Custom full-stack development from concept to launch. High-performance front-end, secure back-end, fully responsive across every device.',
   },
   {
     num: '02',
+    icon: Search,
     title: 'Search & SEO',
-    desc: 'Schema markup, sitemaps, speed tuning and on-page optimization built in from day one so customers actually find you.',
+    desc: 'Schema markup, sitemaps, Core Web Vitals tuning, and on-page optimization built in from day one so real customers actually find you.',
   },
   {
     num: '03',
+    icon: TrendingUp,
     title: 'Growth & Ads',
-    desc: 'Google Ads setup and management, conversion optimization, and clear analytics reporting that ties spend to results.',
+    desc: 'Google Ads setup and management, conversion rate optimization, and clean analytics reporting that ties every dollar of spend to results.',
   },
 ]
 
@@ -80,25 +87,20 @@ const option2Features = [
   'Website build included ($700 labor fee)',
   'Ongoing maintenance & hosting included',
   'Updates, security & priority support queue',
-  'Basic SEO check-ins',
+  'Basic SEO check-ins every month',
   'Buy out the code after term: $600',
 ]
 
 const steps = [
-  { num: '1', title: 'Free Consultation', desc: 'We talk goals, scope, and fit. No pressure — just a real conversation.' },
-  { num: '2', title: 'Clear Proposal', desc: 'A detailed quote with everything spelled out. No hidden fees, no surprises.' },
-  { num: '3', title: 'Weekly Updates', desc: 'You stay in the loop the whole build. You always know where things stand.' },
-  { num: '4', title: 'Launch + Support', desc: 'Your site goes live and I stick around to keep it running smoothly.' },
+  { num: '1', icon: Clock, title: 'Free Consultation', desc: 'We talk goals, scope, and fit. No pressure — just a real conversation about what you actually need.' },
+  { num: '2', icon: Shield, title: 'Clear Proposal', desc: 'A detailed quote with everything spelled out. No hidden fees, no surprises — ever.' },
+  { num: '3', icon: Zap, title: 'Weekly Updates', desc: 'You stay in the loop the whole build. You always know exactly where things stand.' },
+  { num: '4', icon: TrendingUp, title: 'Launch + Support', desc: 'Your site goes live and I stick around to keep it running and growing.' },
 ]
 
 const marqueeItems = [
-  'Web Design',
-  'SEO',
-  'Google Ads',
-  'Full-Stack Dev',
-  'Conversion',
-  'Branding',
-  'Performance',
+  'Next.js', 'TypeScript', 'Tailwind CSS', 'PostgreSQL',
+  'Stripe', 'Framer Motion', 'Vercel', 'SEO', 'Google Ads',
 ]
 
 export default function Home() {
@@ -121,7 +123,6 @@ export default function Home() {
             founder: { '@type': 'Person', name: 'Mansoor Arif' },
             areaServed: 'US',
             serviceType: ['Web Design', 'Web Development', 'SEO', 'Google Ads'],
-            sameAs: ['https://oaktownengineers.com', 'https://unitedflexauto.com'],
           }),
         }}
       />
@@ -131,57 +132,94 @@ export default function Home() {
       <SiteNav />
 
       <ScrollBlur>
-        {/* ---------------- HERO ---------------- */}
-        <section className="relative overflow-hidden px-5 pb-20 pt-36 md:px-10 md:pb-28 md:pt-44">
-          {/* soft radial wash — quiet, no WebGL */}
+
+        {/* ============================================================
+            HERO
+        ============================================================ */}
+        <section className="relative min-h-screen overflow-hidden px-5 pb-24 pt-36 md:px-10 md:pt-48">
+
+          {/* Grid background — structural, technical */}
+          <div aria-hidden className="pointer-events-none absolute inset-0 -z-20 grid-bg opacity-100" />
+
+          {/* Teal origin glow — top-right, like a distant star */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 -z-10 opacity-[0.5]"
-            style={{
-              background:
-                'radial-gradient(60% 55% at 78% 20%, oklch(0.83 0.062 78 / 0.10), transparent 70%)',
-            }}
+            className="pointer-events-none absolute -right-40 -top-40 -z-10 h-[700px] w-[700px] rounded-full"
+            style={{ background: 'radial-gradient(circle, oklch(0.74 0.14 185 / 0.08) 0%, transparent 65%)' }}
           />
+          {/* Secondary deep glow — bottom left */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -bottom-20 -left-20 -z-10 h-[500px] w-[500px] rounded-full"
+            style={{ background: 'radial-gradient(circle, oklch(0.74 0.14 185 / 0.04) 0%, transparent 70%)' }}
+          />
+
           <div className="mx-auto max-w-[1400px]">
+            {/* Status indicator */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="mb-12 flex items-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground"
+              transition={{ duration: 0.6, ease: EASE }}
+              className="mb-14 flex items-center gap-3"
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-              <span>Web Studio — Est. 2023</span>
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
+              </span>
+              <span className="font-mono text-xs uppercase tracking-[0.3em] text-accent">
+                Available for new projects
+              </span>
+              <span className="h-px flex-1 max-w-[60px] bg-border" />
+              <span className="font-mono text-xs uppercase tracking-[0.25em] text-muted-foreground">
+                Est. 2023
+              </span>
             </motion.div>
 
-            <h1 className="max-w-[16ch] font-display text-[13vw] font-medium leading-[0.95] tracking-[-0.03em] md:text-[7.5vw] lg:text-[6.5rem]">
-              <AnimatedHeading as="span" text="Websites that" className="block" />
-              <span className="block text-muted-foreground">
-                <AnimatedHeading as="span" text="actually" className="inline" delay={0.12} />{' '}
-                <span className="inline-block overflow-hidden align-bottom">
-                  <motion.span
-                    className="inline-block text-foreground"
-                    initial={{ y: '110%' }}
-                    animate={{ y: 0 }}
-                    transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.32 }}
-                  >
-                    convert.
-                  </motion.span>
+            {/* Main headline */}
+            <div className="relative">
+              <h1 className="max-w-[18ch] font-display text-[11.5vw] font-semibold leading-[0.92] tracking-[-0.04em] md:text-[7vw] lg:text-[6.2rem]">
+                <AnimatedHeading as="span" text="Websites built" className="block" />
+                <span className="block">
+                  <AnimatedHeading as="span" text="to win" className="inline text-muted-foreground" delay={0.1} />
+                  {' '}
+                  <span className="inline-block overflow-hidden align-bottom">
+                    <motion.span
+                      className="inline-block"
+                      style={{ color: 'var(--accent)' }}
+                      initial={{ y: '110%', filter: 'blur(8px)' }}
+                      animate={{ y: 0, filter: 'blur(0px)' }}
+                      transition={{ duration: 0.8, ease: EASE, delay: 0.26 }}
+                    >
+                      business.
+                    </motion.span>
+                  </span>
                 </span>
-              </span>
-            </h1>
+              </h1>
 
-            <div className="mt-14 grid items-end gap-10 border-t border-border pt-10 md:grid-cols-[1.5fr_1fr]">
+              {/* Decorative index — top-right */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 0.8 }}
+                className="absolute right-0 top-0 hidden font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground/40 lg:block"
+              >
+                [MTF_001]
+              </motion.div>
+            </div>
+
+            {/* Sub-grid: description + CTAs */}
+            <div className="mt-16 grid items-end gap-10 border-t border-border pt-10 md:grid-cols-[1.5fr_1fr]">
               <FadeUp index={1}>
                 <p className="max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl">
                   Premium, hand-built websites that rank on Google and turn visitors into paying
-                  customers. No templates, no fluff — delivered on time.
+                  customers. No templates, no fluff — delivered on time, every time.
                 </p>
               </FadeUp>
               <FadeUp index={2} className="flex flex-col gap-3 sm:flex-row md:justify-end">
                 <Magnetic strength={0.3}>
                   <Link
                     href="/contact"
-                    className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-foreground px-7 py-3.5 text-sm font-medium text-background transition-opacity hover:opacity-90 sm:w-auto"
+                    className="group inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-accent px-7 py-3.5 text-sm font-medium text-accent-foreground transition-all hover:opacity-90 sm:w-auto"
                   >
                     Start a project
                     <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -190,96 +228,131 @@ export default function Home() {
                 <Magnetic strength={0.3}>
                   <a
                     href="#work"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border px-7 py-3.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary sm:w-auto"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border px-7 py-3.5 text-sm font-medium text-foreground transition-colors hover:border-accent/40 hover:bg-secondary sm:w-auto"
                   >
                     See the work
                   </a>
                 </Magnetic>
               </FadeUp>
             </div>
+
+            {/* Tech stack row */}
+            <FadeUp index={3} className="mt-16">
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground/50">
+                  Stack
+                </span>
+                {['Next.js', 'TypeScript', 'Tailwind CSS', 'Postgres', 'Vercel'].map((tech) => (
+                  <span
+                    key={tech}
+                    className="rounded-full border border-border px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground transition-colors hover:border-accent/40 hover:text-accent"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </FadeUp>
           </div>
         </section>
 
-        {/* ---------------- MARQUEE ---------------- */}
-        <section className="border-y border-border py-5">
-          <Marquee speed={26}>
+        {/* ============================================================
+            MARQUEE
+        ============================================================ */}
+        <section className="accent-top overflow-hidden border-b border-border py-4">
+          <Marquee speed={28}>
             {marqueeItems.map((item, i) => (
               <span key={`${item}-${i}`} className="flex items-center">
-                <span className="px-6 font-display text-xl font-normal tracking-tight text-muted-foreground md:text-2xl">
+                <span className="px-8 font-mono text-sm uppercase tracking-[0.25em] text-muted-foreground">
                   {item}
                 </span>
-                <span className="text-accent">·</span>
+                <span className="text-accent opacity-60">_</span>
               </span>
             ))}
           </Marquee>
         </section>
 
-        {/* ---------------- STATS ---------------- */}
-        <section className="border-b border-border">
+        {/* ============================================================
+            STATS
+        ============================================================ */}
+        <section className="border-b border-border bg-card">
           <div className="mx-auto grid max-w-[1400px] grid-cols-2 md:grid-cols-4">
             {stats.map((s, i) => (
               <FadeUp
                 key={s.label}
                 index={i}
-                className={`border-border px-5 py-10 md:px-10 md:py-14 ${
+                className={`group relative border-border px-6 py-12 transition-colors hover:bg-secondary/60 md:px-10 md:py-16 ${
                   i < 2 ? 'border-b md:border-b-0' : ''
                 } ${i % 2 === 0 ? 'border-r' : ''} ${i !== 3 ? 'md:border-r' : ''}`}
               >
                 <CountUp
                   value={s.value}
-                  className="font-display text-4xl font-medium tracking-tight md:text-6xl"
+                  className="font-display text-4xl font-semibold tracking-tight text-foreground md:text-6xl"
                 />
-                <p className="mt-3 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+                <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
                   {s.label}
                 </p>
+                {/* Teal accent bottom line on hover */}
+                <span className="absolute bottom-0 left-0 h-px w-0 bg-accent transition-all duration-500 group-hover:w-full" />
               </FadeUp>
             ))}
           </div>
         </section>
 
-        {/* ---------------- WORK ---------------- */}
+        {/* ============================================================
+            WORK
+        ============================================================ */}
         <section id="work" className="border-b border-border px-5 py-24 md:px-10 md:py-32">
           <div className="mx-auto max-w-[1400px]">
             <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
               <div>
-                <p className="mb-4 font-mono text-xs uppercase tracking-[0.25em] text-accent">
+                <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.35em] text-accent">
                   Selected Work
                 </p>
                 <AnimatedHeading
                   as="h2"
                   text="Recent projects."
-                  className="max-w-[12ch] font-display text-4xl font-medium leading-[1] tracking-[-0.02em] md:text-6xl"
+                  className="max-w-[12ch] font-display text-4xl font-semibold leading-[1] tracking-[-0.03em] md:text-6xl"
                 />
               </div>
-              <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-                ( 02 case studies )
+              <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+                02 case studies
               </p>
             </div>
 
             <div className="border-t border-border">
-              {clients.map((client) => (
+              {clients.map((client, idx) => (
                 <FadeUp key={client.name}>
                   <a
                     href={client.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group grid items-start gap-6 border-b border-border py-10 transition-colors hover:bg-secondary/40 md:grid-cols-[1fr_auto] md:gap-12 md:py-14"
+                    className="group grid items-start gap-6 border-b border-border py-12 transition-colors hover:bg-card md:grid-cols-[auto_1fr_auto] md:gap-12 md:py-16"
                   >
-                    <div className="max-w-2xl">
-                      <p className="mb-3 font-mono text-xs uppercase tracking-widest text-accent">
-                        {client.tag}
-                      </p>
-                      <h3 className="font-display text-3xl font-medium tracking-tight transition-transform duration-300 group-hover:translate-x-2 md:text-5xl">
+                    {/* Index */}
+                    <span className="font-mono text-[11px] tracking-widest text-muted-foreground/40 md:pt-2">
+                      {client.index}
+                    </span>
+
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-4 mb-4">
+                        <span className="rounded-full border border-border px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                          {client.tag}
+                        </span>
+                        <span className="font-mono text-[10px] tracking-widest text-muted-foreground/40">
+                          {client.year}
+                        </span>
+                      </div>
+                      <h3 className="font-display text-3xl font-semibold tracking-tight transition-transform duration-300 group-hover:translate-x-2 md:text-5xl">
                         {client.name}
                       </h3>
-                      <p className="mt-4 text-base leading-relaxed text-muted-foreground md:text-lg">
+                      <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
                         {client.description}
                       </p>
-                      <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
+                      <div className="mt-6 flex flex-wrap gap-x-6 gap-y-3">
                         {client.points.map((point) => (
                           <span
                             key={point}
-                            className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-muted-foreground"
+                            className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground"
                           >
                             <span className="h-1 w-1 rounded-full bg-accent" />
                             {point}
@@ -287,9 +360,11 @@ export default function Home() {
                         ))}
                       </div>
                     </div>
-                    <span className="flex h-12 w-12 items-center justify-center rounded-full border border-border transition-all duration-300 group-hover:rotate-45 group-hover:border-foreground md:justify-self-end">
-                      <ArrowUpRight className="h-5 w-5" />
-                    </span>
+
+                    {/* Arrow circle */}
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-border bg-card transition-all duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-accent-foreground md:self-center">
+                      <ArrowUpRight className="h-5 w-5 transition-transform group-hover:rotate-[360deg] group-hover:duration-500" />
+                    </div>
                   </a>
                 </FadeUp>
               ))}
@@ -297,25 +372,29 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ---------------- TESTIMONIALS ---------------- */}
+        {/* ============================================================
+            TESTIMONIALS
+        ============================================================ */}
         <Testimonials />
 
-        {/* ---------------- SERVICES ---------------- */}
+        {/* ============================================================
+            SERVICES
+        ============================================================ */}
         <section id="services" className="border-b border-border px-5 py-24 md:px-10 md:py-32">
           <div className="mx-auto max-w-[1400px]">
             <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
               <div>
-                <p className="mb-4 font-mono text-xs uppercase tracking-[0.25em] text-accent">
+                <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.35em] text-accent">
                   Services
                 </p>
                 <AnimatedHeading
                   as="h2"
-                  text="What I do."
-                  className="font-display text-4xl font-medium tracking-[-0.02em] md:text-6xl"
+                  text="What I build."
+                  className="font-display text-4xl font-semibold tracking-[-0.03em] md:text-6xl"
                 />
               </div>
-              <p className="max-w-xs font-mono text-xs uppercase tracking-widest text-muted-foreground">
-                Everything you need to launch, rank, and grow online.
+              <p className="max-w-xs font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                Everything needed to launch, rank, and grow online.
               </p>
             </div>
 
@@ -324,40 +403,49 @@ export default function Home() {
                 <FadeUp
                   key={service.title}
                   index={i}
-                  className={`group flex flex-col border-b border-border py-10 transition-colors hover:bg-secondary/40 md:border-b-0 md:py-12 ${
+                  className={`group relative flex flex-col border-b border-border py-10 transition-colors hover:bg-card md:border-b-0 md:py-12 ${
                     i !== 0 ? 'md:border-l md:pl-10' : 'md:pr-10'
-                  } ${i === 1 ? 'md:px-10' : ''} ${i === 2 ? 'md:pl-10' : ''}`}
+                  } ${i === 1 ? 'md:px-10' : ''}`}
                 >
-                  <span className="font-mono text-xs tracking-widest text-muted-foreground">
+                  {/* Number */}
+                  <span className="font-mono text-[10px] tracking-[0.3em] text-muted-foreground/50">
                     {service.num}
                   </span>
-                  <h3 className="mt-4 font-display text-2xl font-medium tracking-tight">
+                  {/* Icon */}
+                  <div className="mt-6 flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-secondary transition-colors group-hover:border-accent/40 group-hover:bg-accent/10">
+                    <service.icon className="h-5 w-5 text-muted-foreground transition-colors group-hover:text-accent" />
+                  </div>
+                  <h3 className="mt-6 font-display text-2xl font-semibold tracking-tight">
                     {service.title}
                   </h3>
                   <p className="mt-4 flex-1 leading-relaxed text-muted-foreground">{service.desc}</p>
-                  <ArrowRight className="mt-8 h-5 w-5 text-muted-foreground transition-all group-hover:translate-x-2 group-hover:text-accent" />
+                  <ArrowRight className="mt-10 h-4 w-4 text-muted-foreground/40 transition-all group-hover:translate-x-2 group-hover:text-accent" />
+                  {/* Bottom accent line */}
+                  <span className="absolute bottom-0 left-0 h-px w-0 bg-accent transition-all duration-500 group-hover:w-full" />
                 </FadeUp>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ---------------- PROCESS ---------------- */}
-        <section className="border-b border-border px-5 py-24 md:px-10 md:py-32">
+        {/* ============================================================
+            PROCESS
+        ============================================================ */}
+        <section className="border-b border-border bg-card px-5 py-24 md:px-10 md:py-32">
           <div className="mx-auto max-w-[1400px]">
             <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
               <div>
-                <p className="mb-4 font-mono text-xs uppercase tracking-[0.25em] text-accent">
+                <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.35em] text-accent">
                   Process
                 </p>
                 <AnimatedHeading
                   as="h2"
                   text="How it works."
-                  className="font-display text-4xl font-medium tracking-[-0.02em] md:text-6xl"
+                  className="font-display text-4xl font-semibold tracking-[-0.03em] md:text-6xl"
                 />
               </div>
-              <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-                ( Simple. Clear. No surprises. )
+              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                Simple. Clear. No surprises.
               </p>
             </div>
             <div className="grid border-t border-border sm:grid-cols-2 lg:grid-cols-4">
@@ -365,115 +453,129 @@ export default function Home() {
                 <FadeUp
                   key={step.num}
                   index={i}
-                  className={`group flex flex-col border-b border-border py-10 sm:border-b-0 lg:py-12 ${
+                  className={`group relative flex flex-col border-b border-border py-10 sm:border-b-0 lg:py-12 ${
                     i !== 0 ? 'lg:border-l lg:pl-8' : 'lg:pr-8'
-                  } ${i > 0 && i < 3 ? 'lg:px-8' : ''} ${i === 3 ? 'lg:pl-8' : ''} ${
+                  } ${i > 0 && i < 3 ? 'lg:px-8' : ''} ${
                     i === 0 ? 'sm:border-r sm:pr-8' : ''
-                  } ${i === 2 ? 'sm:border-r sm:pr-8' : ''} ${i === 1 ? 'sm:pl-8' : ''} ${
-                    i === 3 ? 'sm:pl-8' : ''
+                  } ${i === 2 ? 'sm:border-r sm:pr-8' : ''} ${
+                    i === 1 || i === 3 ? 'sm:pl-8' : ''
                   }`}
                 >
-                  <span className="font-display text-5xl font-medium leading-none text-muted-foreground/50 transition-colors group-hover:text-accent md:text-6xl">
+                  {/* Big ghost number */}
+                  <span className="font-display text-6xl font-semibold leading-none text-border transition-colors duration-300 group-hover:text-accent/30 md:text-7xl">
                     {step.num.padStart(2, '0')}
                   </span>
-                  <h3 className="mt-8 font-display text-xl font-medium tracking-tight">
+                  <div className="mt-6 flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-background transition-colors group-hover:border-accent/40 group-hover:bg-accent/10">
+                    <step.icon className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-accent" />
+                  </div>
+                  <h3 className="mt-5 font-display text-xl font-semibold tracking-tight">
                     {step.title}
                   </h3>
                   <p className="mt-3 leading-relaxed text-muted-foreground">{step.desc}</p>
+                  {/* Teal hover line */}
+                  <span className="absolute bottom-0 left-0 h-px w-0 bg-accent transition-all duration-500 group-hover:w-full" />
                 </FadeUp>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ---------------- WHY CHOOSE ME ---------------- */}
+        {/* ============================================================
+            WHY CHOOSE ME
+        ============================================================ */}
         <WhyChooseMe />
 
-        {/* ---------------- PRICING ---------------- */}
+        {/* ============================================================
+            PRICING
+        ============================================================ */}
         <section id="pricing" className="border-b border-border px-5 py-24 md:px-10 md:py-32">
           <div className="mx-auto max-w-[1400px]">
             <div className="mb-16">
-              <p className="mb-4 font-mono text-xs uppercase tracking-[0.25em] text-accent">
+              <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.35em] text-accent">
                 Pricing
               </p>
               <AnimatedHeading
                 as="h2"
                 text="Pick your path."
-                className="font-display text-4xl font-medium tracking-[-0.02em] md:text-6xl"
+                className="font-display text-4xl font-semibold tracking-[-0.03em] md:text-6xl"
               />
               <FadeUp index={1}>
                 <p className="mt-5 max-w-xl leading-relaxed text-muted-foreground">
-                  Two ways to work together. Same quality, same care — different commitment.
+                  Two ways to work together. Same quality, same care — different commitment level.
                 </p>
               </FadeUp>
             </div>
 
-            <div className="grid border-t border-border lg:grid-cols-2">
-              <FadeUp className="flex flex-col border-b border-border py-10 lg:border-b-0 lg:border-r lg:py-12 lg:pr-12">
-                <div className="flex items-center gap-3">
-                  <p className="font-mono text-xs uppercase tracking-widest text-accent">
-                    One-time — full ownership
-                  </p>
-                  <span className="rounded-full bg-accent px-3 py-1 font-mono text-[10px] font-medium uppercase tracking-wider text-accent-foreground">
-                    Most Popular
-                  </span>
+            <div className="grid gap-0 border border-border lg:grid-cols-2">
+              {/* Option 1 */}
+              <FadeUp className="relative flex flex-col border-b border-border p-8 lg:border-b-0 lg:border-r lg:p-12">
+                {/* "Popular" tag */}
+                <div className="absolute right-6 top-6 rounded-full bg-accent px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-accent-foreground">
+                  Most Popular
                 </div>
-                <h3 className="mt-5 font-display text-2xl font-medium tracking-tight">
+                <span className="font-mono text-[10px] uppercase tracking-[0.35em] text-accent">
+                  One-time · Full ownership
+                </span>
+                <h3 className="mt-5 font-display text-2xl font-semibold tracking-tight">
                   Complete Digital Asset
                 </h3>
-                <div className="mt-6 font-display text-6xl font-medium tracking-tight md:text-7xl">
-                  $1,299
+                <div className="mt-6">
+                  <span className="font-display text-6xl font-semibold tracking-tight md:text-7xl">$1,299</span>
                 </div>
-                <p className="mt-3 font-mono text-xs uppercase tracking-wider text-muted-foreground">
+                <p className="mt-2 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
                   Save $380+ vs monthly in first 3 months
                 </p>
-                <ul className="mt-8 flex-1 space-y-4">
+                <ul className="mt-10 flex-1 space-y-4 border-t border-border pt-8">
                   {option1Features.map((f) => (
-                    <li key={f} className="flex gap-3 border-b border-border pb-4 text-foreground/90">
-                      <ArrowRight className="mt-1 h-4 w-4 flex-shrink-0 text-accent" />
-                      <span>{f}</span>
+                    <li key={f} className="flex items-start gap-3 text-foreground/90">
+                      <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-accent" />
+                      <span className="leading-relaxed">{f}</span>
                     </li>
                   ))}
                 </ul>
-                <Magnetic strength={0.25} className="mt-10">
+                <Magnetic strength={0.2} className="mt-10">
                   <Link
                     href="/contact"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-foreground px-8 py-4 text-sm font-medium text-background transition-opacity hover:opacity-90"
+                    className="group inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-accent px-8 py-4 text-sm font-medium text-accent-foreground transition-all hover:opacity-90"
                   >
-                    Get started <ArrowUpRight className="h-4 w-4" />
+                    Get started
+                    <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </Link>
                 </Magnetic>
               </FadeUp>
 
-              <FadeUp index={1} className="flex flex-col py-10 lg:py-12 lg:pl-12">
-                <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-                  Monthly — managed for you
-                </p>
-                <h3 className="mt-5 font-display text-2xl font-medium tracking-tight">
+              {/* Option 2 */}
+              <FadeUp index={1} className="flex flex-col p-8 lg:p-12">
+                <span className="font-mono text-[10px] uppercase tracking-[0.35em] text-muted-foreground">
+                  Monthly · Managed for you
+                </span>
+                <h3 className="mt-5 font-display text-2xl font-semibold tracking-tight">
                   Managed Website Plan
                 </h3>
-                <div className="mt-6 flex items-baseline gap-3 font-display text-5xl font-medium tracking-tight md:text-6xl">
-                  $700 <span className="text-2xl text-muted-foreground/50">+</span>{' '}
-                  <span className="text-accent">$120</span>
+                <div className="mt-6 flex items-baseline gap-2">
+                  <span className="font-display text-5xl font-semibold tracking-tight">$700</span>
+                  <span className="font-display text-2xl text-muted-foreground/50">+</span>
+                  <span className="font-display text-3xl font-semibold text-accent">$120</span>
                   <span className="font-mono text-sm text-muted-foreground">/mo</span>
                 </div>
-                <p className="mt-3 font-mono text-xs uppercase tracking-wider text-muted-foreground">
+                <p className="mt-2 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
                   3-month minimum — total $1,060
                 </p>
-                <ul className="mt-8 flex-1 space-y-4">
+                <ul className="mt-10 flex-1 space-y-4 border-t border-border pt-8">
                   {option2Features.map((f) => (
-                    <li key={f} className="flex gap-3 border-b border-border pb-4 text-foreground/90">
-                      <ArrowRight className="mt-1 h-4 w-4 flex-shrink-0 text-muted-foreground" />
-                      <span>{f}</span>
+                    <li key={f} className="flex items-start gap-3 text-foreground/80">
+                      <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-muted-foreground/50" />
+                      <span className="leading-relaxed">{f}</span>
                     </li>
                   ))}
                 </ul>
-                <Magnetic strength={0.25} className="mt-10">
+                <Magnetic strength={0.2} className="mt-10">
                   <Link
                     href="/contact"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border px-8 py-4 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border px-8 py-4 text-sm font-medium text-foreground transition-colors hover:border-accent/50 hover:bg-card"
                   >
-                    Let&apos;s do this one <ArrowUpRight className="h-4 w-4" />
+                    Let&apos;s do this one
+                    <ArrowUpRight className="h-4 w-4" />
                   </Link>
                 </Magnetic>
               </FadeUp>
@@ -481,48 +583,62 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ---------------- FAQ ---------------- */}
+        {/* ============================================================
+            FAQ
+        ============================================================ */}
         <FAQ />
 
-        {/* ---------------- CTA ---------------- */}
-        <section className="overflow-hidden border-b border-border px-5 py-28 md:px-10 md:py-36">
+        {/* ============================================================
+            CTA
+        ============================================================ */}
+        <section className="relative overflow-hidden border-b border-border px-5 py-32 md:px-10 md:py-44">
+          {/* Grid bg continues */}
+          <div aria-hidden className="pointer-events-none absolute inset-0 -z-20 grid-bg opacity-60" />
+          {/* Teal glow centered */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 -z-10"
+            style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 100%, oklch(0.74 0.14 185 / 0.07), transparent 70%)' }}
+          />
+
           <div className="mx-auto max-w-[1400px]">
             <FadeUp>
-              <p className="mb-8 font-mono text-xs uppercase tracking-[0.25em] text-accent">
-                ( Let&apos;s build something )
-              </p>
+              <div className="flex items-center gap-3 mb-8">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
+                </span>
+                <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-muted-foreground">
+                  Currently accepting 2 new clients this month
+                </p>
+              </div>
             </FadeUp>
-            <h2 className="font-display text-[11vw] font-medium leading-[0.95] tracking-[-0.03em] md:text-[6rem]">
+
+            <h2 className="font-display text-[11.5vw] font-semibold leading-[0.92] tracking-[-0.04em] md:text-[6.5rem]">
               <AnimatedHeading as="span" text="Ready to get" className="block" />
-              <span className="block text-muted-foreground">
-                <AnimatedHeading as="span" text="more" className="inline" delay={0.1} />{' '}
+              <span className="block">
+                <AnimatedHeading as="span" text="more" className="inline text-muted-foreground" delay={0.1} />
+                {' '}
                 <span className="inline-block overflow-hidden align-bottom">
                   <motion.span
-                    className="inline-block text-foreground"
+                    className="inline-block"
+                    style={{ color: 'var(--accent)' }}
                     initial={{ y: '110%' }}
                     whileInView={{ y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.24 }}
+                    transition={{ duration: 0.8, ease: EASE, delay: 0.24 }}
                   >
                     customers?
                   </motion.span>
                 </span>
               </span>
             </h2>
-            <FadeUp index={1} className="mt-10 flex items-center gap-3">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-accent" />
-              </span>
-              <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-                Currently accepting 2 new clients this month
-              </p>
-            </FadeUp>
-            <FadeUp index={2} className="mt-8 flex flex-col gap-4 sm:flex-row">
+
+            <FadeUp index={1} className="mt-10 flex flex-col gap-4 sm:flex-row">
               <Magnetic strength={0.3}>
                 <Link
                   href="/contact"
-                  className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-foreground px-9 py-4 text-sm font-medium text-background transition-opacity hover:opacity-90 sm:w-auto"
+                  className="group inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-accent px-9 py-4 text-sm font-semibold text-accent-foreground transition-all hover:opacity-90 sm:w-auto"
                 >
                   Start your project
                   <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -531,57 +647,53 @@ export default function Home() {
               <Magnetic strength={0.3}>
                 <a
                   href="mailto:mansoor.buspro@gmail.com"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border px-9 py-4 text-sm font-medium text-foreground transition-colors hover:bg-secondary sm:w-auto"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border px-9 py-4 text-sm font-medium text-foreground transition-colors hover:border-accent/40 hover:bg-card sm:w-auto"
                 >
                   mansoor.buspro@gmail.com
                 </a>
               </Magnetic>
             </FadeUp>
-            <FadeUp index={3} className="mt-6">
-              <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-                Or call / text <span className="text-foreground">(925) 278-9059</span>
+            <FadeUp index={2} className="mt-5">
+              <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+                Or call / text{' '}
+                <a href="tel:9252789059" className="text-foreground hover:text-accent transition-colors">(925) 278-9059</a>
               </p>
             </FadeUp>
           </div>
         </section>
 
-        {/* ---------------- FOOTER ---------------- */}
+        {/* ============================================================
+            FOOTER
+        ============================================================ */}
         <footer className="overflow-hidden px-5 pb-8 pt-16 md:px-10">
           <div className="mx-auto max-w-[1400px]">
             <div className="flex flex-wrap items-end justify-between gap-8 border-b border-border pb-12">
-              <div className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
+              <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
                 <p className="mb-3 text-foreground">Contact</p>
-                <a href="mailto:mansoor.buspro@gmail.com" className="hover:text-accent">
+                <a href="mailto:mansoor.buspro@gmail.com" className="transition-colors hover:text-accent">
                   mansoor.buspro@gmail.com
                 </a>
                 <p className="mt-2">(925) 278-9059</p>
               </div>
-              <div className="flex gap-10 font-mono text-xs uppercase tracking-widest text-muted-foreground">
-                <a href="#work" className="hover:text-foreground">
-                  Work
-                </a>
-                <a href="#services" className="hover:text-foreground">
-                  Services
-                </a>
-                <a href="#pricing" className="hover:text-foreground">
-                  Pricing
-                </a>
-                <Link href="/contact" className="hover:text-foreground">
-                  Contact
-                </Link>
+              <div className="flex gap-10 font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                <a href="#work" className="transition-colors hover:text-foreground">Work</a>
+                <a href="#services" className="transition-colors hover:text-foreground">Services</a>
+                <a href="#pricing" className="transition-colors hover:text-foreground">Pricing</a>
+                <Link href="/contact" className="transition-colors hover:text-foreground">Contact</Link>
               </div>
             </div>
-            <Parallax distance={30}>
-              <p className="mt-8 font-display text-[14vw] font-medium leading-[0.85] tracking-[-0.03em] text-foreground md:text-[9rem]">
+            <Parallax distance={24}>
+              <p className="mt-8 font-display text-[13vw] font-semibold leading-[0.88] tracking-[-0.04em] text-foreground/10 md:text-[8.5rem]">
                 Manny&apos;s
               </p>
             </Parallax>
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-4 font-mono text-xs uppercase tracking-wider text-muted-foreground/70">
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground/50">
               <span>&copy; {new Date().getFullYear()} Manny&apos;s Tech Furnish</span>
               <span>Websites that bring customers to your business</span>
             </div>
           </div>
         </footer>
+
       </ScrollBlur>
       <ScrollToTop />
     </div>

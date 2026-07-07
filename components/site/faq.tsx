@@ -37,17 +37,17 @@ export function FAQ() {
       <div className="mx-auto max-w-[1400px]">
         <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="mb-4 font-mono text-xs uppercase tracking-[0.25em] text-accent">
+            <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.35em] text-accent">
               FAQ
             </p>
             <AnimatedHeading
               as="h2"
               text="Questions."
-              className="font-display text-4xl font-medium tracking-[-0.02em] md:text-6xl"
+              className="font-display text-4xl font-semibold tracking-[-0.03em] md:text-6xl"
             />
           </div>
-          <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
-            ( Answered honestly )
+          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+            Answered honestly
           </p>
         </div>
 
@@ -59,7 +59,7 @@ export function FAQ() {
                 value={`item-${i}`}
                 className="border-b border-border"
               >
-                <AccordionTrigger className="py-6 text-left font-display text-lg font-medium tracking-tight text-foreground hover:text-accent hover:no-underline md:text-xl">
+                <AccordionTrigger className="py-6 text-left font-display text-lg font-semibold tracking-tight text-foreground transition-colors hover:text-accent hover:no-underline md:text-xl">
                   {faq.q}
                 </AccordionTrigger>
                 <AccordionContent className="pb-6 leading-relaxed text-muted-foreground">
