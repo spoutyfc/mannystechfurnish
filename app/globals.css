@@ -40,26 +40,25 @@
 }
 
 .dark {
-  /* Deep-space dark modern palette — #0B0F14 bg, #121826 card, #F5F7FA text, #94A3B8 muted, #14B8A6 teal accent */
-  --background: oklch(0.108 0.012 240);   /* #0B0F14 — true deep space */
-  --foreground: oklch(0.968 0.005 220);   /* #F5F7FA — crisp near-white */
-  --card: oklch(0.175 0.016 240);         /* #121826 — lifted surface, clearly distinct */
-  --card-foreground: oklch(0.968 0.005 220);
-  --popover: oklch(0.175 0.016 240);
-  --popover-foreground: oklch(0.968 0.005 220);
-  --primary: oklch(0.968 0.005 220);
-  --primary-foreground: oklch(0.108 0.012 240);
-  --secondary: oklch(0.21 0.016 240);     /* deeper card hover surface */
-  --secondary-foreground: oklch(0.968 0.005 220);
-  --muted: oklch(0.21 0.016 240);
-  --muted-foreground: oklch(0.60 0.024 230);  /* #94A3B8 — readable slate */
-  --accent: oklch(0.735 0.148 185);       /* #14B8A6 — teal precision */
-  --accent-foreground: oklch(0.06 0.010 240);
-  --destructive: oklch(0.55 0.17 25);
-  --destructive-foreground: oklch(0.97 0 0);
-  --border: oklch(0.255 0.018 240);       /* more visible hairlines */
-  --input: oklch(0.255 0.018 240);
-  --ring: oklch(0.735 0.148 185);
+  --background: oklch(0 0 0);
+  --foreground: oklch(1 0 0);
+  --card: oklch(0.04 0 0);
+  --card-foreground: oklch(1 0 0);
+  --popover: oklch(0.04 0 0);
+  --popover-foreground: oklch(1 0 0);
+  --primary: oklch(1 0 0);
+  --primary-foreground: oklch(0.05 0 0);
+  --secondary: oklch(0.18 0 0);
+  --secondary-foreground: oklch(1 0 0);
+  --muted: oklch(0.18 0 0);
+  --muted-foreground: oklch(0.78 0 0);
+  --accent: oklch(0.7 0.27 350);
+  --accent-foreground: oklch(0.05 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.24 0 0);
+  --input: oklch(0.24 0 0);
+  --ring: oklch(0.7 0.27 350);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
@@ -77,8 +76,8 @@
 
 @theme inline {
   --font-sans: var(--font-inter), 'Inter Fallback', system-ui, sans-serif;
-  --font-display: var(--font-space-grotesk), 'Space Grotesk Fallback', system-ui, sans-serif;
-  --font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', monospace;
+  --font-display: var(--font-archivo), 'Archivo Fallback', system-ui, sans-serif;
+  --font-mono: var(--font-archivo), monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -161,6 +160,19 @@
   }
 }
 
+@keyframes float-orb {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+.animate-float-orb {
+  animation: float-orb 6s ease-in-out infinite;
+}
+
 /* ---------- Marquee ---------- */
 @keyframes marquee-scroll {
   from {
@@ -201,69 +213,38 @@
   transform: translateY(100%);
 }
 
+/* ---------- Custom cursor ---------- */
+@media (pointer: fine) {
+  .cursor-active * {
+    cursor: none !important;
+  }
+}
+.cursor-ring[data-hover='true'] {
+  width: 4rem;
+  height: 4rem;
+  margin-left: -2rem;
+  margin-top: -2rem;
+  background-color: rgba(232, 121, 249, 0.15);
+}
+
+/* ---------- Film grain / noise texture overlay ---------- */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
 /* ---------- Editorial helpers ---------- */
 .text-stroke {
-  -webkit-text-stroke: 1px oklch(0.965 0.006 220 / 0.35);
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.5);
   color: transparent;
 }
-.text-stroke-accent {
-  -webkit-text-stroke: 1px var(--accent);
+.text-stroke-fuchsia {
+  -webkit-text-stroke: 1.5px rgb(232, 121, 249);
   color: transparent;
-}
-.hairline {
-  border-color: var(--border);
-}
-
-/* ---------- Futuristic grid background ---------- */
-.grid-bg {
-  background-image:
-    linear-gradient(oklch(0.24 0.016 240 / 0.45) 1px, transparent 1px),
-    linear-gradient(90deg, oklch(0.24 0.016 240 / 0.45) 1px, transparent 1px);
-  background-size: 48px 48px;
-}
-
-/* ---------- Teal glow card ---------- */
-.glow-card {
-  position: relative;
-  overflow: hidden;
-}
-.glow-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), oklch(0.74 0.14 185 / 0.06), transparent 40%);
-  pointer-events: none;
-  transition: opacity 0.3s;
-}
-
-/* ---------- Teal accent line (top border glow) ---------- */
-.accent-top {
-  border-top: 1px solid var(--accent);
-  box-shadow: 0 -1px 12px oklch(0.74 0.14 185 / 0.25);
-}
-
-/* ---------- Terminal blink cursor ---------- */
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-.cursor-blink {
-  animation: blink 1.2s step-end infinite;
-}
-
-/* ---------- Scrollbar ---------- */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--background);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.74 0.14 185 / 0.6);
 }
 
 @media (prefers-reduced-motion: reduce) {

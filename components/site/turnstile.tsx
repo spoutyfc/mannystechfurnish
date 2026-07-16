@@ -81,7 +81,7 @@ export function Turnstile({
 
   if (!siteKey) {
     return (
-      <p className="font-mono text-[11px] uppercase tracking-widest text-accent/80">
+      <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400/80">
         Bot protection not configured
       </p>
     )

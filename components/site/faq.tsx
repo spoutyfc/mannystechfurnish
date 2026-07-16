@@ -33,36 +33,31 @@ const faqs = [
 
 export function FAQ() {
   return (
-    <section id="faq" className="border-b border-border px-5 py-24 md:px-10 md:py-32">
-      <div className="mx-auto max-w-[1400px]">
-        <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.35em] text-accent">
-              FAQ
-            </p>
-            <AnimatedHeading
-              as="h2"
-              text="Questions."
-              className="font-display text-4xl font-semibold tracking-[-0.03em] md:text-6xl"
-            />
-          </div>
-          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
-            Answered honestly
+    <section id="faq" className="border-b border-white/15 px-5 py-20 md:px-10 md:py-28">
+      <div className="mx-auto max-w-[1500px]">
+        <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
+          <AnimatedHeading
+            as="h2"
+            text="Questions"
+            className="font-display text-5xl font-semibold uppercase tracking-tight md:text-8xl"
+          />
+          <p className="font-mono text-xs uppercase tracking-widest text-white/55">
+            ( Answered honestly )
           </p>
         </div>
 
         <FadeUp>
-          <Accordion type="single" collapsible className="border-t border-border">
+          <Accordion type="single" collapsible className="border-t border-white/15">
             {faqs.map((faq, i) => (
               <AccordionItem
                 key={i}
                 value={`item-${i}`}
-                className="border-b border-border"
+                className="border-b border-white/15"
               >
-                <AccordionTrigger className="py-6 text-left font-display text-lg font-semibold tracking-tight text-foreground transition-colors hover:text-accent hover:no-underline md:text-xl">
+                <AccordionTrigger className="py-6 text-left font-display text-xl font-semibold uppercase tracking-tight text-white hover:text-accent hover:no-underline md:text-2xl">
                   {faq.q}
                 </AccordionTrigger>
-                <AccordionContent className="pb-6 leading-relaxed text-muted-foreground">
+                <AccordionContent className="pb-6 text-lg leading-relaxed text-white/75">
                   {faq.a}
                 </AccordionContent>
               </AccordionItem>

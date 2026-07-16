@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Trash2, Mail, Check, RefreshCw, Inbox, PenSquare, ChevronDown } from 'lucide-react'
+import { LogOut, Trash2, Mail, Check, RefreshCw, Inbox, LinkIcon, PenSquare } from 'lucide-react'
 import { ComposeEmail, type ComposePrefill } from '@/components/admin/compose-email'
-import { AdminShell } from '@/components/admin/admin-shell'
 
 type Submission = {
   id: string
@@ -61,6 +61,11 @@ export default function AdminSubmissionsPage() {
     init()
   }, [router, loadSubmissions])
 
+  const handleSignOut = async () => {
+    await fetch('/api/admin-logout', { method: 'POST' })
+    router.push('/admin-login')
+  }
+
   const setStatus = async (id: string, status: 'read' | 'new') => {
     setBusy(id)
     await fetch(`/api/admin/submissions/${id}`, {
@@ -90,147 +95,135 @@ export default function AdminSubmissionsPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-2 border-accent border-t-transparent rounded-full" />
       </div>
     )
   }
 
   return (
-    <AdminShell
-      active="submissions"
-      adminEmail={admin?.email}
-      title="Inbox"
-      subtitle={`${submissions.length} total message${submissions.length === 1 ? '' : 's'}`}
-      badge={
-        newCount > 0 ? (
-          <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-accent px-2 text-xs font-semibold text-accent-foreground">
-            {newCount} new
-          </span>
-        ) : null
-      }
-      actions={
-        <>
-          <Button size="sm" onClick={() => openCompose()} className="gap-2 rounded-full bg-foreground text-background hover:opacity-90">
-            <PenSquare className="h-4 w-4" /> Compose
-          </Button>
-          <Button variant="outline" size="sm" onClick={loadSubmissions} className="gap-2 rounded-full border-border bg-transparent">
-            <RefreshCw className="h-4 w-4" /> Refresh
-          </Button>
-        </>
-      }
-    >
-      {submissions.length === 0 ? (
-        <EmptyState />
-      ) : (
-        <div className="space-y-2.5">
-          {submissions.map((s) => {
-            const isOpen = active === s.id
-            const isNew = s.status === 'new'
-            return (
+    <div className="min-h-screen bg-black text-white py-10 px-4 md:px-8">
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="font-display text-2xl md:text-3xl font-extrabold uppercase">Submissions</h1>
+              {newCount > 0 && (
+                <span className="inline-flex items-center justify-center min-w-6 h-6 px-2 rounded-full bg-accent text-black text-xs font-bold">
+                  {newCount} new
+                </span>
+              )}
+            </div>
+            <p className="text-neutral-500 text-sm mt-1">Logged in as {admin?.email}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button size="sm" onClick={() => openCompose()} className="gap-2 bg-accent text-black hover:opacity-90">
+              <PenSquare className="w-4 h-4" /> Compose
+            </Button>
+            <Button variant="outline" size="sm" onClick={loadSubmissions} className="gap-2 border-neutral-700 bg-transparent">
+              <RefreshCw className="w-4 h-4" /> Refresh
+            </Button>
+            <Link href="/admin/clients">
+              <Button variant="outline" size="sm" className="gap-2 border-neutral-700 bg-transparent">
+                <LinkIcon className="w-4 h-4" /> Payment Links
+              </Button>
+            </Link>
+            <Button variant="outline" size="sm" onClick={handleSignOut} className="gap-2 border-neutral-700 bg-transparent">
+              <LogOut className="w-4 h-4" /> Sign Out
+            </Button>
+          </div>
+        </div>
+
+        {/* List */}
+        {submissions.length === 0 ? (
+          <div className="border border-neutral-800 rounded-2xl p-16 text-center">
+            <Inbox className="w-10 h-10 text-neutral-600 mx-auto mb-4" />
+            <p className="text-neutral-400">No submissions yet.</p>
+            <p className="text-neutral-600 text-sm mt-1">Contact form messages will appear here.</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {submissions.map((s) => (
               <div
                 key={s.id}
-                className={`overflow-hidden rounded-2xl border transition-colors ${
-                  isNew ? 'border-accent/40 bg-accent/[0.04]' : 'border-border bg-card'
+                className={`border rounded-xl overflow-hidden transition-colors ${
+                  s.status === 'new' ? 'border-accent/40 bg-accent/[0.03]' : 'border-neutral-800 bg-neutral-900/40'
                 }`}
               >
                 <button
                   onClick={() => openSubmission(s)}
-                  className="flex w-full items-center gap-4 p-4 text-left transition-colors hover:bg-secondary/40"
+                  className="w-full flex items-center gap-4 p-4 text-left hover:bg-white/[0.02]"
                 >
-                  <span className={`h-2 w-2 shrink-0 rounded-full ${isNew ? 'bg-accent' : 'bg-muted-foreground/40'}`} />
+                  <div className={`w-2 h-2 rounded-full shrink-0 ${s.status === 'new' ? 'bg-accent' : 'bg-neutral-600'}`} />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="truncate font-medium text-foreground">{s.name}</span>
-                      {isNew && (
-                        <span className="font-mono text-[10px] font-semibold uppercase tracking-wider text-accent">
-                          New
-                        </span>
-                      )}
+                      <span className="font-medium text-white truncate">{s.name}</span>
+                      {s.status === 'new' && <span className="text-[10px] uppercase tracking-wider text-accent font-bold">New</span>}
                     </div>
-                    <p className="truncate text-sm text-muted-foreground">{s.subject}</p>
+                    <p className="text-sm text-neutral-400 truncate">{s.subject}</p>
                   </div>
-                  <span className="hidden shrink-0 font-mono text-xs uppercase tracking-wider text-muted-foreground sm:block">
+                  <span className="text-xs text-neutral-500 shrink-0 hidden sm:block">
                     {new Date(s.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                   </span>
-                  <ChevronDown className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                 </button>
 
-                {isOpen && (
-                  <div className="space-y-4 border-t border-border p-4 md:p-5">
-                    <div className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
-                      <Detail label="Email">
-                        <a href={`mailto:${s.email}`} className="break-all text-accent hover:underline">{s.email}</a>
-                      </Detail>
+                {active === s.id && (
+                  <div className="border-t border-neutral-800 p-4 md:p-5 space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                      <div>
+                        <p className="text-neutral-500 text-xs uppercase tracking-wider mb-1">Email</p>
+                        <a href={`mailto:${s.email}`} className="text-accent hover:underline break-all">{s.email}</a>
+                      </div>
                       {s.phone && (
-                        <Detail label="Phone">
-                          <span className="text-foreground">{s.phone}</span>
-                        </Detail>
+                        <div>
+                          <p className="text-neutral-500 text-xs uppercase tracking-wider mb-1">Phone</p>
+                          <p className="text-white">{s.phone}</p>
+                        </div>
                       )}
-                      <Detail label="Received">
-                        <span className="text-foreground">{new Date(s.createdAt).toLocaleString()}</span>
-                      </Detail>
+                      <div>
+                        <p className="text-neutral-500 text-xs uppercase tracking-wider mb-1">Received</p>
+                        <p className="text-white">{new Date(s.createdAt).toLocaleString()}</p>
+                      </div>
                     </div>
-                    <Detail label="Message">
-                      <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">{s.message}</p>
-                    </Detail>
+                    <div>
+                      <p className="text-neutral-500 text-xs uppercase tracking-wider mb-1">Message</p>
+                      <p className="text-neutral-200 text-sm leading-relaxed whitespace-pre-wrap">{s.message}</p>
+                    </div>
                     <div className="flex flex-wrap items-center gap-2 pt-1">
                       <Button
                         size="sm"
                         onClick={() => openCompose({ to: s.email, subject: `Re: ${s.subject}` })}
-                        className="gap-2 rounded-full bg-foreground text-background hover:opacity-90"
+                        className="gap-2 bg-accent text-black hover:opacity-90"
                       >
-                        <Mail className="h-4 w-4" /> Reply
+                        <Mail className="w-4 h-4" /> Reply
                       </Button>
-                      {isNew ? (
-                        <Button size="sm" variant="outline" disabled={busy === s.id} onClick={() => setStatus(s.id, 'read')} className="gap-2 rounded-full border-border bg-transparent">
-                          <Check className="h-4 w-4" /> Mark read
+                      {s.status === 'new' ? (
+                        <Button size="sm" variant="outline" disabled={busy === s.id} onClick={() => setStatus(s.id, 'read')} className="gap-2 border-neutral-700 bg-transparent">
+                          <Check className="w-4 h-4" /> Mark read
                         </Button>
                       ) : (
-                        <Button size="sm" variant="outline" disabled={busy === s.id} onClick={() => setStatus(s.id, 'new')} className="gap-2 rounded-full border-border bg-transparent">
+                        <Button size="sm" variant="outline" disabled={busy === s.id} onClick={() => setStatus(s.id, 'new')} className="gap-2 border-neutral-700 bg-transparent">
                           Mark unread
                         </Button>
                       )}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        disabled={busy === s.id}
-                        onClick={() => remove(s.id)}
-                        className="ml-auto gap-2 rounded-full border-destructive/40 bg-transparent text-destructive hover:bg-destructive/10"
-                      >
-                        <Trash2 className="h-4 w-4" /> Delete
+                      <Button size="sm" variant="outline" disabled={busy === s.id} onClick={() => remove(s.id)} className="gap-2 border-red-900/50 text-red-400 hover:bg-red-500/10 bg-transparent ml-auto">
+                        <Trash2 className="w-4 h-4" /> Delete
                       </Button>
                     </div>
                   </div>
                 )}
               </div>
-            )
-          })}
-        </div>
-      )}
-
-      <ComposeEmail open={composeOpen} prefill={composePrefill} onClose={() => setComposeOpen(false)} />
-    </AdminShell>
-  )
-}
-
-function Detail({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <p className="mb-1 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">{label}</p>
-      {children}
-    </div>
-  )
-}
-
-function EmptyState() {
-  return (
-    <div className="rounded-2xl border border-border bg-card p-16 text-center">
-      <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-secondary">
-        <Inbox className="h-6 w-6 text-muted-foreground" />
+            ))}
+          </div>
+        )}
       </div>
-      <p className="text-foreground">No submissions yet.</p>
-      <p className="mt-1 text-sm text-muted-foreground">Contact form messages will appear here.</p>
+
+      <ComposeEmail
+        open={composeOpen}
+        prefill={composePrefill}
+        onClose={() => setComposeOpen(false)}
+      />
     </div>
   )
 }
