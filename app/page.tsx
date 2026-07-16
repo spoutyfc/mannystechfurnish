@@ -28,6 +28,8 @@ import { motion } from 'framer-motion'
 import {
   ArrowUpRight,
   ArrowRight,
+  Check,
+  X,
   CalendarClock,
   Sparkles,
   Box,
@@ -88,20 +90,27 @@ const services = [
 ]
 
 const option1Features = [
-  'Custom full-stack development, concept to launch',
-  'Complete codebase ownership — transferred immediately',
-  'High-performance front-end + secure back-end',
-  'Fully responsive across every device',
-  'Advanced SEO + Google Analytics setup',
-  'Optional $99/mo care plan for updates & security',
+  { text: 'Custom full-stack development, concept to launch', included: true },
+  { text: 'Complete codebase ownership — transferred immediately', included: true },
+  { text: 'High-performance front-end + secure back-end', included: true },
+  { text: 'Fully responsive across every device', included: true },
+  { text: 'Advanced SEO + Google Analytics setup', included: true },
+  { text: 'One payment — no monthly fees, ever', included: true },
+  { text: 'Ongoing maintenance handled for you', included: false },
+  { text: 'Hosting managed on your behalf', included: false },
+  { text: 'Priority support queue', included: false },
 ]
 
 const option2Features = [
-  'Website build included ($900 setup fee)',
-  'Ongoing maintenance & hosting included',
-  'Updates, security & priority support queue',
-  'Basic SEO check-ins',
-  'Buy out the code after term: $800',
+  { text: 'Custom website build included ($900 setup)', included: true },
+  { text: 'Ongoing maintenance & updates', included: true },
+  { text: 'Hosting fully managed for you', included: true },
+  { text: 'Security monitoring & backups', included: true },
+  { text: 'Priority support queue', included: true },
+  { text: 'Basic SEO check-ins', included: true },
+  { text: 'Own the code upfront (buy out for $800 later)', included: false },
+  { text: 'Lowest lifetime cost', included: false },
+  { text: 'Zero recurring fees', included: false },
 ]
 
 const steps = [
@@ -476,11 +485,24 @@ export default function Home() {
               <p className="mt-3 font-mono text-xs uppercase tracking-wider text-accent">
                 You own it outright — no monthly fees, ever
               </p>
-              <ul className="mt-8 flex-1 space-y-4">
+              <ul className="mt-8 flex-1 space-y-3">
                 {option1Features.map((f) => (
-                  <li key={f} className="flex gap-3 border-b border-white/10 pb-4 text-white/85">
-                    <ArrowRight className="mt-1 h-4 w-4 flex-shrink-0 text-accent" />
-                    <span>{f}</span>
+                  <li
+                    key={f.text}
+                    className={`flex items-center gap-3 border-b border-white/10 pb-3 ${
+                      f.included ? 'text-white/85' : 'text-white/35'
+                    }`}
+                  >
+                    <span
+                      className={`flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full ${
+                        f.included ? 'bg-accent text-black' : 'bg-white/10 text-white/40'
+                      }`}
+                    >
+                      {f.included ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                    </span>
+                    <span className={f.included ? '' : 'line-through decoration-white/25'}>
+                      {f.text}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -509,11 +531,24 @@ export default function Home() {
               <p className="mt-3 font-mono text-xs uppercase tracking-wider text-white/55">
                 3-month minimum — from $1,377 total
               </p>
-              <ul className="mt-8 flex-1 space-y-4">
+              <ul className="mt-8 flex-1 space-y-3">
                 {option2Features.map((f) => (
-                  <li key={f} className="flex gap-3 border-b border-white/10 pb-4 text-white/85">
-                    <ArrowRight className="mt-1 h-4 w-4 flex-shrink-0 text-white/50" />
-                    <span>{f}</span>
+                  <li
+                    key={f.text}
+                    className={`flex items-center gap-3 border-b border-white/10 pb-3 ${
+                      f.included ? 'text-white/85' : 'text-white/35'
+                    }`}
+                  >
+                    <span
+                      className={`flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full ${
+                        f.included ? 'bg-accent text-black' : 'bg-white/10 text-white/40'
+                      }`}
+                    >
+                      {f.included ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                    </span>
+                    <span className={f.included ? '' : 'line-through decoration-white/25'}>
+                      {f.text}
+                    </span>
                   </li>
                 ))}
               </ul>
