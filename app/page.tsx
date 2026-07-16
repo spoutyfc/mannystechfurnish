@@ -583,7 +583,7 @@ export default function Home() {
               />
             </div>
             <p className="max-w-xs font-mono text-xs uppercase tracking-widest text-white/55">
-              Bolt on serious capability. Add any of these to a plan — pay in one click.
+              Bolt on serious capability. Most upgrades pair with the Managed Plan — booking works with any plan.
             </p>
           </div>
 
@@ -622,6 +622,20 @@ export default function Home() {
                       {addon.tagline}
                     </p>
                     <p className="mt-4 leading-relaxed text-white/70">{addon.description}</p>
+
+                    <div className="mt-5">
+                      <span
+                        className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-wider ${
+                          addon.availability === 'both'
+                            ? 'border-accent/40 text-accent'
+                            : 'border-white/20 text-white/55'
+                        }`}
+                      >
+                        {addon.availability === 'both'
+                          ? 'Works with any plan'
+                          : 'Managed Plan add-on'}
+                      </span>
+                    </div>
 
                     <ul className="mt-6 flex-1 space-y-2.5 border-t border-white/10 pt-6">
                       {addon.whatItDoes.map((w) => (

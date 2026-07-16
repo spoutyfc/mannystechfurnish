@@ -71,6 +71,9 @@ export interface AddOn {
   priceValue: number
   cadence: 'one-time' | 'monthly'
   paymentLink: string
+  // 'both'  = self-contained, works on any site (e.g. scheduling)
+  // 'option2' = requires the Managed Website Plan (ongoing hosting/management)
+  availability: 'both' | 'option2'
   demoHref?: string
   icon: string // lucide icon name
   featured?: boolean
@@ -89,10 +92,11 @@ export const ADD_ONS: AddOn[] = [
       'Blocks double-bookings automatically',
       'Syncs to your Google / Apple calendar',
     ],
-    price: '$649',
-    priceValue: 649,
+    price: '$249',
+    priceValue: 249,
     cadence: 'one-time',
-    paymentLink: 'https://buy.stripe.com/test_4gM4gAgiT8EgbPKgEDds404',
+    paymentLink: 'https://buy.stripe.com/test_6oU9AU2s37Acf1W2NNds40d',
+    availability: 'both',
     demoHref: '/demo/booking',
     icon: 'CalendarClock',
     featured: true,
@@ -109,10 +113,11 @@ export const ADD_ONS: AddOn[] = [
       'Magnetic buttons & hover physics',
       'Page transition choreography',
     ],
-    price: '$499',
-    priceValue: 499,
+    price: '$199',
+    priceValue: 199,
     cadence: 'one-time',
-    paymentLink: 'https://buy.stripe.com/test_fZufZic2D5s4aLG887ds402',
+    paymentLink: 'https://buy.stripe.com/test_28E8wQ4Ab6w81b63RRds40b',
+    availability: 'option2',
     icon: 'Sparkles',
   },
   {
@@ -127,10 +132,11 @@ export const ADD_ONS: AddOn[] = [
       'Optimized to stay fast on mobile',
       'Custom-modeled to your brand',
     ],
-    price: '$899',
-    priceValue: 899,
+    price: '$349',
+    priceValue: 349,
     cadence: 'one-time',
-    paymentLink: 'https://buy.stripe.com/test_bJe4gA5Ef2fScTOagfds403',
+    paymentLink: 'https://buy.stripe.com/test_fZu3cw6Ij4o0cTOfAzds40c',
+    availability: 'option2',
     icon: 'Box',
   },
   {
@@ -145,10 +151,11 @@ export const ADD_ONS: AddOn[] = [
       'SEO fields on every post',
       'No developer needed for updates',
     ],
-    price: '$749',
-    priceValue: 749,
+    price: '$249',
+    priceValue: 249,
     cadence: 'one-time',
-    paymentLink: 'https://buy.stripe.com/test_aFa9AU7MndYA1b6743ds405',
+    paymentLink: 'https://buy.stripe.com/test_eVq7sM5EfaMocTO4VVds40e',
+    availability: 'option2',
     icon: 'PenSquare',
   },
   {
@@ -163,10 +170,11 @@ export const ADD_ONS: AddOn[] = [
       'Locale-aware SEO & URLs',
       'Easy to add more languages later',
     ],
-    price: '$549',
-    priceValue: 549,
+    price: '$179',
+    priceValue: 179,
     cadence: 'one-time',
-    paymentLink: 'https://buy.stripe.com/test_8x25kEd6HbQs2fabkjds406',
+    paymentLink: 'https://buy.stripe.com/test_00w3cwgiT6w8g60887ds40f',
+    availability: 'option2',
     icon: 'Languages',
   },
   {
@@ -181,10 +189,11 @@ export const ADD_ONS: AddOn[] = [
       'Monthly analytics report',
       'Proactive security patching',
     ],
-    price: '$149/mo',
-    priceValue: 149,
+    price: '$49/mo',
+    priceValue: 49,
     cadence: 'monthly',
-    paymentLink: 'https://buy.stripe.com/test_8x2cN64Ab8Egf1Wconds409',
+    paymentLink: 'https://buy.stripe.com/test_5kQ14oeaL1bO6vqfAzds40g',
+    availability: 'option2',
     icon: 'ShieldCheck',
   },
 ]

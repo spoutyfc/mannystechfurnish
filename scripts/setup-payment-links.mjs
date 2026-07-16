@@ -14,17 +14,17 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 const ONE_TIME = [
   { key: 'option1', name: 'Complete Digital Asset — Custom Website', amount: 189900 },
   { key: 'option2_build', name: 'Managed Website — Build Fee', amount: 90000 },
-  { key: 'addon_animations', name: 'Add-on: Advanced Animations & Motion', amount: 49900 },
-  { key: 'addon_webgl', name: 'Add-on: 3D / WebGL Hero Experience', amount: 89900 },
-  { key: 'addon_booking', name: 'Add-on: Booking & Scheduling System', amount: 64900 },
-  { key: 'addon_cms', name: 'Add-on: Headless CMS / Editable Blog', amount: 74900 },
-  { key: 'addon_i18n', name: 'Add-on: Multi-Language (i18n)', amount: 54900 },
+  { key: 'addon_animations', name: 'Add-on: Advanced Animations & Motion', amount: 19900 },
+  { key: 'addon_webgl', name: 'Add-on: 3D / WebGL Hero Experience', amount: 34900 },
+  { key: 'addon_booking', name: 'Add-on: Booking & Scheduling System', amount: 24900 },
+  { key: 'addon_cms', name: 'Add-on: Headless CMS / Editable Blog', amount: 24900 },
+  { key: 'addon_i18n', name: 'Add-on: Multi-Language (i18n)', amount: 17900 },
 ]
 
 const RECURRING = [
   { key: 'option2_monthly', name: 'Managed Website — Monthly Management', amount: 15900 },
   { key: 'careplan', name: 'Care Plan — Updates, Hosting & Security', amount: 9900 },
-  { key: 'addon_priority_care', name: 'Add-on: Priority Care & Analytics', amount: 14900 },
+  { key: 'addon_priority_care', name: 'Add-on: Priority Care & Analytics', amount: 4900 },
 ]
 
 async function createOneTimePrice({ name, amount }) {
