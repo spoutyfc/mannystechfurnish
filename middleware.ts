@@ -4,8 +4,8 @@ import { verifySessionToken, ADMIN_COOKIE } from '@/lib/admin-auth'
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Protect /admin/* routes — never /admin-login
-  if (pathname.startsWith('/admin/')) {
+  // Protect the admin dashboard and all sub-routes — never /admin-login
+  if (pathname === '/admin' || pathname.startsWith('/admin/')) {
     const token = request.cookies.get(ADMIN_COOKIE)?.value
     const email = await verifySessionToken(token)
 
@@ -19,5 +19,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path+'],
+  matcher: ['/admin', '/admin/:path*'],
 }

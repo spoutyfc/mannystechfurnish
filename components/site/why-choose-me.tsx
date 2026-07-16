@@ -1,28 +1,29 @@
 'use client'
 
-import { AnimatedHeading, FadeUp } from '@/components/site/motion'
+import Image from 'next/image'
+import { AnimatedHeading, FadeUp, ClipReveal, Tilt } from '@/components/site/motion'
 import { MessageSquare, Zap, Code2, Gauge } from 'lucide-react'
 
 const reasons = [
   {
     icon: MessageSquare,
     title: 'Direct Communication',
-    desc: 'You talk to me — the person actually building your site. No account managers, no telephone game, no waiting weeks for a reply.',
+    desc: 'You talk to me — the person actually building your site. No account managers, no telephone game.',
   },
   {
     icon: Zap,
     title: 'Fast Turnaround',
-    desc: 'No bloated agency timelines. Most sites ship in weeks, not months, with weekly updates so you always know where things stand.',
+    desc: 'No bloated agency timelines. Most sites ship in weeks, not months, with weekly updates.',
   },
   {
     icon: Code2,
     title: 'You Own Your Code',
-    desc: "It's your business and your asset. The full codebase is transferred to you — no hostage situations, no platform lock-in.",
+    desc: "It's your asset. The full codebase is transferred to you — no lock-in, no hostage situations.",
   },
   {
     icon: Gauge,
     title: 'No Bloat',
-    desc: 'Hand-built, lightweight sites that load fast and rank well. No page-builder junk slowing you down or dragging your SEO.',
+    desc: 'Hand-built, lightweight sites that load fast and rank well. No page-builder junk.',
   },
 ]
 
@@ -41,26 +42,46 @@ export function WhyChooseMe() {
           </p>
         </div>
 
-        <div className="grid border-t border-white/15 sm:grid-cols-2 lg:grid-cols-4">
-          {reasons.map((r, i) => (
-            <FadeUp
-              key={r.title}
-              index={i}
-              className={`group flex flex-col border-b border-white/15 py-10 transition-colors hover:bg-white/[0.03] sm:border-b-0 lg:py-12 ${
-                i !== 0 ? 'lg:border-l lg:pl-8' : 'lg:pr-8'
-              } ${i > 0 && i < 3 ? 'lg:px-8' : ''} ${i === 3 ? 'lg:pl-8' : ''} ${
-                i === 0 ? 'sm:border-r sm:pr-8' : ''
-              } ${i === 2 ? 'sm:border-r sm:pr-8' : ''} ${i === 1 ? 'sm:pl-8' : ''} ${
-                i === 3 ? 'sm:pl-8' : ''
-              }`}
-            >
-              <r.icon className="h-9 w-9 text-accent transition-transform group-hover:-translate-y-1" />
-              <h3 className="mt-6 font-display text-2xl font-semibold uppercase tracking-tight">
-                {r.title}
-              </h3>
-              <p className="mt-3 leading-relaxed text-white/75">{r.desc}</p>
-            </FadeUp>
-          ))}
+        <div className="grid items-start gap-10 lg:grid-cols-[1fr_1.15fr] lg:gap-14">
+          {/* Feature visual */}
+          <ClipReveal from="left">
+            <Tilt max={7} className="relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.02]">
+              <Image
+                src="/images/illo-workspace.png"
+                alt="Dedicated developer workspace"
+                width={1024}
+                height={1024}
+                className="h-auto w-full"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              <div className="absolute bottom-5 left-5 right-5 flex items-center gap-3">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-accent" />
+                </span>
+                <p className="font-mono text-xs uppercase tracking-widest text-white/85">
+                  One developer. Full accountability.
+                </p>
+              </div>
+            </Tilt>
+          </ClipReveal>
+
+          {/* Reasons grid */}
+          <div className="grid gap-px overflow-hidden rounded-xl border border-white/10 bg-white/10 sm:grid-cols-2">
+            {reasons.map((r, i) => (
+              <FadeUp
+                key={r.title}
+                index={i}
+                className="group flex flex-col bg-black p-7 transition-colors hover:bg-white/[0.03] md:p-8"
+              >
+                <r.icon className="h-9 w-9 text-accent transition-transform duration-300 group-hover:-translate-y-1" />
+                <h3 className="mt-6 font-display text-2xl font-semibold uppercase tracking-tight">
+                  {r.title}
+                </h3>
+                <p className="mt-3 leading-relaxed text-white/75">{r.desc}</p>
+              </FadeUp>
+            ))}
+          </div>
         </div>
       </div>
     </section>

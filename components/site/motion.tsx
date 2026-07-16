@@ -200,3 +200,83 @@ export function Parallax({
     </motion.div>
   )
 }
+
+/* ---------- Cinematic clip-path reveal (for images/media) ---------- */
+export function ClipReveal({
+  children,
+  className = '',
+  delay = 0,
+  from = 'bottom',
+}: {
+  children: ReactNode
+  className?: string
+  delay?: number
+  from?: 'bottom' | 'left'
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { once: true, margin: '0px 0px -12% 0px' })
+  const hidden =
+    from === 'left' ? 'inset(0 100% 0 0)' : 'inset(100% 0 0 0)'
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ clipPath: hidden }}
+      animate={inView ? { clipPath: 'inset(0 0 0 0)' } : { clipPath: hidden }}
+      transition={{ duration: 1.1, ease: EASE, delay }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+/* ---------- 3D tilt-on-hover wrapper (cards / media) ---------- */
+export function Tilt({
+  children,
+  className = '',
+  max = 10,
+  scale = 1.02,
+}: {
+  children: ReactNode
+  className?: string
+  max?: number
+  scale?: number
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+  const rx = useMotionValue(0)
+  const ry = useMotionValue(0)
+  const srx = useSpring(rx, { stiffness: 150, damping: 15, mass: 0.4 })
+  const sry = useSpring(ry, { stiffness: 150, damping: 15, mass: 0.4 })
+
+  const onMove = (e: React.MouseEvent) => {
+    const el = ref.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const px = (e.clientX - rect.left) / rect.width - 0.5
+    const py = (e.clientY - rect.top) / rect.height - 0.5
+    ry.set(px * max * 2)
+    rx.set(-py * max * 2)
+  }
+  const reset = () => {
+    rx.set(0)
+    ry.set(0)
+  }
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={onMove}
+      onMouseLeave={reset}
+      whileHover={{ scale }}
+      style={{
+        rotateX: srx,
+        rotateY: sry,
+        transformStyle: 'preserve-3d',
+        transformPerspective: 1000,
+      }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  )
+}

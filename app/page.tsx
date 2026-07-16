@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { SiteNav } from '@/components/site/site-nav'
 import { Preloader } from '@/components/site/preloader'
 import { Marquee } from '@/components/site/marquee'
@@ -19,9 +20,22 @@ import {
   Magnetic,
   CountUp,
   Parallax,
+  ClipReveal,
+  Tilt,
 } from '@/components/site/motion'
+import { PAYMENT_LINKS, ADD_ONS } from '@/lib/plans'
 import { motion } from 'framer-motion'
-import { ArrowUpRight, ArrowRight } from 'lucide-react'
+import {
+  ArrowUpRight,
+  ArrowRight,
+  Check,
+  CalendarClock,
+  Sparkles,
+  Box,
+  PenSquare,
+  Languages,
+  ShieldCheck,
+} from 'lucide-react'
 
 const stats = [
   { value: '12+', label: 'Projects shipped' },
@@ -39,6 +53,7 @@ const clients = [
       'A licensed structural engineering firm serving the Bay Area for 10+ years. We rebuilt their digital presence to match their reputation.',
     points: ['500+ projects showcased', 'Ranks #1 for "structural engineer Bay Area"', '3x more consults'],
     url: 'https://oaktownengineers.com',
+    image: '/images/work-oaktown.png',
   },
   {
     index: '02',
@@ -48,6 +63,7 @@ const clients = [
       'A premium pre-owned dealership that needed a modern site to showcase inventory and drive online leads at scale.',
     points: ['Full inventory system', 'Online test-drive booking', '200% more inquiries'],
     url: 'https://unitedflexauto.com',
+    image: '/images/work-unitedflex.png',
   },
 ]
 
@@ -56,34 +72,40 @@ const services = [
     num: '01',
     title: 'Design & Build',
     desc: 'Custom full-stack development from concept to launch. High-performance front-end, secure back-end, fully responsive.',
+    image: '/images/illo-design.png',
   },
   {
     num: '02',
     title: 'Search & SEO',
     desc: 'Schema markup, sitemaps, speed tuning and on-page optimization built in from day one so customers actually find you.',
+    image: '/images/illo-seo.png',
   },
   {
     num: '03',
     title: 'Growth & Ads',
     desc: 'Google Ads setup and management, conversion optimization, and clear analytics reporting that ties spend to results.',
+    image: '/images/illo-growth.png',
   },
 ]
 
 const option1Features = [
   'Custom full-stack development, concept to launch',
-  'Complete codebase ownership — transferred immediately',
+  'Complete codebase ownership — transferred to you immediately',
   'High-performance front-end + secure back-end',
   'Fully responsive across every device',
   'Advanced SEO + Google Analytics setup',
-  'Optional $70/mo care plan for updates & security',
+  'One payment — you own it outright, no monthly fees',
+  'Optional $99/mo care plan if you ever want us to manage it',
 ]
 
 const option2Features = [
-  'Website build included ($700 labor fee)',
-  'Ongoing maintenance & hosting included',
-  'Updates, security & priority support queue',
-  'Basic SEO check-ins',
-  'Buy out the code after term: $600',
+  'Custom website build included ($900 setup)',
+  'Ongoing maintenance & updates handled for you',
+  'Hosting fully managed — nothing to set up',
+  'Security monitoring & automatic backups',
+  'Priority support queue whenever you need us',
+  'Regular SEO check-ins to keep you ranking',
+  'Buy out the code anytime after your term ($800)',
 ]
 
 const steps = [
@@ -102,6 +124,15 @@ const marqueeItems = [
   'Branding',
   'Performance',
 ]
+
+const ADDON_ICONS: Record<string, typeof Sparkles> = {
+  CalendarClock,
+  Sparkles,
+  Box,
+  PenSquare,
+  Languages,
+  ShieldCheck,
+}
 
 export default function Home() {
   return (
@@ -258,40 +289,68 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="border-t border-white/15">
-            {clients.map((client) => (
-              <FadeUp key={client.name}>
-                <a
-                  href={client.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group grid items-start gap-6 border-b border-white/15 py-10 transition-colors hover:bg-white/[0.03] md:grid-cols-[1fr_auto] md:gap-12 md:py-14"
-                >
-                  <div className="max-w-2xl">
-                    <p className="mb-3 font-mono text-xs uppercase tracking-widest text-accent">
-                      {client.tag}
-                    </p>
-                    <h3 className="font-display text-4xl font-semibold uppercase tracking-tight transition-transform duration-300 group-hover:translate-x-2 md:text-6xl">
+          <div className="grid gap-x-12 gap-y-20 md:gap-y-28">
+            {clients.map((client, i) => (
+              <a
+                key={client.name}
+                href={client.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`group grid items-center gap-8 md:gap-14 lg:grid-cols-2 ${
+                  i % 2 === 1 ? 'lg:[&>*:first-child]:order-2' : ''
+                }`}
+              >
+                {/* Visual mockup with cinematic reveal + hover zoom */}
+                <ClipReveal from={i % 2 === 1 ? 'left' : 'bottom'} className="relative">
+                  <Tilt max={8} className="relative overflow-hidden rounded-lg border border-white/10 bg-white/[0.02]">
+                    {/* accent glow behind */}
+                    <div className="pointer-events-none absolute -inset-px z-0 bg-gradient-to-br from-accent/20 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                    <div className="relative z-10 overflow-hidden">
+                      <Image
+                        src={client.image || '/placeholder.svg'}
+                        alt={`${client.name} website design`}
+                        width={1024}
+                        height={1024}
+                        className="h-auto w-full scale-105 transition-transform duration-700 ease-out will-change-transform group-hover:scale-110"
+                      />
+                    </div>
+                    {/* view badge on hover */}
+                    <div className="absolute right-4 top-4 z-20 flex translate-y-2 items-center gap-2 rounded-full bg-accent px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-wider text-black opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                      Visit site
+                      <ArrowUpRight className="h-3.5 w-3.5" />
+                    </div>
+                  </Tilt>
+                </ClipReveal>
+
+                {/* Text */}
+                <FadeUp>
+                  <div className="max-w-xl">
+                    <div className="flex items-center gap-4">
+                      <span className="font-display text-5xl font-semibold leading-none text-white/15 md:text-6xl">
+                        {client.index}
+                      </span>
+                      <p className="font-mono text-xs uppercase tracking-widest text-accent">
+                        {client.tag}
+                      </p>
+                    </div>
+                    <h3 className="mt-5 font-display text-4xl font-semibold uppercase tracking-tight transition-transform duration-300 group-hover:translate-x-2 md:text-6xl">
                       {client.name}
                     </h3>
                     <p className="mt-4 text-lg leading-relaxed text-white/75">{client.description}</p>
-                    <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
+                    <div className="mt-7 flex flex-col gap-3 border-t border-white/15 pt-6">
                       {client.points.map((point) => (
                         <span
                           key={point}
-                          className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-white/80"
+                          className="inline-flex items-center gap-3 font-mono text-xs uppercase tracking-wider text-white/80"
                         >
-                          <span className="h-1.5 w-1.5 bg-accent" />
+                          <span className="h-1.5 w-1.5 flex-shrink-0 bg-accent" />
                           {point}
                         </span>
                       ))}
                     </div>
                   </div>
-                  <span className="flex h-14 w-14 items-center justify-center rounded-full border border-white/30 transition-all duration-300 group-hover:rotate-45 group-hover:border-accent group-hover:bg-accent group-hover:text-black md:justify-self-end">
-                    <ArrowUpRight className="h-6 w-6" />
-                  </span>
-                </a>
-              </FadeUp>
+                </FadeUp>
+              </a>
             ))}
           </div>
         </div>
@@ -301,9 +360,8 @@ export default function Home() {
       <Testimonials />
 
       {/* ---------------- SERVICES ---------------- */}
-      <section id="services" className="relative overflow-hidden border-b border-white/15 px-5 py-20 md:px-10 md:py-28">
-        <MediaBackdrop src="/images/showcase-code.png" alt="Code on screen" intensity={0.8} />
-        <div className="relative z-10 mx-auto max-w-[1500px]">
+      <section id="services" className="border-b border-white/15 px-5 py-20 md:px-10 md:py-28">
+        <div className="mx-auto max-w-[1500px]">
           <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
             <AnimatedHeading
               as="h2"
@@ -315,20 +373,31 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid border-t border-white/15 md:grid-cols-3">
+          <div className="grid gap-5 md:grid-cols-3">
             {services.map((service, i) => (
-              <FadeUp
-                key={service.title}
-                index={i}
-                className={`group flex flex-col border-b border-white/15 py-10 transition-colors hover:bg-white/[0.03] md:border-b-0 md:py-12 ${
-                  i !== 0 ? 'md:border-l md:pl-10' : 'md:pr-10'
-                } ${i === 1 ? 'md:px-10' : ''} ${i === 2 ? 'md:pl-10' : ''}`}
-              >
-                <h3 className="font-display text-3xl font-semibold uppercase tracking-tight">
-                  {service.title}
-                </h3>
-                <p className="mt-4 flex-1 text-lg leading-relaxed text-white/75">{service.desc}</p>
-                <ArrowRight className="mt-8 h-6 w-6 text-white/40 transition-all group-hover:translate-x-2 group-hover:text-accent" />
+              <FadeUp key={service.title} index={i}>
+                <Tilt max={9} className="group flex h-full flex-col overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] transition-colors hover:border-accent/40">
+                  <div className="relative aspect-[4/3] overflow-hidden border-b border-white/10">
+                    <Image
+                      src={service.image || '/placeholder.svg'}
+                      alt={service.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <span className="absolute left-5 top-4 font-display text-2xl font-semibold text-white/80">
+                      {service.num}
+                    </span>
+                  </div>
+                  <div className="flex flex-1 flex-col p-6 md:p-8">
+                    <h3 className="font-display text-2xl font-semibold uppercase tracking-tight md:text-3xl">
+                      {service.title}
+                    </h3>
+                    <p className="mt-4 flex-1 leading-relaxed text-white/75">{service.desc}</p>
+                    <ArrowRight className="mt-8 h-6 w-6 text-white/40 transition-all group-hover:translate-x-2 group-hover:text-accent" />
+                  </div>
+                </Tilt>
               </FadeUp>
             ))}
           </div>
@@ -406,26 +475,44 @@ export default function Home() {
               </div>
               <h3 className="mt-5 font-display text-3xl font-semibold uppercase">Complete Digital Asset</h3>
               <div className="mt-6 font-display text-7xl font-semibold tracking-tight md:text-8xl">
-                $1,299
+                $1,899
               </div>
               <p className="mt-3 font-mono text-xs uppercase tracking-wider text-accent">
-                Save $380+ vs monthly in first 3 months
+                You own it outright — no monthly fees, ever
               </p>
-              <ul className="mt-8 flex-1 space-y-4">
+
+              <div className="relative mt-8 aspect-[16/10] overflow-hidden rounded-xl border border-white/10 bg-white/[0.02]">
+                <Image
+                  src="/images/plan-ownership.png"
+                  alt="What's included in the Complete Digital Asset package"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 45vw"
+                  className="object-cover"
+                />
+                <span className="absolute bottom-3 left-3 rounded-full bg-black/60 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-white/90 backdrop-blur">
+                  Your package
+                </span>
+              </div>
+
+              <ul className="mt-8 flex-1 space-y-3">
                 {option1Features.map((f) => (
-                  <li key={f} className="flex gap-3 border-b border-white/10 pb-4 text-white/85">
-                    <ArrowRight className="mt-1 h-4 w-4 flex-shrink-0 text-accent" />
+                  <li key={f} className="flex items-center gap-3 border-b border-white/10 pb-3 text-white/85">
+                    <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-accent text-black">
+                      <Check className="h-3 w-3" />
+                    </span>
                     <span>{f}</span>
                   </li>
                 ))}
               </ul>
               <Magnetic strength={0.3} className="mt-10">
-                <Link
-                  href="/contact"
+                <a
+                  href={PAYMENT_LINKS.option1}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex w-full items-center justify-center gap-2 bg-accent px-8 py-4 text-sm font-semibold uppercase tracking-wider text-black transition-opacity hover:opacity-90"
                 >
-                  Get started <ArrowUpRight className="h-4 w-4" />
-                </Link>
+                  Pay &amp; get started <ArrowUpRight className="h-4 w-4" />
+                </a>
               </Magnetic>
             </FadeUp>
 
@@ -435,30 +522,167 @@ export default function Home() {
               </p>
               <h3 className="mt-5 font-display text-3xl font-semibold uppercase">Managed Website Plan</h3>
               <div className="mt-6 flex items-baseline gap-3 font-display text-6xl font-semibold tracking-tight md:text-7xl">
-                $700 <span className="text-3xl text-white/40">+</span>{' '}
-                <span className="text-accent">$120</span>
+                $900 <span className="text-3xl text-white/40">+</span>{' '}
+                <span className="text-accent">$159</span>
                 <span className="font-mono text-sm text-white/55">/mo</span>
               </div>
               <p className="mt-3 font-mono text-xs uppercase tracking-wider text-white/55">
-                3-month minimum — total $1,060
+                3-month minimum — from $1,377 total
               </p>
-              <ul className="mt-8 flex-1 space-y-4">
+
+              <div className="relative mt-8 aspect-[16/10] overflow-hidden rounded-xl border border-white/10 bg-white/[0.02]">
+                <Image
+                  src="/images/plan-managed.png"
+                  alt="What's included in the Managed Website Plan package"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 45vw"
+                  className="object-cover"
+                />
+                <span className="absolute bottom-3 left-3 rounded-full bg-black/60 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-white/90 backdrop-blur">
+                  Your package
+                </span>
+              </div>
+
+              <ul className="mt-8 flex-1 space-y-3">
                 {option2Features.map((f) => (
-                  <li key={f} className="flex gap-3 border-b border-white/10 pb-4 text-white/85">
-                    <ArrowRight className="mt-1 h-4 w-4 flex-shrink-0 text-white/50" />
+                  <li key={f} className="flex items-center gap-3 border-b border-white/10 pb-3 text-white/85">
+                    <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-accent text-black">
+                      <Check className="h-3 w-3" />
+                    </span>
                     <span>{f}</span>
                   </li>
                 ))}
               </ul>
               <Magnetic strength={0.3} className="mt-10">
-                <Link
-                  href="/contact"
+                <a
+                  href={PAYMENT_LINKS.option2}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex w-full items-center justify-center gap-2 border border-white/30 px-8 py-4 text-sm font-semibold uppercase tracking-wider text-white transition-colors hover:bg-white hover:text-black"
                 >
-                  Lets Do This One <ArrowUpRight className="h-4 w-4" />
-                </Link>
+                  Start this plan <ArrowUpRight className="h-4 w-4" />
+                </a>
               </Magnetic>
             </FadeUp>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------------- ADD-ONS ---------------- */}
+      <section id="addons" className="border-b border-white/15 px-5 py-20 md:px-10 md:py-28">
+        <div className="mx-auto max-w-[1500px]">
+          <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-accent">
+                ( Premium upgrades )
+              </p>
+              <AnimatedHeading
+                as="h2"
+                text="Power-Ups"
+                className="font-display text-5xl font-semibold uppercase tracking-tight md:text-8xl"
+              />
+            </div>
+            <p className="max-w-xs font-mono text-xs uppercase tracking-widest text-white/55">
+              Bolt on serious capability. Most upgrades pair with the Managed Plan — booking works with any plan.
+            </p>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {ADD_ONS.map((addon, i) => {
+              const Icon = ADDON_ICONS[addon.icon] || Sparkles
+              return (
+                <FadeUp key={addon.id} index={i % 3}>
+                  <Tilt
+                    max={8}
+                    className={`group flex h-full flex-col rounded-xl border p-6 transition-colors md:p-8 ${
+                      addon.featured
+                        ? 'border-accent/50 bg-accent/[0.06]'
+                        : 'border-white/12 bg-white/[0.02] hover:border-white/30'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span
+                        className={`inline-flex h-12 w-12 items-center justify-center rounded-lg ${
+                          addon.featured ? 'bg-accent text-black' : 'bg-white/5 text-accent'
+                        }`}
+                      >
+                        <Icon className="h-6 w-6" />
+                      </span>
+                      {addon.featured && (
+                        <span className="bg-accent px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-black">
+                          Live demo
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 className="mt-6 font-display text-2xl font-semibold uppercase tracking-tight">
+                      {addon.name}
+                    </h3>
+                    <p className="mt-1 font-mono text-xs uppercase tracking-wider text-accent">
+                      {addon.tagline}
+                    </p>
+                    <p className="mt-4 leading-relaxed text-white/70">{addon.description}</p>
+
+                    <div className="mt-5">
+                      <span
+                        className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-wider ${
+                          addon.availability === 'both'
+                            ? 'border-accent/40 text-accent'
+                            : 'border-white/20 text-white/55'
+                        }`}
+                      >
+                        {addon.availability === 'both'
+                          ? 'Works with any plan'
+                          : 'Managed Plan add-on'}
+                      </span>
+                    </div>
+
+                    <ul className="mt-6 flex-1 space-y-2.5 border-t border-white/10 pt-6">
+                      {addon.whatItDoes.map((w) => (
+                        <li key={w} className="flex items-start gap-2.5 text-sm text-white/80">
+                          <ArrowRight className="mt-1 h-3.5 w-3.5 flex-shrink-0 text-accent" />
+                          <span>{w}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div className="mt-7 flex items-end justify-between border-t border-white/10 pt-5">
+                      <div>
+                        <p className="font-display text-3xl font-semibold tracking-tight">
+                          {addon.price}
+                        </p>
+                        <p className="font-mono text-[10px] uppercase tracking-widest text-white/45">
+                          {addon.cadence === 'monthly' ? 'billed monthly' : 'one-time add-on'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-5 flex flex-col gap-2.5">
+                      {addon.demoHref && (
+                        <Link
+                          href={addon.demoHref}
+                          className="inline-flex w-full items-center justify-center gap-2 border border-accent/50 px-5 py-3 text-xs font-semibold uppercase tracking-wider text-accent transition-colors hover:bg-accent hover:text-black"
+                        >
+                          See it live <ArrowUpRight className="h-3.5 w-3.5" />
+                        </Link>
+                      )}
+                      <a
+                        href={addon.paymentLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`inline-flex w-full items-center justify-center gap-2 px-5 py-3 text-xs font-semibold uppercase tracking-wider transition-opacity hover:opacity-90 ${
+                          addon.featured
+                            ? 'bg-accent text-black'
+                            : 'border border-white/25 text-white hover:bg-white hover:text-black'
+                        }`}
+                      >
+                        Add this upgrade <ArrowUpRight className="h-3.5 w-3.5" />
+                      </a>
+                    </div>
+                  </Tilt>
+                </FadeUp>
+              )
+            })}
           </div>
         </div>
       </section>
@@ -548,6 +772,9 @@ export default function Home() {
               </a>
               <a href="#pricing" className="hover:text-white">
                 Pricing
+              </a>
+              <a href="#addons" className="hover:text-white">
+                Add-ons
               </a>
               <Link href="/contact" className="hover:text-white">
                 Contact

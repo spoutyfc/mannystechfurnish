@@ -20,8 +20,14 @@ const limiter = redis
 export async function checkContactRateLimit(identifier: string) {
   // If Redis isn't configured, allow the request (fail open) so the form still works.
   if (!limiter) return { success: true, remaining: 999 }
-  const { success, remaining } = await limiter.limit(identifier)
-  return { success, remaining }
+  try {
+    const { success, remaining } = await limiter.limit(identifier)
+    return { success, remaining }
+  } catch (err) {
+    // Redis unreachable/misconfigured — never block a real user on infra failure.
+    console.error('[v0] Contact rate limit unavailable, failing open:', err)
+    return { success: true, remaining: 999 }
+  }
 }
 
 // Stricter limiter for admin login: 8 attempts per 10 minutes per IP to slow
@@ -37,6 +43,13 @@ const loginLimiter = redis
 
 export async function checkLoginRateLimit(identifier: string) {
   if (!loginLimiter) return { success: true, remaining: 999 }
-  const { success, remaining } = await loginLimiter.limit(identifier)
-  return { success, remaining }
+  try {
+    const { success, remaining } = await loginLimiter.limit(identifier)
+    return { success, remaining }
+  } catch (err) {
+    // Redis unreachable/misconfigured — fail open so a dead Redis can never
+    // lock the admin out of their own dashboard.
+    console.error('[v0] Login rate limit unavailable, failing open:', err)
+    return { success: true, remaining: 999 }
+  }
 }

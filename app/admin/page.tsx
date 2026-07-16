@@ -4,8 +4,9 @@ import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { LogOut, Trash2, Mail, Check, RefreshCw, Inbox, LinkIcon, PenSquare } from 'lucide-react'
+import { LogOut, Trash2, Mail, Check, RefreshCw, Inbox, LinkIcon, PenSquare, KeyRound } from 'lucide-react'
 import { ComposeEmail, type ComposePrefill } from '@/components/admin/compose-email'
+import { ChangePassword } from '@/components/admin/change-password'
 
 type Submission = {
   id: string
@@ -27,6 +28,7 @@ export default function AdminSubmissionsPage() {
   const [busy, setBusy] = useState<string | null>(null)
   const [composeOpen, setComposeOpen] = useState(false)
   const [composePrefill, setComposePrefill] = useState<ComposePrefill>({})
+  const [passwordOpen, setPasswordOpen] = useState(false)
 
   const openCompose = (prefill: ComposePrefill = {}) => {
     setComposePrefill(prefill)
@@ -129,6 +131,9 @@ export default function AdminSubmissionsPage() {
                 <LinkIcon className="w-4 h-4" /> Payment Links
               </Button>
             </Link>
+            <Button variant="outline" size="sm" onClick={() => setPasswordOpen(true)} className="gap-2 border-neutral-700 bg-transparent">
+              <KeyRound className="w-4 h-4" /> Password
+            </Button>
             <Button variant="outline" size="sm" onClick={handleSignOut} className="gap-2 border-neutral-700 bg-transparent">
               <LogOut className="w-4 h-4" /> Sign Out
             </Button>
@@ -224,6 +229,8 @@ export default function AdminSubmissionsPage() {
         prefill={composePrefill}
         onClose={() => setComposeOpen(false)}
       />
+
+      <ChangePassword open={passwordOpen} onClose={() => setPasswordOpen(false)} />
     </div>
   )
 }

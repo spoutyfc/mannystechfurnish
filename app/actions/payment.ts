@@ -134,10 +134,10 @@ export async function getDashboardStats() {
   const paid = all.filter((c) => c.paymentStatus === 'completed')
   const pending = all.filter((c) => c.paymentStatus === 'pending')
 
-  // Estimate collected revenue from plan type (server source of truth).
+  // Estimate collected revenue from plan type (server source of truth in PLAN_DETAILS).
   const revenue = paid.reduce((sum, c) => {
-    const base = c.planType === 'option1' ? 1299 : 700
-    return sum + base
+    const plan = PLAN_DETAILS[(c.planType as PlanType)] ?? PLAN_DETAILS.option1
+    return sum + plan.priceValue
   }, 0)
 
   return {
