@@ -128,7 +128,7 @@ export default function PayClient({
                   className="mt-1 w-4 h-4 accent-[var(--accent)]"
                 />
                 <span>
-                  <span className="block font-medium">Add the Care Plan — $70/mo</span>
+                  <span className="block font-medium">Add the Care Plan — $99/mo</span>
                   <span className="block text-sm text-neutral-500">Priority updates, security monitoring & ongoing support. Cancel anytime.</span>
                 </span>
               </label>
@@ -147,7 +147,7 @@ export default function PayClient({
               {planType === 'option1' && includeCareplan && (
                 <div className="flex justify-between">
                   <span className="text-neutral-400">Care Plan</span>
-                  <span className="text-white">$70/mo</span>
+                  <span className="text-white">$99/mo</span>
                 </div>
               )}
             </div>
