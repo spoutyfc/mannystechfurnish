@@ -23,8 +23,18 @@ import {
   ClipReveal,
   Tilt,
 } from '@/components/site/motion'
+import { PAYMENT_LINKS, ADD_ONS } from '@/lib/plans'
 import { motion } from 'framer-motion'
-import { ArrowUpRight, ArrowRight } from 'lucide-react'
+import {
+  ArrowUpRight,
+  ArrowRight,
+  CalendarClock,
+  Sparkles,
+  Box,
+  PenSquare,
+  Languages,
+  ShieldCheck,
+} from 'lucide-react'
 
 const stats = [
   { value: '12+', label: 'Projects shipped' },
@@ -83,15 +93,15 @@ const option1Features = [
   'High-performance front-end + secure back-end',
   'Fully responsive across every device',
   'Advanced SEO + Google Analytics setup',
-  'Optional $70/mo care plan for updates & security',
+  'Optional $99/mo care plan for updates & security',
 ]
 
 const option2Features = [
-  'Website build included ($700 labor fee)',
+  'Website build included ($900 setup fee)',
   'Ongoing maintenance & hosting included',
   'Updates, security & priority support queue',
   'Basic SEO check-ins',
-  'Buy out the code after term: $600',
+  'Buy out the code after term: $800',
 ]
 
 const steps = [
@@ -110,6 +120,15 @@ const marqueeItems = [
   'Branding',
   'Performance',
 ]
+
+const ADDON_ICONS: Record<string, typeof Sparkles> = {
+  CalendarClock,
+  Sparkles,
+  Box,
+  PenSquare,
+  Languages,
+  ShieldCheck,
+}
 
 export default function Home() {
   return (
@@ -452,10 +471,10 @@ export default function Home() {
               </div>
               <h3 className="mt-5 font-display text-3xl font-semibold uppercase">Complete Digital Asset</h3>
               <div className="mt-6 font-display text-7xl font-semibold tracking-tight md:text-8xl">
-                $1,299
+                $1,899
               </div>
               <p className="mt-3 font-mono text-xs uppercase tracking-wider text-accent">
-                Save $380+ vs monthly in first 3 months
+                You own it outright — no monthly fees, ever
               </p>
               <ul className="mt-8 flex-1 space-y-4">
                 {option1Features.map((f) => (
@@ -466,12 +485,14 @@ export default function Home() {
                 ))}
               </ul>
               <Magnetic strength={0.3} className="mt-10">
-                <Link
-                  href="/contact"
+                <a
+                  href={PAYMENT_LINKS.option1}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex w-full items-center justify-center gap-2 bg-accent px-8 py-4 text-sm font-semibold uppercase tracking-wider text-black transition-opacity hover:opacity-90"
                 >
-                  Get started <ArrowUpRight className="h-4 w-4" />
-                </Link>
+                  Pay &amp; get started <ArrowUpRight className="h-4 w-4" />
+                </a>
               </Magnetic>
             </FadeUp>
 
@@ -481,12 +502,12 @@ export default function Home() {
               </p>
               <h3 className="mt-5 font-display text-3xl font-semibold uppercase">Managed Website Plan</h3>
               <div className="mt-6 flex items-baseline gap-3 font-display text-6xl font-semibold tracking-tight md:text-7xl">
-                $700 <span className="text-3xl text-white/40">+</span>{' '}
-                <span className="text-accent">$120</span>
+                $900 <span className="text-3xl text-white/40">+</span>{' '}
+                <span className="text-accent">$159</span>
                 <span className="font-mono text-sm text-white/55">/mo</span>
               </div>
               <p className="mt-3 font-mono text-xs uppercase tracking-wider text-white/55">
-                3-month minimum — total $1,060
+                3-month minimum — from $1,377 total
               </p>
               <ul className="mt-8 flex-1 space-y-4">
                 {option2Features.map((f) => (
@@ -497,14 +518,121 @@ export default function Home() {
                 ))}
               </ul>
               <Magnetic strength={0.3} className="mt-10">
-                <Link
-                  href="/contact"
+                <a
+                  href={PAYMENT_LINKS.option2}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex w-full items-center justify-center gap-2 border border-white/30 px-8 py-4 text-sm font-semibold uppercase tracking-wider text-white transition-colors hover:bg-white hover:text-black"
                 >
-                  Lets Do This One <ArrowUpRight className="h-4 w-4" />
-                </Link>
+                  Start this plan <ArrowUpRight className="h-4 w-4" />
+                </a>
               </Magnetic>
             </FadeUp>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------------- ADD-ONS ---------------- */}
+      <section id="addons" className="border-b border-white/15 px-5 py-20 md:px-10 md:py-28">
+        <div className="mx-auto max-w-[1500px]">
+          <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <p className="mb-4 font-mono text-xs uppercase tracking-widest text-accent">
+                ( Premium upgrades )
+              </p>
+              <AnimatedHeading
+                as="h2"
+                text="Power-Ups"
+                className="font-display text-5xl font-semibold uppercase tracking-tight md:text-8xl"
+              />
+            </div>
+            <p className="max-w-xs font-mono text-xs uppercase tracking-widest text-white/55">
+              Bolt on serious capability. Add any of these to a plan — pay in one click.
+            </p>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {ADD_ONS.map((addon, i) => {
+              const Icon = ADDON_ICONS[addon.icon] || Sparkles
+              return (
+                <FadeUp key={addon.id} index={i % 3}>
+                  <Tilt
+                    max={8}
+                    className={`group flex h-full flex-col rounded-xl border p-6 transition-colors md:p-8 ${
+                      addon.featured
+                        ? 'border-accent/50 bg-accent/[0.06]'
+                        : 'border-white/12 bg-white/[0.02] hover:border-white/30'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span
+                        className={`inline-flex h-12 w-12 items-center justify-center rounded-lg ${
+                          addon.featured ? 'bg-accent text-black' : 'bg-white/5 text-accent'
+                        }`}
+                      >
+                        <Icon className="h-6 w-6" />
+                      </span>
+                      {addon.featured && (
+                        <span className="bg-accent px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-black">
+                          Live demo
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 className="mt-6 font-display text-2xl font-semibold uppercase tracking-tight">
+                      {addon.name}
+                    </h3>
+                    <p className="mt-1 font-mono text-xs uppercase tracking-wider text-accent">
+                      {addon.tagline}
+                    </p>
+                    <p className="mt-4 leading-relaxed text-white/70">{addon.description}</p>
+
+                    <ul className="mt-6 flex-1 space-y-2.5 border-t border-white/10 pt-6">
+                      {addon.whatItDoes.map((w) => (
+                        <li key={w} className="flex items-start gap-2.5 text-sm text-white/80">
+                          <ArrowRight className="mt-1 h-3.5 w-3.5 flex-shrink-0 text-accent" />
+                          <span>{w}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div className="mt-7 flex items-end justify-between border-t border-white/10 pt-5">
+                      <div>
+                        <p className="font-display text-3xl font-semibold tracking-tight">
+                          {addon.price}
+                        </p>
+                        <p className="font-mono text-[10px] uppercase tracking-widest text-white/45">
+                          {addon.cadence === 'monthly' ? 'billed monthly' : 'one-time add-on'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-5 flex flex-col gap-2.5">
+                      {addon.demoHref && (
+                        <Link
+                          href={addon.demoHref}
+                          className="inline-flex w-full items-center justify-center gap-2 border border-accent/50 px-5 py-3 text-xs font-semibold uppercase tracking-wider text-accent transition-colors hover:bg-accent hover:text-black"
+                        >
+                          See it live <ArrowUpRight className="h-3.5 w-3.5" />
+                        </Link>
+                      )}
+                      <a
+                        href={addon.paymentLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`inline-flex w-full items-center justify-center gap-2 px-5 py-3 text-xs font-semibold uppercase tracking-wider transition-opacity hover:opacity-90 ${
+                          addon.featured
+                            ? 'bg-accent text-black'
+                            : 'border border-white/25 text-white hover:bg-white hover:text-black'
+                        }`}
+                      >
+                        Add this upgrade <ArrowUpRight className="h-3.5 w-3.5" />
+                      </a>
+                    </div>
+                  </Tilt>
+                </FadeUp>
+              )
+            })}
           </div>
         </div>
       </section>
@@ -594,6 +722,9 @@ export default function Home() {
               </a>
               <a href="#pricing" className="hover:text-white">
                 Pricing
+              </a>
+              <a href="#addons" className="hover:text-white">
+                Add-ons
               </a>
               <Link href="/contact" className="hover:text-white">
                 Contact
