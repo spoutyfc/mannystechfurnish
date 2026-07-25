@@ -68,6 +68,26 @@ const clients = [
     url: 'https://unitedflexauto.com',
     image: '/images/work-unitedflex.png',
   },
+  {
+    index: '03',
+    tag: 'Geotechnical Engineering',
+    name: 'Bear Geotechnical',
+    description:
+      'A licensed geotechnical firm serving 12 Bay Area counties. We built a cinematic, trust-first site with deep local SEO to win high-value engineering leads.',
+    points: ['Ranks across 12 counties', 'Cinematic hero + motion', 'Dedicated city landing pages'],
+    url: 'https://beargeotech.com',
+    image: '/images/work-bear.png',
+  },
+  {
+    index: '04',
+    tag: 'Design-Build Remodeling',
+    name: 'Sequoia Remodeling',
+    description:
+      'A Bay Area design-build remodeler with two divisions. We shipped a bold, editorial site with cinematic video storytelling that turns browsers into booked consultations.',
+    points: ['4.9-star social proof', 'Cinematic video sections', 'Consultation booking flow'],
+    url: 'https://sequoiaremodel.com',
+    image: '/images/work-sequoia.png',
+  },
 ]
 
 const services = [
@@ -157,7 +177,12 @@ export default function Home() {
             founder: { '@type': 'Person', name: 'Mansoor Arif' },
             areaServed: 'US',
             serviceType: ['Web Design', 'Web Development', 'SEO', 'Google Ads'],
-            sameAs: ['https://oaktownengineers.com', 'https://unitedflexauto.com'],
+            sameAs: [
+              'https://oaktownengineers.com',
+              'https://unitedflexauto.com',
+              'https://beargeotech.com',
+              'https://sequoiaremodel.com',
+            ],
           }),
         }}
       />
