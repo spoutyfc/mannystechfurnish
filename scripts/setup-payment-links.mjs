@@ -8,7 +8,8 @@
  */
 import Stripe from 'stripe'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
+// Use the live Stripe Connect access token (real, activated account) when present.
+const stripe = new Stripe(process.env.STRIPE_ACCESS_TOKEN || process.env.STRIPE_SECRET_KEY)
 
 // amount in cents
 const ONE_TIME = [

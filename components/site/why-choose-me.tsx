@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import { AnimatedHeading, FadeUp, ClipReveal, Tilt } from '@/components/site/motion'
 import { MessageSquare, Zap, Code2, Gauge } from 'lucide-react'
 
@@ -45,15 +44,18 @@ export function WhyChooseMe() {
         <div className="grid items-start gap-10 lg:grid-cols-[1fr_1.15fr] lg:gap-14">
           {/* Feature visual */}
           <ClipReveal from="left">
-            <Tilt max={7} className="relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.02]">
-              <Image
-                src="/images/illo-workspace.png"
-                alt="Dedicated developer workspace"
-                width={1024}
-                height={1024}
-                className="h-auto w-full"
+            <Tilt max={7} className="relative overflow-hidden rounded-xl border border-white/10 bg-black">
+              <video
+                src="/videos/46635.mp4"
+                muted
+                loop
+                autoPlay
+                playsInline
+                preload="metadata"
+                aria-hidden="true"
+                className="aspect-[4/3] w-full object-cover"
               />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               <div className="absolute bottom-5 left-5 right-5 flex items-center gap-3">
                 <span className="relative flex h-2.5 w-2.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />

@@ -5,21 +5,25 @@
 // PAYMENTS ARE NO-CODE: each plan/add-on has a Stripe Payment Link URL. Buttons
 // link straight to Stripe's hosted checkout — no custom checkout code required.
 // To change prices, edit scripts/setup-payment-links.mjs, re-run it, and paste
-// the new priceId/url values below. Links are TEST-mode until live keys are set.
+// the new priceId/url values below.
+//
+// LIVE MODE: these are real, live Stripe Payment Links for the activated
+// "Manny's Tech Furnish" account (generated via STRIPE_ACCESS_TOKEN). Real
+// payments are collected. Regenerate via scripts/setup-payment-links.mjs.
 
-// Stripe Price IDs (test mode) — regenerate via scripts/setup-payment-links.mjs
+// Stripe Price IDs (LIVE) — regenerate via scripts/setup-payment-links.mjs
 export const STRIPE_PRICES = {
-  option1: 'price_1TtlKFK40rUg2ebUry70mnLo', // $1,899 one-time
-  option2_build: 'price_1TtlKFK40rUg2ebUIpZMANVi', // $900 one-time
-  option2_monthly: 'price_1TtlKJK40rUg2ebU8m1JdCyq', // $159/mo
-  careplan: 'price_1TtlKKK40rUg2ebUui9FKJ7g', // $99/mo
+  option1: 'price_1TwxXDGzcLjrrlAL91bYdaR7', // $1,899 one-time
+  option2_build: 'price_1TwxXEGzcLjrrlALGLFmMEjr', // $900 one-time
+  option2_monthly: 'price_1TwxXIGzcLjrrlALvVHHf6Pi', // $159/mo
+  careplan: 'price_1TwxXIGzcLjrrlALs54NIOT2', // $99/mo
 } as const
 
-// No-code Stripe Payment Link URLs
+// No-code Stripe Payment Link URLs (LIVE)
 export const PAYMENT_LINKS = {
-  option1: 'https://buy.stripe.com/test_cNi14oeaL8EgcTOdsrds400',
-  option2: 'https://buy.stripe.com/test_aFa4gA1nZ3jWdXS9cbds40a', // build + monthly combined
-  careplan: 'https://buy.stripe.com/test_8x24gA9Uv9IkcTObkjds408',
+  option1: 'https://buy.stripe.com/cNicN50GA0ng01i85a7EQ00',
+  option2: 'https://buy.stripe.com/dRm3cvfBuda2dS84SY7EQ0a', // build + monthly combined
+  careplan: 'https://buy.stripe.com/bJebJ12OI1rk29q2KQ7EQ08',
 } as const
 
 export const PLAN_DETAILS = {
@@ -95,7 +99,7 @@ export const ADD_ONS: AddOn[] = [
     price: '$249',
     priceValue: 249,
     cadence: 'one-time',
-    paymentLink: 'https://buy.stripe.com/test_6oU9AU2s37Acf1W2NNds40d',
+    paymentLink: 'https://buy.stripe.com/eVq7sL3SM7PIdS885a7EQ04',
     availability: 'both',
     demoHref: '/demo/booking',
     icon: 'CalendarClock',
@@ -116,7 +120,7 @@ export const ADD_ONS: AddOn[] = [
     price: '$199',
     priceValue: 199,
     cadence: 'one-time',
-    paymentLink: 'https://buy.stripe.com/test_28E8wQ4Ab6w81b63RRds40b',
+    paymentLink: 'https://buy.stripe.com/14A28r3SM7PI8xO3OU7EQ02',
     availability: 'option2',
     icon: 'Sparkles',
   },
@@ -135,7 +139,7 @@ export const ADD_ONS: AddOn[] = [
     price: '$349',
     priceValue: 349,
     cadence: 'one-time',
-    paymentLink: 'https://buy.stripe.com/test_fZu3cw6Ij4o0cTOfAzds40c',
+    paymentLink: 'https://buy.stripe.com/7sYbJ1dtm2vo5lCdpu7EQ03',
     availability: 'option2',
     icon: 'Box',
   },
@@ -154,7 +158,7 @@ export const ADD_ONS: AddOn[] = [
     price: '$249',
     priceValue: 249,
     cadence: 'one-time',
-    paymentLink: 'https://buy.stripe.com/test_eVq7sM5EfaMocTO4VVds40e',
+    paymentLink: 'https://buy.stripe.com/cNi3cvexqfiaaFWdpu7EQ05',
     availability: 'option2',
     icon: 'PenSquare',
   },
@@ -173,7 +177,7 @@ export const ADD_ONS: AddOn[] = [
     price: '$179',
     priceValue: 179,
     cadence: 'one-time',
-    paymentLink: 'https://buy.stripe.com/test_00w3cwgiT6w8g60887ds40f',
+    paymentLink: 'https://buy.stripe.com/5kQ6oH74Yc5Y5lC4SY7EQ06',
     availability: 'option2',
     icon: 'Languages',
   },
@@ -192,7 +196,7 @@ export const ADD_ONS: AddOn[] = [
     price: '$49/mo',
     priceValue: 49,
     cadence: 'monthly',
-    paymentLink: 'https://buy.stripe.com/test_5kQ14oeaL1bO6vqfAzds40g',
+    paymentLink: 'https://buy.stripe.com/00w9ATdtm9XQeWcclq7EQ09',
     availability: 'option2',
     icon: 'ShieldCheck',
   },
