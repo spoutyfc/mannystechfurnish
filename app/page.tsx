@@ -24,6 +24,7 @@ import {
   Tilt,
 } from '@/components/site/motion'
 import { ADD_ONS } from '@/lib/plans'
+import { FAQ_ITEMS } from '@/lib/faq-data'
 import { motion } from 'framer-motion'
 import {
   ArrowUpRight,
@@ -166,22 +167,88 @@ export default function Home() {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             '@context': 'https://schema.org',
-            '@type': 'ProfessionalService',
-            name: "Manny's Tech Furnish",
-            description:
-              'Custom website design and development for growing businesses, with SEO optimization, Google Ads, and ongoing support.',
-            url: 'https://mannystechfurnish.com',
-            email: 'mansoor.buspro@gmail.com',
-            image: 'https://mannystechfurnish.com/og-image.png',
-            priceRange: '$$',
-            founder: { '@type': 'Person', name: 'Mansoor Arif' },
-            areaServed: 'US',
-            serviceType: ['Web Design', 'Web Development', 'SEO', 'Google Ads'],
-            sameAs: [
-              'https://oaktownengineers.com',
-              'https://unitedflexauto.com',
-              'https://beargeotech.com',
-              'https://sequoiaremodel.com',
+            '@graph': [
+              {
+                '@type': ['ProfessionalService', 'Organization'],
+                '@id': 'https://mannystechfurnish.com/#organization',
+                name: "Manny's Tech Furnish",
+                alternateName: 'Mannys Tech Furnish',
+                description:
+                  'Custom website design and development for growing businesses worldwide, with SEO optimization, Google Ads, and ongoing support.',
+                url: 'https://mannystechfurnish.com',
+                email: 'mansoor.buspro@gmail.com',
+                logo: 'https://mannystechfurnish.com/icon.png',
+                image: 'https://mannystechfurnish.com/og-image.png',
+                priceRange: '$$',
+                founder: { '@type': 'Person', name: 'Mansoor Arif' },
+                knowsLanguage: ['en', 'ur'],
+                // Local + international reach
+                areaServed: [
+                  { '@type': 'Country', name: 'United States' },
+                  { '@type': 'AdministrativeArea', name: 'California' },
+                  { '@type': 'City', name: 'Oakland' },
+                  { '@type': 'City', name: 'San Francisco' },
+                  { '@type': 'Place', name: 'Worldwide' },
+                ],
+                serviceType: [
+                  'Web Design',
+                  'Web Development',
+                  'SEO',
+                  'Local SEO',
+                  'Google Ads',
+                  'Ecommerce Development',
+                  'Website Redesign',
+                ],
+                hasOfferCatalog: {
+                  '@type': 'OfferCatalog',
+                  name: 'Website Services',
+                  itemListElement: [
+                    {
+                      '@type': 'Offer',
+                      itemOffered: { '@type': 'Service', name: 'Complete Digital Asset — Custom Website' },
+                    },
+                    {
+                      '@type': 'Offer',
+                      itemOffered: { '@type': 'Service', name: 'Managed Website Plan' },
+                    },
+                    {
+                      '@type': 'Offer',
+                      itemOffered: { '@type': 'Service', name: 'SEO & Google Ads' },
+                    },
+                  ],
+                },
+                sameAs: [
+                  'https://oaktownengineers.com',
+                  'https://unitedflexauto.com',
+                  'https://beargeotech.com',
+                  'https://sequoiaremodel.com',
+                ],
+              },
+              {
+                '@type': 'WebSite',
+                '@id': 'https://mannystechfurnish.com/#website',
+                url: 'https://mannystechfurnish.com',
+                name: "Manny's Tech Furnish",
+                publisher: { '@id': 'https://mannystechfurnish.com/#organization' },
+                inLanguage: 'en-US',
+                potentialAction: {
+                  '@type': 'SearchAction',
+                  target: {
+                    '@type': 'EntryPoint',
+                    urlTemplate: 'https://mannystechfurnish.com/?q={search_term_string}',
+                  },
+                  'query-input': 'required name=search_term_string',
+                },
+              },
+              {
+                '@type': 'FAQPage',
+                '@id': 'https://mannystechfurnish.com/#faq',
+                mainEntity: FAQ_ITEMS.map((f) => ({
+                  '@type': 'Question',
+                  name: f.q,
+                  acceptedAnswer: { '@type': 'Answer', text: f.a },
+                })),
+              },
             ],
           }),
         }}
@@ -609,66 +676,39 @@ export default function Home() {
                     <h3 className="mt-6 font-display text-2xl font-semibold uppercase tracking-tight">
                       {addon.name}
                     </h3>
-                    <p className="mt-1 font-mono text-xs uppercase tracking-wider text-accent">
-                      {addon.tagline}
+                    <p className="mt-3 flex-1 leading-relaxed text-white/65">{addon.description}</p>
+
+                    <p className="mt-5 font-mono text-[10px] uppercase tracking-wider text-white/40">
+                      {addon.availability === 'both' ? 'Works with any plan' : 'Managed Plan add-on'}
                     </p>
-                    <p className="mt-4 leading-relaxed text-white/70">{addon.description}</p>
 
-                    <div className="mt-5">
-                      <span
-                        className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-wider ${
-                          addon.availability === 'both'
-                            ? 'border-accent/40 text-accent'
-                            : 'border-white/20 text-white/55'
-                        }`}
-                      >
-                        {addon.availability === 'both'
-                          ? 'Works with any plan'
-                          : 'Managed Plan add-on'}
-                      </span>
-                    </div>
-
-                    <ul className="mt-6 flex-1 space-y-2.5 border-t border-white/10 pt-6">
-                      {addon.whatItDoes.map((w) => (
-                        <li key={w} className="flex items-start gap-2.5 text-sm text-white/80">
-                          <ArrowRight className="mt-1 h-3.5 w-3.5 flex-shrink-0 text-accent" />
-                          <span>{w}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <div className="mt-7 flex items-end justify-between border-t border-white/10 pt-5">
-                      <div>
-                        <p className="font-display text-3xl font-semibold tracking-tight">
-                          {addon.price}
-                        </p>
-                        <p className="font-mono text-[10px] uppercase tracking-widest text-white/45">
-                          {addon.cadence === 'monthly' ? 'billed monthly' : 'one-time add-on'}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="mt-5 flex flex-col gap-2.5">
-                      {addon.demoHref && (
-                        <Link
-                          href={addon.demoHref}
-                          className="inline-flex w-full items-center justify-center gap-2 border border-accent/50 px-5 py-3 text-xs font-semibold uppercase tracking-wider text-accent transition-colors hover:bg-accent hover:text-black"
+                    <div className="mt-5 flex items-end justify-between border-t border-white/10 pt-5">
+                      <p className="font-display text-3xl font-semibold tracking-tight">
+                        {addon.price}
+                        <span className="ml-1.5 font-mono text-[10px] font-normal uppercase tracking-widest text-white/40">
+                          {addon.cadence === 'monthly' ? '/mo' : 'one-time'}
+                        </span>
+                      </p>
+                      <div className="flex items-center gap-4">
+                        {addon.demoHref && (
+                          <Link
+                            href={addon.demoHref}
+                            className="font-mono text-[11px] uppercase tracking-wider text-accent underline-offset-4 hover:underline"
+                          >
+                            Demo
+                          </Link>
+                        )}
+                        <a
+                          href={addon.paymentLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`inline-flex items-center gap-1.5 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider transition-opacity hover:opacity-90 ${
+                            addon.featured ? 'bg-accent text-black' : 'border border-white/25 text-white hover:bg-white hover:text-black'
+                          }`}
                         >
-                          See it live <ArrowUpRight className="h-3.5 w-3.5" />
-                        </Link>
-                      )}
-                      <a
-                        href={addon.paymentLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`inline-flex w-full items-center justify-center gap-2 px-5 py-3 text-xs font-semibold uppercase tracking-wider transition-opacity hover:opacity-90 ${
-                          addon.featured
-                            ? 'bg-accent text-black'
-                            : 'border border-white/25 text-white hover:bg-white hover:text-black'
-                        }`}
-                      >
-                        Add this upgrade <ArrowUpRight className="h-3.5 w-3.5" />
-                      </a>
+                          Add <ArrowUpRight className="h-3 w-3" />
+                        </a>
+                      </div>
                     </div>
                   </Tilt>
                 </FadeUp>
