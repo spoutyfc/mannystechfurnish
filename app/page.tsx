@@ -7,7 +7,7 @@ import { Preloader } from '@/components/site/preloader'
 import { Marquee } from '@/components/site/marquee'
 import { SmoothScroll } from '@/components/site/smooth-scroll'
 import { ScrollProgress } from '@/components/site/scroll-progress'
-import { MediaBackdrop } from '@/components/site/media-backdrop'
+import { VideoBackdrop } from '@/components/site/video-backdrop'
 import { HeroOrb } from '@/components/site/hero-orb'
 import { Testimonials } from '@/components/site/testimonials'
 import { WhyChooseMe } from '@/components/site/why-choose-me'
@@ -29,6 +29,9 @@ import {
   ArrowUpRight,
   ArrowRight,
   Check,
+  Code2,
+  Search,
+  TrendingUp,
   CalendarClock,
   Sparkles,
   Box,
@@ -72,19 +75,19 @@ const services = [
     num: '01',
     title: 'Design & Build',
     desc: 'Custom full-stack development from concept to launch. High-performance front-end, secure back-end, fully responsive.',
-    image: '/images/illo-design.png',
+    Icon: Code2,
   },
   {
     num: '02',
     title: 'Search & SEO',
     desc: 'Schema markup, sitemaps, speed tuning and on-page optimization built in from day one so customers actually find you.',
-    image: '/images/illo-seo.png',
+    Icon: Search,
   },
   {
     num: '03',
     title: 'Growth & Ads',
     desc: 'Google Ads setup and management, conversion optimization, and clear analytics reporting that ties spend to results.',
-    image: '/images/illo-growth.png',
+    Icon: TrendingUp,
   },
 ]
 
@@ -376,27 +379,20 @@ export default function Home() {
           <div className="grid gap-5 md:grid-cols-3">
             {services.map((service, i) => (
               <FadeUp key={service.title} index={i}>
-                <Tilt max={9} className="group flex h-full flex-col overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] transition-colors hover:border-accent/40">
-                  <div className="relative aspect-[4/3] overflow-hidden border-b border-white/10">
-                    <Image
-                      src={service.image || '/placeholder.svg'}
-                      alt={service.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <span className="absolute left-5 top-4 font-display text-2xl font-semibold text-white/80">
+                <Tilt max={9} className="group flex h-full flex-col rounded-xl border border-white/10 bg-white/[0.02] p-7 transition-colors hover:border-accent/40 md:p-9">
+                  <div className="flex items-center justify-between">
+                    <span className="inline-flex h-14 w-14 items-center justify-center rounded-xl bg-accent/10 text-accent transition-colors group-hover:bg-accent group-hover:text-black">
+                      <service.Icon className="h-7 w-7" />
+                    </span>
+                    <span className="font-display text-4xl font-semibold leading-none text-white/15">
                       {service.num}
                     </span>
                   </div>
-                  <div className="flex flex-1 flex-col p-6 md:p-8">
-                    <h3 className="font-display text-2xl font-semibold uppercase tracking-tight md:text-3xl">
-                      {service.title}
-                    </h3>
-                    <p className="mt-4 flex-1 leading-relaxed text-white/75">{service.desc}</p>
-                    <ArrowRight className="mt-8 h-6 w-6 text-white/40 transition-all group-hover:translate-x-2 group-hover:text-accent" />
-                  </div>
+                  <h3 className="mt-8 font-display text-2xl font-semibold uppercase tracking-tight md:text-3xl">
+                    {service.title}
+                  </h3>
+                  <p className="mt-4 flex-1 leading-relaxed text-white/75">{service.desc}</p>
+                  <ArrowRight className="mt-8 h-6 w-6 text-white/40 transition-all group-hover:translate-x-2 group-hover:text-accent" />
                 </Tilt>
               </FadeUp>
             ))}
@@ -406,7 +402,7 @@ export default function Home() {
 
       {/* ---------------- PROCESS ---------------- */}
       <section className="relative overflow-hidden border-b border-white/15 px-5 py-20 md:px-10 md:py-28">
-        <MediaBackdrop src="/images/showcase-security.png" alt="Digital security shield" intensity={0.82} />
+        <VideoBackdrop src="/videos/31771.mp4" intensity={0.82} />
         <div className="relative z-10 mx-auto max-w-[1500px]">
           <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
             <AnimatedHeading
@@ -481,20 +477,7 @@ export default function Home() {
                 You own it outright — no monthly fees, ever
               </p>
 
-              <div className="relative mt-8 aspect-[16/10] overflow-hidden rounded-xl border border-white/10 bg-white/[0.02]">
-                <Image
-                  src="/images/plan-ownership.png"
-                  alt="What's included in the Complete Digital Asset package"
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 45vw"
-                  className="object-cover"
-                />
-                <span className="absolute bottom-3 left-3 rounded-full bg-black/60 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-white/90 backdrop-blur">
-                  Your package
-                </span>
-              </div>
-
-              <ul className="mt-8 flex-1 space-y-3">
+              <ul className="mt-10 flex-1 space-y-3">
                 {option1Features.map((f) => (
                   <li key={f} className="flex items-center gap-3 border-b border-white/10 pb-3 text-white/85">
                     <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-accent text-black">
@@ -530,20 +513,7 @@ export default function Home() {
                 3-month minimum — from $1,377 total
               </p>
 
-              <div className="relative mt-8 aspect-[16/10] overflow-hidden rounded-xl border border-white/10 bg-white/[0.02]">
-                <Image
-                  src="/images/plan-managed.png"
-                  alt="What's included in the Managed Website Plan package"
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 45vw"
-                  className="object-cover"
-                />
-                <span className="absolute bottom-3 left-3 rounded-full bg-black/60 px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-white/90 backdrop-blur">
-                  Your package
-                </span>
-              </div>
-
-              <ul className="mt-8 flex-1 space-y-3">
+              <ul className="mt-10 flex-1 space-y-3">
                 {option2Features.map((f) => (
                   <li key={f} className="flex items-center gap-3 border-b border-white/10 pb-3 text-white/85">
                     <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-accent text-black">
@@ -691,8 +661,9 @@ export default function Home() {
       <FAQ />
 
       {/* ---------------- CTA ---------------- */}
-      <section className="overflow-hidden border-b border-white/15 px-5 py-24 md:px-10 md:py-32">
-        <div className="mx-auto max-w-[1500px]">
+      <section className="relative overflow-hidden border-b border-white/15 px-5 py-24 md:px-10 md:py-32">
+        <VideoBackdrop src="/videos/44818.mp4" intensity={0.74} position="center" />
+        <div className="relative z-10 mx-auto max-w-[1500px]">
           <FadeUp>
             <p className="mb-8 font-mono text-xs uppercase tracking-[0.2em] text-accent">
               ( Let&apos;s build something )
