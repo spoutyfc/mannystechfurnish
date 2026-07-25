@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { eq } from 'drizzle-orm'
 import { db } from '@/lib/db'
-import { clients } from '@/lib/db/schema'
+import { clients, projectIntakes } from '@/lib/db/schema'
 import { stripe } from '@/lib/stripe'
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
@@ -43,6 +43,28 @@ export async function POST(req: Request) {
   switch (event.type) {
     case 'checkout.session.completed': {
       const session = event.data.object as Stripe.Checkout.Session
+
+      // --- Typeform intake path: client_reference_id === project_intakes.id ---
+      const intakeId = session.client_reference_id
+      if (intakeId && intakeId.startsWith('itk_')) {
+        try {
+          await db
+            .update(projectIntakes)
+            .set({
+              paymentStatus: 'paid',
+              amount: session.amount_total ?? null,
+              currency: session.currency ?? null,
+              stripeSessionId: session.id,
+              stripeCustomerId: (session.customer as string) || null,
+              updatedAt: new Date(),
+            })
+            .where(eq(projectIntakes.id, intakeId))
+          console.log(`Intake marked paid: ${intakeId}`)
+        } catch (error) {
+          console.error('Failed to update intake:', error)
+        }
+      }
+
       const clientId = parseClientId(session.metadata?.clientId)
 
       if (clientId !== null) {

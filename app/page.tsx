@@ -23,7 +23,7 @@ import {
   ClipReveal,
   Tilt,
 } from '@/components/site/motion'
-import { PAYMENT_LINKS, ADD_ONS } from '@/lib/plans'
+import { ADD_ONS } from '@/lib/plans'
 import { motion } from 'framer-motion'
 import {
   ArrowUpRight,
@@ -246,7 +246,7 @@ export default function Home() {
             <FadeUp index={2} className="flex flex-col gap-3 sm:flex-row md:justify-end">
               <Magnetic strength={0.35}>
                 <Link
-                  href="/contact"
+                  href="/start"
                   className="group inline-flex w-full items-center justify-center gap-2 bg-accent px-8 py-4 text-sm font-semibold uppercase tracking-wider text-black transition-opacity hover:opacity-90 sm:w-auto"
                 >
                   Start a project
@@ -513,14 +513,12 @@ export default function Home() {
                 ))}
               </ul>
               <Magnetic strength={0.3} className="mt-10">
-                <a
-                  href={PAYMENT_LINKS.option1}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  href="/start?plan=option1"
                   className="inline-flex w-full items-center justify-center gap-2 bg-accent px-8 py-4 text-sm font-semibold uppercase tracking-wider text-black transition-opacity hover:opacity-90"
                 >
-                  Pay &amp; get started <ArrowUpRight className="h-4 w-4" />
-                </a>
+                  Start &amp; get a quote <ArrowUpRight className="h-4 w-4" />
+                </Link>
               </Magnetic>
             </FadeUp>
 
@@ -549,14 +547,12 @@ export default function Home() {
                 ))}
               </ul>
               <Magnetic strength={0.3} className="mt-10">
-                <a
-                  href={PAYMENT_LINKS.option2}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  href="/start?plan=option2"
                   className="inline-flex w-full items-center justify-center gap-2 border border-white/30 px-8 py-4 text-sm font-semibold uppercase tracking-wider text-white transition-colors hover:bg-white hover:text-black"
                 >
                   Start this plan <ArrowUpRight className="h-4 w-4" />
-                </a>
+                </Link>
               </Magnetic>
             </FadeUp>
           </div>
@@ -723,7 +719,7 @@ export default function Home() {
           <FadeUp index={2} className="mt-8 flex flex-col gap-4 sm:flex-row">
             <Magnetic strength={0.35}>
               <Link
-                href="/contact"
+                href="/start"
                 className="group inline-flex w-full items-center justify-center gap-2 bg-accent px-10 py-5 text-sm font-semibold uppercase tracking-wider text-black transition-opacity hover:opacity-90 sm:w-auto"
               >
                 Start your project

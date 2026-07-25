@@ -25,6 +25,7 @@ import {
   X,
   RefreshCw,
   ExternalLink,
+  ClipboardList,
 } from 'lucide-react'
 
 type ClientRow = {
@@ -187,6 +188,11 @@ export default function AdminClientLinksPage() {
             <Link href="/admin">
               <Button variant="outline" size="sm" className="gap-2 border-neutral-700 bg-transparent">
                 <Inbox className="w-4 h-4" /> Submissions
+              </Button>
+            </Link>
+            <Link href="/admin/intakes">
+              <Button variant="outline" size="sm" className="gap-2 border-neutral-700 bg-transparent">
+                <ClipboardList className="w-4 h-4" /> Briefs
               </Button>
             </Link>
             <Button variant="outline" size="sm" onClick={handleSignOut} className="gap-2 border-neutral-700 bg-transparent">
