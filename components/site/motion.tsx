@@ -8,6 +8,7 @@ import {
   useTransform,
   useScroll,
   animate,
+  useReducedMotion,
   type Variants,
 } from 'framer-motion'
 import {
@@ -149,31 +150,48 @@ export function CountUp({
 }) {
   const ref = useRef<HTMLSpanElement>(null)
   const inView = useInView(ref, { once: true, margin: '0px 0px -10% 0px' })
-  const [display, setDisplay] = useState('0')
+  const reduceMotion = useReducedMotion()
 
-  // Parse numeric portion + prefix/suffix (e.g. "340%", "12+", "Page 1")
-  const match = value.match(/(\d[\d,.]*)/)
-  const num = match ? parseFloat(match[1].replace(/,/g, '')) : null
-  const prefix = match ? value.slice(0, match.index) : ''
-  const suffix = match ? value.slice((match.index ?? 0) + match[1].length) : ''
-
+  // The final value is rendered on the server, so crawlers, no-JS visitors and
+  // reduced-motion users always see the real number. When the stat scrolls
+  // into view the text is animated up to that value by writing to the DOM
+  // node directly, which avoids a re-render per frame.
   useEffect(() => {
-    if (!inView) return
-    if (num === null) {
-      setDisplay(value)
-      return
-    }
+    const node = ref.current
+    if (!node || !inView || reduceMotion) return
+
+    const match = value.match(/(\d[\d,.]*)/)
+    if (!match) return
+    const raw = match[1].replace(/,/g, '')
+    const num = parseFloat(raw)
+    if (!Number.isFinite(num)) return
+    const decimals = raw.includes('.') ? raw.split('.')[1].length : 0
+    const prefix = value.slice(0, match.index)
+    const suffix = value.slice((match.index ?? 0) + match[1].length)
+
     const controls = animate(0, num, {
       duration: 1.4,
       ease: EASE,
-      onUpdate: (v) => setDisplay(`${prefix}${Math.round(v).toLocaleString()}${suffix}`),
+      onUpdate: (v) => {
+        const formatted = v.toLocaleString(undefined, {
+          minimumFractionDigits: decimals,
+          maximumFractionDigits: decimals,
+        })
+        node.textContent = `${prefix}${formatted}${suffix}`
+      },
+      onComplete: () => {
+        node.textContent = value
+      },
     })
-    return () => controls.stop()
-  }, [inView, num, prefix, suffix, value])
+    return () => {
+      controls.stop()
+      node.textContent = value
+    }
+  }, [inView, reduceMotion, value])
 
   return (
     <span ref={ref} className={className}>
-      {display}
+      {value}
     </span>
   )
 }

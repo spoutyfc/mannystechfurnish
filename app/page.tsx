@@ -759,7 +759,7 @@ export default function Home() {
               </a>
               <p className="mt-2">(925) 278-9059</p>
             </div>
-            <div className="flex gap-10 font-mono text-xs uppercase tracking-widest text-white/55">
+            <div className="flex flex-wrap gap-x-10 gap-y-4 font-mono text-xs uppercase tracking-widest text-white/55">
               <a href="#work" className="hover:text-white">
                 Work
               </a>
@@ -775,6 +775,14 @@ export default function Home() {
               <Link href="/contact" className="hover:text-white">
                 Contact
               </Link>
+              <a
+                href="https://github.com/spoutyfc"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white"
+              >
+                GitHub
+              </a>
             </div>
           </div>
           <Parallax distance={40}>
