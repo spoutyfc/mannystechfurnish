@@ -13,7 +13,9 @@
  */
 export const SHARED_BUCKET = 'shared'
 
-export function getClientIp(headers: Headers, env: NodeJS.ProcessEnv = process.env): string {
+type IpEnv = Readonly<Record<string, string | undefined>>
+
+export function getClientIp(headers: Headers, env: IpEnv = process.env): string {
   if (env.VERCEL) {
     const ip =
       headers.get('x-vercel-forwarded-for')?.split(',')[0]?.trim() || headers.get('x-real-ip')?.trim()
