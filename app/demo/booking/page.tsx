@@ -58,7 +58,7 @@ function buildDays() {
 }
 
 export default function BookingDemoPage() {
-  const days = useMemo(buildDays, [])
+  const days = useMemo(() => buildDays(), [])
   const [dayIndex, setDayIndex] = useState(0)
   const [slot, setSlot] = useState<number | null>(null)
   const [step, setStep] = useState<'pick' | 'details' | 'done'>('pick')

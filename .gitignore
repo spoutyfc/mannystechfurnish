@@ -14,3 +14,12 @@ node_modules
 .next/
 .DS_Store
 .vercel
+
+# Secrets: only the documented example file is tracked
+.env
+.env.*
+!.env.example
+
+# Build and test artefacts
+*.tsbuildinfo
+coverage/
