@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { X, Send, Loader2, CheckCircle2 } from 'lucide-react'
 
@@ -26,7 +26,14 @@ export function ComposeEmail({
   const [error, setError] = useState<string | null>(null)
   const [sent, setSent] = useState(false)
 
-  useEffect(() => {
+  // Reset the form whenever the dialog opens or its prefill changes. Adjusting
+  // state during render (instead of in an effect) avoids a second render pass.
+  const [synced, setSynced] = useState<{ open: boolean; prefill: typeof prefill }>({
+    open: false,
+    prefill: undefined,
+  })
+  if (synced.open !== open || synced.prefill !== prefill) {
+    setSynced({ open, prefill })
     if (open) {
       setTo(prefill?.to || '')
       setSubject(prefill?.subject || '')
@@ -35,7 +42,7 @@ export function ComposeEmail({
       setError(null)
       setSent(false)
     }
-  }, [open, prefill])
+  }
 
   if (!open) return null
 

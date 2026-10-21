@@ -10,6 +10,8 @@ export function Preloader() {
   const [done, setDone] = useState(false)
   const [count, setCount] = useState(0)
   const reduce = useReducedMotion()
+  // Reduced motion skips the count-up and shows the finished value.
+  const shown = reduce ? 100 : count
 
   // Lock scroll while the intro plays.
   useEffect(() => {
@@ -24,7 +26,6 @@ export function Preloader() {
   // Animate the percentage counter from 0 -> 100.
   useEffect(() => {
     if (reduce) {
-      setCount(100)
       const t = setTimeout(() => setDone(true), 300)
       return () => clearTimeout(t)
     }
@@ -79,7 +80,7 @@ export function Preloader() {
               transition={{ duration: 0.7, ease: EASE }}
               className="block font-display text-[22vw] font-extrabold leading-none tracking-tighter text-white md:text-[14rem]"
             >
-              {count}
+              {shown}
               <span className="text-[hsl(var(--accent))] text-fuchsia-500">%</span>
             </motion.span>
           </div>
@@ -88,7 +89,7 @@ export function Preloader() {
           <div className="mt-2 h-px w-[60vw] max-w-md overflow-hidden bg-white/10">
             <motion.div
               className="h-full bg-fuchsia-500"
-              style={{ width: `${count}%` }}
+              style={{ width: `${shown}%` }}
             />
           </div>
 
