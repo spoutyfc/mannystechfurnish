@@ -1,7 +1,9 @@
 import { pgTable, text, timestamp, boolean, integer, varchar, serial } from 'drizzle-orm/pg-core'
 
-// --- Better Auth required tables -------------------------------------------
-// Column names are camelCase to match Better Auth's defaults. Do not rename.
+// --- Identity tables --------------------------------------------------------
+// Created by the original Better Auth setup, which has since been removed. They
+// stay because the live database has them and contact_inquiries.userId points at
+// a fixed system row in "user". Column names are camelCase; do not rename.
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
