@@ -1,154 +1,142 @@
-# Manny's Tech Furnish - SaaS Platform
+# Manny's Tech Furnish
 
-A premium, modern tech services platform built with Next.js 16, Neon Postgres, Better Auth, Framer Motion, and Stripe integration.
+The production site and back office for my web development studio: **[mannystechfurnish.com](https://mannystechfurnish.com)**.
 
-## Features
+It does three jobs. It markets the studio, it captures leads through a bot-protected contact form, and it gets clients paid up through per-client Stripe checkout links that I create from a private admin dashboard.
 
-### Public Site
-- **Landing Page**: Beautiful hero section with glassmorphism design and smooth animations
-- **Portfolio Page**: Showcase completed projects with technologies and links
-- **Services Page**: Display service offerings with flexible pricing options
-- **Contact Page**: Professional inquiry form with real-time submission
-- **Navigation**: Responsive navbar with links throughout the site
+![Home page at 1440px](docs/screenshots/home-desktop.png)
 
-### Admin Dashboard
-- **Authentication**: Email/password based with Better Auth (Better than other solutions built-in)
-- **Portfolio Management**: Full CRUD for projects with images, descriptions, and technologies
-- **Services Management**: Manage service offerings with pricing types and icons
-- **Inquiry Tracking**: View, categorize, and manage client inquiries in real-time
-- **Settings**: Configure site settings and Stripe integration details
+<p align="center"><img src="docs/screenshots/home-mobile.png" alt="Home page at 390px" width="260"></p>
 
-### Technical Stack
-- **Frontend**: Next.js 16 (App Router), React 19, Framer Motion, GSAP
-- **Styling**: Tailwind CSS v4, shadcn/ui components
-- **Authentication**: Better Auth with Neon Postgres
-- **Database**: Neon Postgres with Drizzle ORM
-- **API**: RESTful routes for public portfolio/services data
-- **Animations**: Framer Motion for page transitions and micro-interactions
+[![CI](https://github.com/spoutyfc/mannystechfurnish/actions/workflows/ci.yml/badge.svg)](https://github.com/spoutyfc/mannystechfurnish/actions/workflows/ci.yml)
 
-## Installation
+## Stack
 
-### Prerequisites
-- Node.js 18+
-- pnpm (recommended)
-- Neon database URL
-- BETTER_AUTH_SECRET (generate with `openssl rand -base64 32`)
+| Layer | Choice |
+|---|---|
+| Framework | Next.js 16 (App Router, server actions, route handlers), React 19, TypeScript |
+| Data | Neon Postgres with Drizzle ORM (`lib/db/schema.ts`) |
+| Auth | HMAC-signed admin session cookie (`lib/admin-auth.ts`) and bcrypt password hashes |
+| Payments | Stripe Checkout Sessions for client invoices, and Stripe Payment Links for the public pricing table |
+| Email | Resend, with escaped HTML templates (`lib/email.ts`) |
+| Abuse controls | Cloudflare Turnstile, Upstash Redis sliding-window rate limits, and a honeypot field |
+| UI | Tailwind CSS v4, Framer Motion, GSAP, Lenis |
+| Quality | Vitest, ESLint 9 (next/core-web-vitals and typescript), `tsc --noEmit`, and GitHub Actions on Ubuntu |
+| Runtime | Vercel in production. A multi-stage Docker image (Next standalone output, non-root) is also included |
 
-### Setup
+## What it does
 
-1. **Clone and install**:
+**Public site**
+- `/` is the marketing page. It has the work, services, pricing (Stripe Payment Links), paid add-ons and an FAQ.
+- `/contact` is an inquiry form. The server validates the input, checks it with Turnstile and rate-limits it, then stores it in Postgres and emails both me and the sender.
+- `/pay/[slug]` is a personal invoice page for one client. The price always comes from the plan stored on the server.
+- `/demo/booking` is a working demo of the booking add-on.
+
+**Admin** (`/admin`, gated in middleware and on every handler)
+- An inbox of contact submissions, where each one can be marked new, read or resolved, or deleted.
+- A composer that sends branded emails to a client through Resend.
+- `/admin/clients` lets me create a client on a plan, copy their pay link, mark a payment and see totals collected.
+- Password change, which re-verifies the current password.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  V[Visitor] -->|POST /api/public/contact| C[Contact route]
+  C --> T[Turnstile verify]
+  C --> R[Upstash rate limit]
+  C --> DB[(Neon Postgres)]
+  C --> E[Resend]
+
+  A[Admin] -->|signed cookie| MW[middleware.ts]
+  MW --> AD[/admin pages/]
+  AD -->|server actions + route handlers re-check the cookie| DB
+
+  CL[Client] -->|/pay/slug| P[createClientCheckoutSession]
+  P -->|price ids from lib/plans.ts| S[Stripe Checkout]
+  S -->|signed webhook| W[/api/webhooks/stripe/]
+  W --> DB
+```
+
+### Payment flow
+
+1. In the admin dashboard I create a client and pick a plan (`option1` or `option2`). The server then generates an unguessable slug.
+2. The client opens `/pay/<slug>`. That page reads only the public fields it needs: name, company, plan and whether it is paid.
+3. **Pay** calls a server action. The action validates the slug, refuses if the invoice is already paid, and builds the Stripe line items from stored price ids with `lib/checkout.ts`. The browser never sends an amount.
+4. Stripe calls `/api/webhooks/stripe`. The route verifies the signature, then applies the event through `lib/payment-status.ts`. A paid client is never downgraded by a late "expired" or "failed" event, and only the session currently on record can mark a client failed. If the database write fails, the route returns 500 so that Stripe retries.
+
+### Data model (main tables)
+
+| Table | Purpose |
+|---|---|
+| `clients` | Invoice recipients: slug, contact details, plan, payment status, Stripe customer, session and subscription ids |
+| `contact_inquiries` | Contact form submissions with a status of `new`, `read` or `resolved` |
+| `admin_users` | Admin email and bcrypt hash. It is managed with raw parameterized SQL and is not in the Drizzle schema |
+| `user`, `session`, `account`, `verification` | Better Auth tables. Public inquiries are attached to a fixed system user |
+
+## Security notes
+
+- **Server-side validation.** Every public input and every admin mutation is parsed with zod (`lib/validation.ts`) before any database, Stripe or email call.
+- **Admin sessions.** The cookie holds `email.expiry.HMAC-SHA256` and is verified in constant time with Web Crypto, which works in both Edge middleware and Node. It is `httpOnly` and `secure`, and `SameSite=Lax` in production. If no secret is configured, verification throws instead of letting the request through.
+- **Defense in depth.** Middleware guards `/admin/*`, and each admin route handler and server action checks the session again on its own.
+- **Bootstrap endpoint.** `/api/admin-setup` returns 404 unless `ADMIN_SETUP_SECRET` is set. It compares the secret in constant time and requires a password of at least 12 characters.
+- **Login hardening.** Admin login is rate-limited per IP, and bcrypt runs even for unknown emails so response timing does not reveal which accounts exist.
+- **Queries.** All SQL goes through Drizzle or tagged `sql` templates, which are parameterized.
+- **Email.** Every value from the user is HTML-escaped before it goes into a template.
+
+## Local setup
+
+Requirements: Node 20.9 or newer, pnpm 10 (`corepack enable`), and a Postgres database such as Neon.
+
 ```bash
-git clone <repo>
-cd manny-tech-furnish
+corepack enable
 pnpm install
+cp .env.example .env.local   # fill in values; names are documented in the file
+pnpm dev                     # http://localhost:3000
 ```
 
-2. **Environment variables** (`.env.local`):
-```
-DATABASE_URL=postgresql://user:password@host/database
-BETTER_AUTH_SECRET=your-generated-secret
-```
+The site runs without Turnstile and Upstash configured, because those checks are skipped when their keys are absent. Stripe, Resend and the database are only needed for the flows that use them.
 
-3. **Run development server**:
+To create the first admin, set `ADMIN_SETUP_SECRET` and send a POST to `/api/admin-setup` with the `x-setup-secret` header and an `{ "email", "password" }` body. Unset the secret afterwards.
+
+## Checks
+
 ```bash
-pnpm dev
+pnpm typecheck   # tsc --noEmit
+pnpm lint        # eslint .
+pnpm test        # vitest run
+pnpm build       # next build (standalone output)
 ```
 
-4. **Open browser**:
-- Public site: http://localhost:3000
-- Sign up: http://localhost:3000/sign-up
-- Admin dashboard: http://localhost:3000/dashboard
+The tests (`lib/__tests__`, `app/__tests__`) cover:
+- validation boundaries
+- checkout pricing, including rejection of unknown plans
+- webhook status transitions and retry behaviour
+- forgery, expiry and missing-secret cases for the admin token
+- unauthenticated calls to every admin route and server action
 
-## Key Pages
+CI (`.github/workflows/ci.yml`) runs all four checks on `ubuntu-latest`. It then builds the Docker image and smoke-tests the container's `/api/health` endpoint.
 
-### Public Routes
-- `/` - Landing page with hero, features, CTA
-- `/portfolio` - Portfolio grid of projects
-- `/services` - Service offerings
-- `/contact` - Contact form
+## Docker
 
-### Auth Routes
-- `/sign-in` - Email/password login
-- `/sign-up` - Registration
-- `/dashboard` - Protected overview page
+```bash
+docker build -t mannystechfurnish .
+docker run --env-file .env -p 3000:3000 mannystechfurnish
+```
 
-### Admin Routes (Protected)
-- `/dashboard/portfolio` - Manage portfolio projects
-- `/dashboard/services` - Manage services
-- `/dashboard/inquiries` - View client inquiries
-- `/dashboard/settings` - Site configuration
+The build has three stages: `deps`, then `build`, then a slim runtime. The runtime stage runs as the unprivileged `node` user and has a `HEALTHCHECK` against `/api/health`. Secrets are injected at runtime, and only `NEXT_PUBLIC_*` values are build arguments.
 
-### Public APIs
-- `GET /api/public/portfolio` - Fetch projects
-- `GET /api/public/services` - Fetch services
-- `POST /api/public/contact` - Submit contact inquiry
+## Project layout
 
-## Database Schema
+```
+app/                 routes, server actions (app/actions), API route handlers (app/api)
+components/site/     marketing page sections and motion primitives
+components/admin/    admin dashboard widgets
+lib/                 db, auth, Stripe, email, validation, pricing and status logic
+scripts/             one-off Stripe Payment Link setup
+docs/screenshots/    images used in this README
+```
 
-### Better Auth Tables
-- `user` - User accounts with email verification
-- `session` - Active sessions
-- `account` - OAuth/provider accounts
-- `verification` - Email verification tokens
+## Author
 
-### App Tables
-- `portfolio_projects` - Portfolio projects with images and technologies
-- `services` - Service offerings with pricing types
-- `testimonials` - Client testimonials
-- `contact_inquiries` - Client inquiries from contact form
-- `orders` - Customer orders (for Stripe integration)
-- `subscriptions` - Recurring subscriptions
-- `site_settings` - Site configuration and Stripe keys
-
-## Security Features
-
-- Session-based authentication with Better Auth
-- Per-user data scoping (getUserId() pattern)
-- Password hashing by Better Auth
-- CSRF protection
-- Secure cookies with proper SameSite attributes
-- Server-side data validation with Zod
-
-## Next Steps for Deployment
-
-1. **Stripe Integration**:
-   - Add Stripe API keys to `.env.local`
-   - Create Stripe products and prices
-   - Map services to Stripe price IDs in admin settings
-
-2. **Email Notifications**:
-   - Add email service (SendGrid, Resend, etc.)
-   - Send inquiry confirmations to admins
-   - Send order receipts to customers
-
-3. **Deployment**:
-   - Connect GitHub repo to Vercel
-   - Set environment variables in Vercel dashboard
-   - Deploy with `vercel deploy`
-
-4. **Custom Domain**:
-   - Update BETTER_AUTH_URL if using custom domain
-   - Configure DNS records with Vercel
-
-## Performance Notes
-
-- Uses Turbopack for fast builds
-- Optimized images with Next.js Image component
-- Static generation where possible
-- Smooth animations with Framer Motion GPU acceleration
-- Database queries with proper indexing
-
-## Browser Support
-
-- Chrome/Edge 90+
-- Firefox 89+
-- Safari 14+
-- Mobile browsers (responsive design)
-
-## License
-
-Private - Manny's Tech Furnish
-
-## Support
-
-For issues or questions, contact: contact@example.com
+Built and maintained by Mansoor Arif ([@spoutyfc](https://github.com/spoutyfc)).
