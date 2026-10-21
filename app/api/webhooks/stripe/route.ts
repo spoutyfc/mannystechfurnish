@@ -1,11 +1,15 @@
 import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
-import { eq } from 'drizzle-orm'
+import { and, eq, sql, type SQL } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { clients } from '@/lib/db/schema'
 import { getStripe } from '@/lib/stripe'
-import { nextPaymentStatus, type PaymentEvent } from '@/lib/payment-status'
+import {
+  paymentTransition,
+  type CheckoutPaymentStatus,
+  type PaymentEvent,
+} from '@/lib/payment-status'
 
 /** Metadata clientId is stored as a string; the DB id is a serial integer. */
 function parseClientId(raw: string | undefined | null): number | null {
@@ -14,28 +18,35 @@ function parseClientId(raw: string | undefined | null): number | null {
   return Number.isInteger(n) && n > 0 ? n : null
 }
 
+/**
+ * Apply a payment transition in a single conditional UPDATE, so the guard and
+ * the write are atomic. Concurrent or out-of-order events cannot downgrade a
+ * paid row, because the "not completed" check runs inside the same statement.
+ */
 async function applyStatus(
   clientId: number,
   event: PaymentEvent,
   extra: Partial<typeof clients.$inferInsert> = {},
 ) {
-  const [current] = await db
-    .select({
-      paymentStatus: clients.paymentStatus,
-      stripeCheckoutSessionId: clients.stripeCheckoutSessionId,
-    })
-    .from(clients)
-    .where(eq(clients.id, clientId))
-    .limit(1)
-  if (!current) return
-
-  const status = nextPaymentStatus(current, event)
-  if (status === null) return
+  const t = paymentTransition(event)
+  const conditions: SQL[] = [eq(clients.id, clientId)]
+  if (t.unlessCompleted) {
+    conditions.push(sql`${clients.paymentStatus} IS DISTINCT FROM 'completed'`)
+  }
+  if (t.onlyForSession !== undefined) {
+    conditions.push(eq(clients.stripeCheckoutSessionId, t.onlyForSession))
+  }
 
   await db
     .update(clients)
-    .set({ ...extra, paymentStatus: status, updatedAt: new Date() })
-    .where(eq(clients.id, clientId))
+    .set({ ...extra, paymentStatus: t.status, updatedAt: new Date() })
+    .where(and(...conditions))
+}
+
+function checkoutPaymentStatus(session: Stripe.Checkout.Session): CheckoutPaymentStatus {
+  return session.payment_status === 'paid' || session.payment_status === 'no_payment_required'
+    ? session.payment_status
+    : 'unpaid'
 }
 
 export async function POST(req: Request) {
@@ -59,12 +70,16 @@ export async function POST(req: Request) {
   try {
     switch (event.type) {
       case 'checkout.session.completed': {
-        const session = event.data.object as Stripe.Checkout.Session
+        const session = event.data.object
         const clientId = parseClientId(session.metadata?.clientId)
         if (clientId !== null) {
           await applyStatus(
             clientId,
-            { type: 'checkout.session.completed' },
+            {
+              type: 'checkout.session.completed',
+              sessionId: session.id,
+              paymentStatus: checkoutPaymentStatus(session),
+            },
             {
               stripeCustomerId: (session.customer as string) || null,
               stripeCheckoutSessionId: session.id,
@@ -75,17 +90,31 @@ export async function POST(req: Request) {
         break
       }
 
-      case 'checkout.session.expired': {
-        const session = event.data.object as Stripe.Checkout.Session
+      case 'checkout.session.async_payment_succeeded': {
+        const session = event.data.object
         const clientId = parseClientId(session.metadata?.clientId)
         if (clientId !== null) {
-          await applyStatus(clientId, { type: 'checkout.session.expired', sessionId: session.id })
+          await applyStatus(
+            clientId,
+            { type: 'checkout.session.async_payment_succeeded', sessionId: session.id },
+            { stripeCheckoutSessionId: session.id },
+          )
+        }
+        break
+      }
+
+      case 'checkout.session.async_payment_failed':
+      case 'checkout.session.expired': {
+        const session = event.data.object
+        const clientId = parseClientId(session.metadata?.clientId)
+        if (clientId !== null) {
+          await applyStatus(clientId, { type: event.type, sessionId: session.id })
         }
         break
       }
 
       case 'customer.subscription.created': {
-        const subscription = event.data.object as Stripe.Subscription
+        const subscription = event.data.object
         const clientId = parseClientId(subscription.metadata?.clientId)
         if (clientId !== null) {
           await db
@@ -97,7 +126,7 @@ export async function POST(req: Request) {
       }
 
       case 'payment_intent.payment_failed': {
-        const paymentIntent = event.data.object as Stripe.PaymentIntent
+        const paymentIntent = event.data.object
         const clientId = parseClientId(paymentIntent.metadata?.clientId)
         if (clientId !== null) {
           await applyStatus(clientId, { type: 'payment_intent.payment_failed' })

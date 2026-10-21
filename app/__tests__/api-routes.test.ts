@@ -210,15 +210,75 @@ describe('POST /api/webhooks/stripe', () => {
     errSpy.mockRestore()
   })
 
-  it('returns 500 so Stripe retries when the database update fails', async () => {
+  function mockUpdateChain() {
+    const where = vi.fn().mockResolvedValue(undefined)
+    const set = vi.fn(() => ({ where }))
+    mocks.db.update.mockReturnValue({ set })
+    return { set, where }
+  }
+
+  function signedEvent(type: string, object: Record<string, unknown>) {
     vi.stubEnv('STRIPE_WEBHOOK_SECRET', 'whsec_test')
     mocks.headers.mockResolvedValue(new Headers({ 'stripe-signature': 't=1,v1=ok' }))
-    mocks.constructEvent.mockReturnValue({
-      id: 'evt_1',
-      type: 'checkout.session.completed',
-      data: { object: { id: 'cs_1', metadata: { clientId: '7' }, customer: 'cus_1', subscription: null } },
+    mocks.constructEvent.mockReturnValue({ id: 'evt_1', type, data: { object } })
+  }
+
+  it('applies a paid checkout with one conditional UPDATE and no prior read', async () => {
+    signedEvent('checkout.session.completed', {
+      id: 'cs_1',
+      payment_status: 'paid',
+      metadata: { clientId: '7' },
+      customer: 'cus_1',
+      subscription: null,
     })
-    mocks.db.select.mockImplementation(() => {
+    const { set, where } = mockUpdateChain()
+    const res = await webhookPOST(webhookRequest())
+    expect(res.status).toBe(200)
+    expect(mocks.db.select).not.toHaveBeenCalled()
+    expect(mocks.db.update).toHaveBeenCalledTimes(1)
+    expect(set).toHaveBeenCalledWith(
+      expect.objectContaining({ paymentStatus: 'completed', stripeCheckoutSessionId: 'cs_1' }),
+    )
+    expect(where).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps a delayed-method checkout pending instead of marking it paid', async () => {
+    signedEvent('checkout.session.completed', {
+      id: 'cs_2',
+      payment_status: 'unpaid',
+      metadata: { clientId: '7' },
+      customer: 'cus_1',
+      subscription: null,
+    })
+    const { set } = mockUpdateChain()
+    const res = await webhookPOST(webhookRequest())
+    expect(res.status).toBe(200)
+    expect(set).toHaveBeenCalledWith(expect.objectContaining({ paymentStatus: 'pending' }))
+  })
+
+  it('marks a delayed payment completed when the funds clear', async () => {
+    signedEvent('checkout.session.async_payment_succeeded', { id: 'cs_2', metadata: { clientId: '7' } })
+    const { set } = mockUpdateChain()
+    await webhookPOST(webhookRequest())
+    expect(set).toHaveBeenCalledWith(expect.objectContaining({ paymentStatus: 'completed' }))
+  })
+
+  it('ignores events whose clientId metadata is not a positive integer', async () => {
+    signedEvent('checkout.session.expired', { id: 'cs_3', metadata: { clientId: '7; DROP TABLE clients' } })
+    const res = await webhookPOST(webhookRequest())
+    expect(res.status).toBe(200)
+    expect(mocks.db.update).not.toHaveBeenCalled()
+  })
+
+  it('returns 500 so Stripe retries when the database update fails', async () => {
+    signedEvent('checkout.session.completed', {
+      id: 'cs_1',
+      payment_status: 'paid',
+      metadata: { clientId: '7' },
+      customer: 'cus_1',
+      subscription: null,
+    })
+    mocks.db.update.mockImplementation(() => {
       throw new Error('connection refused')
     })
     const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
