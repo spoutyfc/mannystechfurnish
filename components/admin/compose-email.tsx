@@ -91,8 +91,9 @@ export function ComposeEmail({
         ) : (
           <form onSubmit={submit} className="space-y-4 px-5 py-5">
             <div>
-              <label className="mb-1 block text-xs uppercase tracking-wider text-neutral-500">To</label>
+              <label htmlFor="compose-to" className="mb-1 block text-xs uppercase tracking-wider text-neutral-500">To</label>
               <input
+                id="compose-to"
                 type="email"
                 required
                 value={to}
@@ -102,8 +103,9 @@ export function ComposeEmail({
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs uppercase tracking-wider text-neutral-500">Subject</label>
+              <label htmlFor="compose-subject" className="mb-1 block text-xs uppercase tracking-wider text-neutral-500">Subject</label>
               <input
+                id="compose-subject"
                 type="text"
                 required
                 maxLength={200}
@@ -114,10 +116,11 @@ export function ComposeEmail({
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs uppercase tracking-wider text-neutral-500">
+              <label htmlFor="compose-heading" className="mb-1 block text-xs uppercase tracking-wider text-neutral-500">
                 Headline <span className="text-neutral-600">(optional, shown large)</span>
               </label>
               <input
+                id="compose-heading"
                 type="text"
                 maxLength={120}
                 value={heading}
@@ -127,8 +130,9 @@ export function ComposeEmail({
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs uppercase tracking-wider text-neutral-500">Message</label>
+              <label htmlFor="compose-message" className="mb-1 block text-xs uppercase tracking-wider text-neutral-500">Message</label>
               <textarea
+                id="compose-message"
                 required
                 rows={6}
                 maxLength={5000}

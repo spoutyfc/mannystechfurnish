@@ -63,14 +63,15 @@ export default function AdminLoginPage() {
             )}
 
             <div>
-              <label className="mb-2 block font-mono text-xs uppercase tracking-widest text-white/50">
+              <label htmlFor="admin-email" className="mb-2 block font-mono text-xs uppercase tracking-widest text-white/50">
                 Email
               </label>
               <input
+                id="admin-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@mannystechfurnish.com"
+                placeholder="you@example.com"
                 autoComplete="username"
                 className="w-full rounded-lg border border-white/15 bg-black px-4 py-3 text-white placeholder:text-white/30 focus:border-accent focus:outline-none"
                 required
@@ -78,10 +79,11 @@ export default function AdminLoginPage() {
             </div>
 
             <div>
-              <label className="mb-2 block font-mono text-xs uppercase tracking-widest text-white/50">
+              <label htmlFor="admin-password" className="mb-2 block font-mono text-xs uppercase tracking-widest text-white/50">
                 Password
               </label>
               <input
+                id="admin-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
