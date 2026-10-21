@@ -22,7 +22,7 @@ const reasons = [
   {
     icon: Gauge,
     title: 'No Bloat',
-    desc: 'Hand-built, lightweight sites that load fast and rank well. No page-builder junk.',
+    desc: 'Custom, lightweight sites that load fast and are built for search. No page-builder bloat.',
   },
 ]
 

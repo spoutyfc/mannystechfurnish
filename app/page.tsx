@@ -9,7 +9,6 @@ import { SmoothScroll } from '@/components/site/smooth-scroll'
 import { ScrollProgress } from '@/components/site/scroll-progress'
 import { VideoBackdrop } from '@/components/site/video-backdrop'
 import { HeroOrb } from '@/components/site/hero-orb'
-import { Testimonials } from '@/components/site/testimonials'
 import { WhyChooseMe } from '@/components/site/why-choose-me'
 import { FAQ } from '@/components/site/faq'
 import { ScrollToTop } from '@/components/site/scroll-to-top'
@@ -23,7 +22,7 @@ import {
   ClipReveal,
   Tilt,
 } from '@/components/site/motion'
-import { PAYMENT_LINKS, ADD_ONS } from '@/lib/plans'
+import { PAYMENT_LINKS, PLAN_DETAILS, ADD_ONS } from '@/lib/plans'
 import { motion } from 'framer-motion'
 import {
   ArrowUpRight,
@@ -40,21 +39,14 @@ import {
   ShieldCheck,
 } from 'lucide-react'
 
-const stats = [
-  { value: '12+', label: 'Projects shipped' },
-  { value: '340%', label: 'Avg traffic lift' },
-  { value: '100%', label: 'Client satisfaction' },
-  { value: 'Page 1', label: 'Google rankings' },
-]
-
 const clients = [
   {
     index: '01',
     tag: 'Structural Engineering',
     name: 'Oaktown Engineers',
     description:
-      'A licensed structural engineering firm serving the Bay Area for 10+ years. We rebuilt their digital presence to match their reputation.',
-    points: ['500+ projects showcased', 'Ranks #1 for "structural engineer Bay Area"', '3x more consults'],
+      'A licensed structural engineering firm in Oakland. We rebuilt their site around an admin-run project library and data-driven local service pages.',
+    points: ['Admin-managed project CMS', '10 service and 6 city pages', 'Search Console and GA4 wired in'],
     url: 'https://oaktownengineers.com',
     image: '/images/work-oaktown.png',
   },
@@ -63,8 +55,8 @@ const clients = [
     tag: 'Auto Dealership',
     name: 'United Flex Auto',
     description:
-      'A premium pre-owned dealership that needed a modern site to showcase inventory and drive online leads at scale.',
-    points: ['Full inventory system', 'Online test-drive booking', '200% more inquiries'],
+      'A pre-owned dealership in Pleasant Hill that needed a modern site to show live inventory and take leads online.',
+    points: ['Full inventory system', 'Online test-drive booking', 'VIN-decoding admin editor'],
     url: 'https://unitedflexauto.com',
     image: '/images/work-unitedflex.png',
   },
@@ -73,8 +65,8 @@ const clients = [
     tag: 'Geotechnical Engineering',
     name: 'Bear Geotechnical',
     description:
-      'A licensed geotechnical firm serving 12 Bay Area counties. We built a cinematic, trust-first site with deep local SEO to win high-value engineering leads.',
-    points: ['Ranks across 12 counties', 'Cinematic hero + motion', 'Dedicated city landing pages'],
+      'A Bay Area foundation and geotechnical engineering firm. We built a cinematic, trust-first site with service and city pages generated from structured data.',
+    points: ['Data-driven service and city pages', 'Cinematic hero + motion', 'Admin inquiry inbox with export'],
     url: 'https://beargeotech.com',
     image: '/images/work-bear.png',
   },
@@ -83,11 +75,20 @@ const clients = [
     tag: 'Design-Build Remodeling',
     name: 'Sequoia Remodeling',
     description:
-      'A Bay Area design-build remodeler with two divisions. We shipped a bold, editorial site with cinematic video storytelling that turns browsers into booked consultations.',
-    points: ['4.9-star social proof', 'Cinematic video sections', 'Consultation booking flow'],
+      'A Bay Area design-build remodeler with two divisions. We shipped a bold, editorial site with cinematic video storytelling and a consultation booking flow.',
+    points: ['Cinematic video sections', 'Consultation booking flow'],
     url: 'https://sequoiaremodel.com',
     image: '/images/work-sequoia.png',
   },
+]
+
+// Every stat is derived from data on this page or from the published price list,
+// so nothing here can drift from what the site actually offers.
+const stats = [
+  { value: String(clients.length), label: 'Client sites in the work below' },
+  { value: PLAN_DETAILS.option1.price, label: 'Published one-time build price' },
+  { value: '$0', label: 'Monthly fees on the one-time plan' },
+  { value: '100%', label: 'Code ownership handed to you' },
 ]
 
 const services = [
@@ -239,8 +240,8 @@ export default function Home() {
           <div className="mt-12 grid items-end gap-10 border-t border-white/15 pt-10 md:grid-cols-[1.4fr_1fr]">
             <FadeUp index={1}>
               <p className="max-w-2xl text-pretty text-xl leading-snug text-white md:text-2xl">
-                Premium, hand-built websites that rank on Google and turn visitors into paying
-                customers. No templates. No fluff. Delivered on time.
+                Custom websites built to rank on Google and turn visitors into paying
+                customers. Built for your business, and the code is yours.
               </p>
             </FadeUp>
             <FadeUp index={2} className="flex flex-col gap-3 sm:flex-row md:justify-end">
@@ -385,7 +386,6 @@ export default function Home() {
       </section>
 
       {/* ---------------- TESTIMONIALS ---------------- */}
-      <Testimonials />
 
       {/* ---------------- SERVICES ---------------- */}
       <section id="services" className="border-b border-white/15 px-5 py-20 md:px-10 md:py-28">
