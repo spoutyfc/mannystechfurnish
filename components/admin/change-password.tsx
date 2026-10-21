@@ -29,8 +29,8 @@ export function ChangePassword({ open, onClose }: { open: boolean; onClose: () =
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    if (next.length < 8) {
-      setError('New password must be at least 8 characters')
+    if (next.length < 12) {
+      setError('New password must be at least 12 characters')
       return
     }
     if (next !== confirm) {

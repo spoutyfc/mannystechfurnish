@@ -1,55 +1,78 @@
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 
-// Uses the Upstash/Vercel KV env vars already present in the project.
+export type RateLimitResult = { success: boolean; remaining: number }
+
+type Policy = { prefix: string; limit: number; windowMs: number }
+
+const CONTACT: Policy = { prefix: 'ratelimit:contact', limit: 5, windowMs: 10 * 60_000 }
+const LOGIN: Policy = { prefix: 'ratelimit:adminlogin', limit: 8, windowMs: 10 * 60_000 }
+
+/**
+ * Per-process sliding-window limiter. It is the fallback when Upstash is not
+ * configured or is unreachable, so an outage degrades the limit to one instance
+ * instead of switching it off. On serverless each warm instance has its own
+ * window, which is weaker than Redis but never "unlimited".
+ */
+export class MemoryRateLimiter {
+  private hits = new Map<string, number[]>()
+
+  constructor(
+    private readonly limit: number,
+    private readonly windowMs: number,
+    private readonly now: () => number = Date.now,
+  ) {}
+
+  check(key: string): RateLimitResult {
+    const t = this.now()
+    const recent = (this.hits.get(key) ?? []).filter((at) => t - at < this.windowMs)
+    if (recent.length >= this.limit) {
+      this.hits.set(key, recent)
+      return { success: false, remaining: 0 }
+    }
+    recent.push(t)
+    this.hits.set(key, recent)
+    if (this.hits.size > 10_000) this.prune(t)
+    return { success: true, remaining: this.limit - recent.length }
+  }
+
+  private prune(t: number) {
+    for (const [key, times] of this.hits) {
+      if (times.every((at) => t - at >= this.windowMs)) this.hits.delete(key)
+    }
+  }
+}
+
+// Uses the Upstash/Vercel KV env vars when present.
 const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL
 const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN
-
 const redis = url && token ? new Redis({ url, token }) : null
 
-// 5 submissions per 10 minutes per IP.
-const limiter = redis
-  ? new Ratelimit({
-      redis,
-      limiter: Ratelimit.slidingWindow(5, '10 m'),
-      prefix: 'ratelimit:contact',
-      analytics: false,
-    })
-  : null
+function makeLimiter(policy: Policy) {
+  const memory = new MemoryRateLimiter(policy.limit, policy.windowMs)
+  const remote = redis
+    ? new Ratelimit({
+        redis,
+        limiter: Ratelimit.slidingWindow(policy.limit, `${policy.windowMs / 60_000} m`),
+        prefix: policy.prefix,
+        analytics: false,
+      })
+    : null
 
-export async function checkContactRateLimit(identifier: string) {
-  // If Redis isn't configured, allow the request (fail open) so the form still works.
-  if (!limiter) return { success: true, remaining: 999 }
-  try {
-    const { success, remaining } = await limiter.limit(identifier)
-    return { success, remaining }
-  } catch (err) {
-    // Redis unreachable/misconfigured — never block a real user on infra failure.
-    console.error('[v0] Contact rate limit unavailable, failing open:', err)
-    return { success: true, remaining: 999 }
+  return async function check(identifier: string): Promise<RateLimitResult> {
+    if (!remote) return memory.check(identifier)
+    try {
+      const { success, remaining } = await remote.limit(identifier)
+      return { success, remaining }
+    } catch (err) {
+      console.error(`[rate-limit] ${policy.prefix}: Redis unavailable, using in-process limit:`, err)
+      return memory.check(identifier)
+    }
   }
 }
 
-// Stricter limiter for admin login: 8 attempts per 10 minutes per IP to slow
-// brute-force / credential-stuffing attacks.
-const loginLimiter = redis
-  ? new Ratelimit({
-      redis,
-      limiter: Ratelimit.slidingWindow(8, '10 m'),
-      prefix: 'ratelimit:adminlogin',
-      analytics: false,
-    })
-  : null
+/** Contact form: 5 submissions per 10 minutes per client. */
+export const checkContactRateLimit = makeLimiter(CONTACT)
 
-export async function checkLoginRateLimit(identifier: string) {
-  if (!loginLimiter) return { success: true, remaining: 999 }
-  try {
-    const { success, remaining } = await loginLimiter.limit(identifier)
-    return { success, remaining }
-  } catch (err) {
-    // Redis unreachable/misconfigured — fail open so a dead Redis can never
-    // lock the admin out of their own dashboard.
-    console.error('[v0] Login rate limit unavailable, failing open:', err)
-    return { success: true, remaining: 999 }
-  }
-}
+/** Admin login: 8 attempts per 10 minutes per client, to slow credential stuffing. */
+export const checkLoginRateLimit = makeLimiter(LOGIN)

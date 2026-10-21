@@ -66,3 +66,19 @@ export const adminSetupSchema = z.object({
   email,
   password: z.string().min(12).max(200),
 })
+
+/**
+ * New admin passwords. bcrypt only reads the first 72 bytes, and the upper bound
+ * keeps an attacker from making the server hash megabyte-sized strings.
+ */
+export const newPasswordSchema = z.string().min(12).max(200)
+
+export const loginSchema = z.object({
+  email,
+  password: z.string().min(1).max(200),
+})
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1).max(200),
+  newPassword: newPasswordSchema,
+})

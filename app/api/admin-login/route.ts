@@ -3,16 +3,17 @@ import { db } from '@/lib/db'
 import { sql } from 'drizzle-orm'
 import bcrypt from 'bcryptjs'
 import { createSessionToken, ADMIN_COOKIE, SESSION_MAX_AGE } from '@/lib/admin-auth'
+import { getDummyHash } from '@/lib/passwords'
 import { checkLoginRateLimit } from '@/lib/rate-limit'
 import { getClientIp } from '@/lib/request'
+import { loginSchema } from '@/lib/validation'
 
 type AdminRow = { email: string; password_hash?: string; passwordHash?: string }
 
 export async function POST(req: NextRequest) {
   try {
-    // Rate limit login attempts per IP to stop brute-force / credential stuffing.
-    const ip = getClientIp(req.headers)
-    const { success: allowed } = await checkLoginRateLimit(ip)
+    // Rate limit login attempts per client to slow brute-force / credential stuffing.
+    const { success: allowed } = await checkLoginRateLimit(getClientIp(req.headers))
     if (!allowed) {
       return NextResponse.json(
         { error: 'Too many login attempts. Please wait a few minutes and try again.' },
@@ -20,26 +21,19 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const body = await req.json()
-    const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : ''
-    const password = typeof body?.password === 'string' ? body.password : ''
-
-    if (!email || !password) {
+    const parsed = loginSchema.safeParse(await req.json().catch(() => null))
+    if (!parsed.success) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 })
     }
+    const { email, password } = parsed.data
 
-    const result = await db.execute(
-      sql`SELECT * FROM admin_users WHERE lower(email) = ${email}`,
-    )
+    const result = await db.execute(sql`SELECT * FROM admin_users WHERE lower(email) = ${email}`)
     const rows = (result as unknown as { rows?: AdminRow[] }).rows ?? (result as unknown as AdminRow[])
     const adminUser = rows[0]
 
-    // Always run a bcrypt compare (even when user not found) to avoid leaking
-    // which emails exist via response timing.
-    const storedHash =
-      adminUser?.password_hash ||
-      adminUser?.passwordHash ||
-      '$2a$10$invalidinvalidinvalidinvalidinvalidinvalidinvalidinva'
+    // Always run a bcrypt compare at the stored-hash cost, even for unknown emails,
+    // so response timing does not reveal which accounts exist.
+    const storedHash = adminUser?.password_hash || adminUser?.passwordHash || (await getDummyHash())
     const passwordMatch = await bcrypt.compare(password, storedHash)
 
     if (!adminUser || !passwordMatch) {
@@ -52,16 +46,15 @@ export async function POST(req: NextRequest) {
     response.cookies.set(ADMIN_COOKIE, token, {
       httpOnly: true,
       secure: true,
-      // Lax blocks cross-site POSTs carrying the admin cookie (CSRF). The v0
-      // preview iframe needs 'none', so relax it only outside production.
-      sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'none',
+      // Lax blocks cross-site POSTs carrying the admin cookie (CSRF).
+      sameSite: 'lax',
       maxAge: SESSION_MAX_AGE,
       path: '/',
     })
 
     return response
   } catch (error) {
-    console.error('[v0] Login error:', error)
+    console.error('[admin-login] failed:', error)
     return NextResponse.json({ error: 'Login failed' }, { status: 500 })
   }
 }

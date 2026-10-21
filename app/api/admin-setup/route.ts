@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { timingSafeEqual } from 'node:crypto'
 import { db } from '@/lib/db'
 import { sql } from 'drizzle-orm'
-import bcrypt from 'bcryptjs'
+import { hashPassword } from '@/lib/passwords'
 import { adminSetupSchema } from '@/lib/validation'
 
 /** Constant-time comparison of the setup secret header. */
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const { email, password } = parsed.data
-    const passwordHash = await bcrypt.hash(password, 12)
+    const passwordHash = await hashPassword(password)
 
     await db.execute(
       sql`INSERT INTO admin_users (email, password_hash) VALUES (${email}, ${passwordHash})
