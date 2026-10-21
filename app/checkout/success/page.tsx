@@ -1,11 +1,7 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
-export default function CheckoutSuccess({
-  searchParams,
-}: {
-  searchParams: Promise<{ session_id?: string }>
-}) {
+export default function CheckoutSuccess() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-neutral-950 via-neutral-900 to-neutral-950 flex items-center justify-center px-4">
       <div className="max-w-md w-full text-center">
@@ -22,12 +18,6 @@ export default function CheckoutSuccess({
           Thank you for choosing Manny&apos;s Tech Furnish. We&apos;ve received your payment and will be in touch soon with next steps.
         </p>
 
-        <div className="bg-neutral-900/50 border border-neutral-800 rounded-lg p-6 mb-8">
-          <p className="text-sm text-neutral-500 mb-2">Session ID</p>
-          <p className="text-white font-mono text-sm break-all">
-            {/* @ts-ignore */}
-          </p>
-        </div>
 
         <div className="space-y-3">
           <p className="text-neutral-400">

@@ -24,19 +24,17 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
     setError(null)
     setLoading(true)
 
-    console.log('[v0] Attempting', isSignUp ? 'sign-up' : 'sign-in', 'for:', email)
 
     try {
       const result = isSignUp
         ? await authClient.signUp.email({ email, password, name })
         : await authClient.signIn.email({ email, password })
 
-      console.log('[v0] Auth result:', JSON.stringify(result, null, 2))
 
       setLoading(false)
 
       if (result.error) {
-        const errorMsg = result.error.message || result.error.code || JSON.stringify(result.error)
+        const errorMsg = result.error.message || result.error.statusText || 'Authentication failed'
         console.error('[v0] Auth error:', errorMsg)
         setError(errorMsg)
         return
@@ -48,7 +46,6 @@ export function AuthForm({ mode }: { mode: 'sign-in' | 'sign-up' }) {
         return
       }
 
-      console.log('[v0] Auth successful, redirecting...')
       router.push('/admin/clients')
       router.refresh()
     } catch (err) {

@@ -4,14 +4,14 @@ import { sql } from 'drizzle-orm'
 import bcrypt from 'bcryptjs'
 import { createSessionToken, ADMIN_COOKIE, SESSION_MAX_AGE } from '@/lib/admin-auth'
 import { checkLoginRateLimit } from '@/lib/rate-limit'
+import { getClientIp } from '@/lib/request'
+
+type AdminRow = { email: string; password_hash?: string; passwordHash?: string }
 
 export async function POST(req: NextRequest) {
   try {
     // Rate limit login attempts per IP to stop brute-force / credential stuffing.
-    const ip =
-      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-      req.headers.get('x-real-ip') ||
-      'anonymous'
+    const ip = getClientIp(req.headers)
     const { success: allowed } = await checkLoginRateLimit(ip)
     if (!allowed) {
       return NextResponse.json(
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     const result = await db.execute(
       sql`SELECT * FROM admin_users WHERE lower(email) = ${email}`,
     )
-    const rows = (result as any).rows || result
+    const rows = (result as unknown as { rows?: AdminRow[] }).rows ?? (result as unknown as AdminRow[])
     const adminUser = rows[0]
 
     // Always run a bcrypt compare (even when user not found) to avoid leaking
@@ -52,7 +52,9 @@ export async function POST(req: NextRequest) {
     response.cookies.set(ADMIN_COOKIE, token, {
       httpOnly: true,
       secure: true,
-      sameSite: 'none', // Required for cross-site contexts like the v0 preview iframe
+      // Lax blocks cross-site POSTs carrying the admin cookie (CSRF). The v0
+      // preview iframe needs 'none', so relax it only outside production.
+      sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'none',
       maxAge: SESSION_MAX_AGE,
       path: '/',
     })

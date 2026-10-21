@@ -1,8 +1,8 @@
 import { db } from '@/lib/db'
 import { services } from '@/lib/db/schema'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const servicesList = await db
       .select()

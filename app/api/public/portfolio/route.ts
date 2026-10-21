@@ -1,9 +1,8 @@
 import { db } from '@/lib/db'
-import { portfolioProjects, services } from '@/lib/db/schema'
-import { eq } from 'drizzle-orm'
-import { NextRequest, NextResponse } from 'next/server'
+import { portfolioProjects } from '@/lib/db/schema'
+import { NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // For now, get the first user's portfolio (in a real app, this would be based on domain/subdomain)
     const userProjects = await db
