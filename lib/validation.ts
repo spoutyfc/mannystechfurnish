@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { DISCIPLINES } from '@/lib/site-content'
 
 /**
  * Server-side input schemas. Client-side checks in the forms are a convenience;
@@ -19,12 +20,17 @@ const email = z.string().trim().toLowerCase().email().max(254)
 
 export const planTypeSchema = z.enum(['option1', 'option2'])
 
+
 export const contactSchema = z.object({
   name: z.string().trim().min(1).max(200),
   email,
   phone: optionalText(40),
   subject: z.string().trim().min(1).max(200),
   message: z.string().trim().min(1).max(5000),
+  /** Fit-call details. Optional so older clients of this endpoint keep working. */
+  firm: optionalText(200),
+  website: optionalText(500),
+  discipline: z.enum(DISCIPLINES).optional(),
   /** Honeypot field. Real users never see or fill it. */
   company: z.string().optional(),
   turnstileToken: z.string().max(4096).optional().nullable(),

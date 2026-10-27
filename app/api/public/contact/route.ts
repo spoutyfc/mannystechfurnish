@@ -6,6 +6,7 @@ import { checkContactRateLimit } from '@/lib/rate-limit'
 import { verifyTurnstile } from '@/lib/turnstile'
 import { contactSchema } from '@/lib/validation'
 import { getClientIp } from '@/lib/request'
+import { composeInquiryMessage } from '@/lib/inquiry'
 
 /** Public inquiries belong to a fixed system user (contact_inquiries has a FK to "user"). */
 const SYSTEM_USER_ID = 'system_public_inquiries'
@@ -34,7 +35,8 @@ export async function POST(request: NextRequest) {
         { status: 400 },
       )
     }
-    const { name, email, phone, subject, message, turnstileToken } = parsed.data
+    const { name, email, phone, subject, turnstileToken } = parsed.data
+    const message = composeInquiryMessage(parsed.data)
 
     const ip = getClientIp(request.headers)
 

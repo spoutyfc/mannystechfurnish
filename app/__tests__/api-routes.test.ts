@@ -101,6 +101,34 @@ describe('POST /api/public/contact', () => {
     expect(mocks.db.insert).toHaveBeenCalledTimes(2) // system user + inquiry
     errSpy.mockRestore()
   })
+
+  it('stores and emails fit-call details as part of the message', async () => {
+    const values = vi.fn(() => ({ onConflictDoNothing: vi.fn() }))
+    mocks.db.insert.mockReturnValueOnce({ values }).mockReturnValueOnce({ values })
+    mocks.sendOwnerNotification.mockResolvedValue(undefined)
+    mocks.sendClientConfirmation.mockResolvedValue(undefined)
+    const res = await contactPOST(
+      jsonRequest('http://localhost/api/public/contact', {
+        ...valid,
+        firm: 'Acme Geotech',
+        discipline: 'Geotechnical engineering',
+      }),
+    )
+    expect(res.status).toBe(200)
+    const stored = (values.mock.calls[1] as unknown as [{ message: string }])[0]
+    expect(stored.message).toBe('Firm: Acme Geotech\nDiscipline: Geotechnical engineering\n\nHello')
+    expect(mocks.sendOwnerNotification).toHaveBeenCalledWith(
+      expect.objectContaining({ message: stored.message }),
+    )
+  })
+
+  it('rejects an unknown discipline with 400 and stores nothing', async () => {
+    const res = await contactPOST(
+      jsonRequest('http://localhost/api/public/contact', { ...valid, discipline: 'Rocket science' }),
+    )
+    expect(res.status).toBe(400)
+    expect(mocks.db.insert).not.toHaveBeenCalled()
+  })
 })
 
 describe('admin routes deny unauthenticated callers', () => {

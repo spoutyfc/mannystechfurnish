@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Archivo, Inter } from 'next/font/google'
+import { Archivo, IBM_Plex_Mono, Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
@@ -14,38 +14,40 @@ const inter = Inter({
   variable: '--font-inter',
   display: 'swap',
 })
+const plexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  variable: '--font-plex-mono',
+  weight: ['400', '500'],
+  display: 'swap',
+})
+
+const DESCRIPTION =
+  'Website and local search partner for Bay Area structural, geotechnical, civil, surveying and design-build firms. One fixed monthly fee.'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://mannystechfurnish.com'),
-  title: "Manny's Tech Furnish | Professional Websites for Growing Businesses",
-  description: 'Custom website design and development for businesses that want to stand out online. SEO optimization, Google Ads ready, clear communication, on-time delivery.',
-  keywords: ['web design', 'website development', 'SEO', 'small business websites', 'landing pages', 'custom websites'],
+  title: {
+    default: "Websites for Engineering & Construction Firms | Manny's Tech Furnish",
+    template: "%s | Manny's Tech Furnish",
+  },
+  description: DESCRIPTION,
   authors: [{ name: 'Mansoor Arif' }],
-  creator: 'Manny\'s Tech Furnish',
+  creator: "Manny's Tech Furnish",
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: 'Manny\'s Tech Furnish | Professional Websites for Growing Businesses',
-    description: 'Custom website design and development with SEO optimization. Clear communication, on-time delivery, real results.',
+    title: "Websites for Engineering & Construction Firms | Manny's Tech Furnish",
+    description: DESCRIPTION,
     url: 'https://mannystechfurnish.com',
     type: 'website',
     locale: 'en_US',
-    siteName: 'Manny\'s Tech Furnish',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Manny\'s Tech Furnish — Websites that actually convert',
-      },
-    ],
+    siteName: "Manny's Tech Furnish",
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Manny\'s Tech Furnish | Professional Websites',
-    description: 'Custom website design and development with SEO optimization.',
-    images: ['/og-image.png'],
+    title: "Websites for Engineering & Construction Firms | Manny's Tech Furnish",
+    description: DESCRIPTION,
   },
   robots: {
     index: true,
@@ -64,7 +66,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`dark bg-black ${archivo.variable} ${inter.variable}`}>
+    <html
+      lang="en"
+      className={`dark bg-black ${archivo.variable} ${inter.variable} ${plexMono.variable}`}
+    >
       <body className="bg-black font-sans text-neutral-50 antialiased">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
