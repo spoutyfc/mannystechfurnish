@@ -44,7 +44,7 @@ export function MobileMenu() {
               href="/contact"
               event="cta_click"
               location="mobile-menu"
-              className="flex min-h-12 items-center justify-center rounded-[2px] bg-signal px-5 font-semibold text-white"
+              className="flex min-h-12 items-center justify-center bg-accent px-5 font-mono text-xs font-semibold uppercase tracking-wider text-black"
             >
               Book a 20-minute fit call
             </TrackedLink>

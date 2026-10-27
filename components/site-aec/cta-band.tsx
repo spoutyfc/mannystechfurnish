@@ -12,7 +12,7 @@ export function CtaBand({ location }: { location: string }) {
             Twenty minutes to find out whether this fits your firm.
           </h2>
           <p className="mt-4 max-w-[56ch] text-graphite">
-            We look at your current site and how clients find you today. If it&apos;s not a fit, you&apos;ll hear
+            I&apos;ll look at your current site and how clients find you today. If it&apos;s not a fit, you&apos;ll hear
             that on the call, along with anything worth fixing on your own.
           </p>
         </div>

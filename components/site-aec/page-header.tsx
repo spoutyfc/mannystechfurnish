@@ -33,7 +33,7 @@ export function PageHeader({
         <nav aria-label="Breadcrumb" className="font-plex text-[0.8125rem] uppercase tracking-[0.06em] text-graphite">
           <ol className="flex flex-wrap items-center gap-2">
             <li>
-              <Link href="/" className="prose-link text-graphite">
+              <Link href="/" className="prose-link inline-flex min-h-6 items-center text-graphite">
                 Home
               </Link>
             </li>
@@ -42,7 +42,7 @@ export function PageHeader({
           </ol>
         </nav>
         <p className="mt-8 font-plex text-[0.8125rem] uppercase tracking-[0.08em] text-signal">{sheet}</p>
-        <h1 className="mt-3 max-w-[22ch] text-[2.25rem] text-ink sm:text-5xl md:text-[3.5rem]">{title}</h1>
+        <h1 className="mt-3 max-w-[22ch] text-[2.25rem] text-ink sm:text-[2.75rem] lg:text-[3.75rem]">{title}</h1>
         <div className="mt-6 max-w-[62ch] text-lg text-graphite md:text-xl">{lead}</div>
       </div>
     </header>

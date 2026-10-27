@@ -63,7 +63,8 @@ const SECTIONS: { h: string; body: React.ReactNode }[] = [
     body: (
       <p>
         Hosting and analytics: Vercel. Database: a managed Postgres provider (Neon). Email delivery: Resend. Spam
-        protection: Cloudflare Turnstile. Payments: Stripe. Each processes information only to provide its
+        protection: Cloudflare Turnstile, and Upstash for short-lived rate-limit counters keyed by IP address.
+        Payments: Stripe. Each processes information only to provide its
         service.
       </p>
     ),
@@ -72,8 +73,9 @@ const SECTIONS: { h: string; body: React.ReactNode }[] = [
     h: 'How long it is kept',
     body: (
       <p>
-        Inquiries that do not become client work are deleted within 24 months. Client records are kept for as
-        long as needed for the engagement and for tax and accounting requirements.
+        Inquiries are kept only as long as they are useful for replying and following up, and are deleted on
+        request. Client records are kept for as long as the engagement needs and as tax and accounting rules
+        require.
       </p>
     ),
   },

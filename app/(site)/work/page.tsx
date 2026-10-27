@@ -3,11 +3,11 @@ import { CaseStudySheet } from '@/components/site-aec/case-study'
 import { CtaBand } from '@/components/site-aec/cta-band'
 import { PageHeader } from '@/components/site-aec/page-header'
 import { Section, SheetLabel } from '@/components/site-aec/ui'
-import { CASE_STUDIES, OTHER_WORK } from '@/lib/site-content'
+import { PUBLISHED_CASE_STUDIES, OTHER_WORK } from '@/lib/site-content'
 
 const PATH = '/work'
 const DESCRIPTION =
-  'Live websites for a structural engineering firm, a geotechnical engineering firm and a design-build remodeler, with what was shipped and how to check it.'
+  'Live websites for a Bay Area structural engineering firm and a geotechnical engineering firm, with what was shipped and how to check it.'
 
 export const metadata: Metadata = {
   title: 'Work — Engineering & Construction Websites',
@@ -36,7 +36,7 @@ export default function WorkPage() {
       <Section>
         <SheetLabel sheet="5.1">Engineering and construction</SheetLabel>
         <div className="mt-4">
-          {CASE_STUDIES.map((c) => (
+          {PUBLISHED_CASE_STUDIES.map((c) => (
             <CaseStudySheet key={c.slug} study={c} headingLevel="h2" />
           ))}
         </div>

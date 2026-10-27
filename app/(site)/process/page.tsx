@@ -71,8 +71,23 @@ export default function ProcessPage() {
 
       <Section>
         <SheetLabel sheet="4.1">Stages</SheetLabel>
-        <div className="mt-6 overflow-x-auto">
-          <table className="w-full min-w-[640px] border-collapse text-left">
+        {/* Phones get stacked blocks; the three-column table starts at md. */}
+        <ol className="mt-6 border-t border-rule-strong md:hidden">
+          {STAGES.map((s) => (
+            <li key={s.title} className="border-b border-rule py-5">
+              <p className="font-plex text-[0.8125rem] uppercase tracking-[0.04em] text-signal">{s.when}</p>
+              <h2 className="mt-1 text-xl text-ink">{s.title}</h2>
+              <h3 className="mt-3 font-plex text-[0.8125rem] uppercase tracking-[0.06em] text-graphite">What I do</h3>
+              <p className="mt-1 text-ink">{s.me}</p>
+              <h3 className="mt-3 font-plex text-[0.8125rem] uppercase tracking-[0.06em] text-graphite">
+                What you provide
+              </h3>
+              <p className="mt-1 text-graphite">{s.you}</p>
+            </li>
+          ))}
+        </ol>
+        <div className="mt-6 hidden md:block">
+          <table className="w-full border-collapse text-left">
             <caption className="sr-only">Engagement stages, what I do, and what you provide</caption>
             <thead>
               <tr className="border-b border-rule-strong font-plex text-[0.8125rem] uppercase tracking-[0.06em] text-graphite">

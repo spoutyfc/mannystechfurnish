@@ -36,12 +36,14 @@ function validate(f: Fields) {
   if (!EMAIL_RE.test(f.email.trim())) errors.email = 'Enter an email address like name@firm.com.'
   if (!f.firm.trim()) errors.firm = 'Enter your firm’s name.'
   if (!f.message.trim()) errors.message = 'Add a sentence or two so the call can be useful.'
+  if (f.website.trim() && !/^(https?:\/\/)?[^\s/.]+\.[^\s]+$/i.test(f.website.trim()))
+    errors.website = 'Enter a website address like acme.com, or leave it blank.'
   if (f.message.length > 4500) errors.message = 'Please keep this under 4,500 characters.'
   return errors
 }
 
 const inputClass =
-  'mt-2 block min-h-12 w-full rounded-[2px] border border-rule-strong bg-surface px-3 py-2 text-base text-ink placeholder:text-[#6b7177] focus-visible:border-ink aria-[invalid=true]:border-signal'
+  'mt-2 block min-h-12 w-full rounded-[2px] border border-rule-strong bg-transparent px-3 py-2 text-base text-white placeholder:text-white/50 focus-visible:border-accent aria-[invalid=true]:border-signal'
 const labelClass = 'block font-medium text-ink'
 
 export function FitCallForm() {
@@ -143,7 +145,7 @@ export function FitCallForm() {
     <form onSubmit={onSubmit} noValidate className="space-y-6 border border-rule-strong bg-surface p-5 md:p-8">
       <div ref={summaryRef} tabIndex={-1} aria-live="assertive" className="outline-none">
         {(errorList.length > 0 || serverError) && (
-          <div role="alert" className="border-l-4 border-signal bg-[#fbeee8] p-4 text-ink">
+          <div role="alert" className="border-l-4 border-accent bg-accent/10 p-4 text-white">
             {serverError ? (
               <p>{serverError}</p>
             ) : (
@@ -177,7 +179,7 @@ export function FitCallForm() {
           </label>
           <input id="name" name="name" autoComplete="name" required value={fields.name} onChange={set('name')}
             aria-invalid={Boolean(errors.name)} aria-describedby={describe('name')} className={inputClass} />
-          {errors.name && <p id="name-error" className="mt-1 text-[0.9375rem] text-signal">{errors.name}</p>}
+          {errors.name && <p id="name-error" className="mt-1 text-base text-[#ff7ab8]">{errors.name}</p>}
         </div>
         <div>
           <label htmlFor="firm" className={labelClass}>
@@ -185,7 +187,7 @@ export function FitCallForm() {
           </label>
           <input id="firm" name="firm" autoComplete="organization" required value={fields.firm} onChange={set('firm')}
             aria-invalid={Boolean(errors.firm)} aria-describedby={describe('firm')} className={inputClass} />
-          {errors.firm && <p id="firm-error" className="mt-1 text-[0.9375rem] text-signal">{errors.firm}</p>}
+          {errors.firm && <p id="firm-error" className="mt-1 text-base text-[#ff7ab8]">{errors.firm}</p>}
         </div>
         <div>
           <label htmlFor="email" className={labelClass}>
@@ -193,7 +195,7 @@ export function FitCallForm() {
           </label>
           <input id="email" name="email" type="email" autoComplete="email" required value={fields.email} onChange={set('email')}
             aria-invalid={Boolean(errors.email)} aria-describedby={describe('email')} className={inputClass} />
-          {errors.email && <p id="email-error" className="mt-1 text-[0.9375rem] text-signal">{errors.email}</p>}
+          {errors.email && <p id="email-error" className="mt-1 text-base text-[#ff7ab8]">{errors.email}</p>}
         </div>
         <div>
           <label htmlFor="phone" className={labelClass}>
@@ -219,7 +221,9 @@ export function FitCallForm() {
             Current website <span className="font-normal text-graphite">(optional)</span>
           </label>
           <input id="website" name="website" type="url" inputMode="url" autoComplete="url" placeholder="https://"
-            value={fields.website} onChange={set('website')} className={inputClass} />
+            value={fields.website} onChange={set('website')} aria-invalid={Boolean(errors.website)}
+            aria-describedby={describe('website')} className={inputClass} />
+          {errors.website && <p id="website-error" className="mt-1 text-base text-[#ff7ab8]">{errors.website}</p>}
         </div>
       </div>
 
@@ -230,10 +234,10 @@ export function FitCallForm() {
         <textarea id="message" name="message" rows={5} required value={fields.message} onChange={set('message')}
           aria-invalid={Boolean(errors.message)} aria-describedby={describe('message') ?? 'message-hint'}
           className={`${inputClass} resize-y`} />
-        <p id="message-hint" className="mt-1 text-[0.9375rem] text-graphite">
+        <p id="message-hint" className="mt-1 text-base text-graphite">
           A sentence or two is plenty. Suggest a couple of times that suit you, if you like.
         </p>
-        {errors.message && <p id="message-error" className="mt-1 text-[0.9375rem] text-signal">{errors.message}</p>}
+        {errors.message && <p id="message-error" className="mt-1 text-base text-[#ff7ab8]">{errors.message}</p>}
       </div>
 
       <Turnstile key={widgetKey} theme="light" onVerify={setToken} onExpire={() => setToken('')} />
@@ -242,11 +246,12 @@ export function FitCallForm() {
         <button
           type="submit"
           disabled={status === 'sending'}
-          className="inline-flex min-h-12 w-full items-center justify-center rounded-[2px] bg-signal px-6 py-3 font-semibold text-white transition-colors hover:bg-signal-dark disabled:opacity-60 sm:w-auto"
+          aria-busy={status === 'sending'}
+          className="inline-flex min-h-12 w-full items-center justify-center bg-accent px-8 py-4 text-sm font-semibold uppercase tracking-wider text-black transition-opacity hover:opacity-90 disabled:cursor-wait sm:w-auto"
         >
           {status === 'sending' ? 'Sending…' : 'Request a fit call'}
         </button>
-        <p className="text-[0.9375rem] text-graphite">
+        <p className="text-base text-graphite">
           Your details are used only to reply to this request. See the{' '}
           <Link href="/privacy" className="prose-link">
             privacy notice

@@ -62,7 +62,7 @@ export const OFFER_INCLUDED = [
   {
     title: 'Direct access',
     detail:
-      'One active request at a time, answered within two business days. You always deal with the person doing the work.',
+      'One active request at a time, with a reply within two business days. You always deal with the person doing the work.',
   },
 ] as const
 
@@ -89,6 +89,8 @@ export interface CaseStudy {
   /** Facts that anyone can re-check from the live site, with the date checked. */
   evidence: { label: string; value: string }[]
   checked: string
+  /** False until authorship and written permission are confirmed (research/claim-register.md). */
+  publish: boolean
 }
 
 // Counts below come from each client's public sitemap.xml, checked 2026-10-27.
@@ -117,6 +119,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       { label: 'Guides and articles', value: '8' },
     ],
     checked: '2026-10-27',
+    publish: true,
   },
   {
     slug: 'bear-geotechnical',
@@ -130,13 +133,13 @@ export const CASE_STUDIES: CaseStudy[] = [
     shipped: [
       'Service and service-area pages generated from structured data',
       'Admin inquiry inbox with export',
-      'FAQ, privacy and terms pages',
     ],
     evidence: [
       { label: 'Service pages', value: '6' },
       { label: 'Service-area pages', value: '8' },
     ],
     checked: '2026-10-27',
+    publish: true,
   },
   {
     slug: 'sequoia-remodeling',
@@ -150,8 +153,13 @@ export const CASE_STUDIES: CaseStudy[] = [
     shipped: ['Division-specific project storytelling', 'Consultation request flow'],
     evidence: [],
     checked: '2026-10-27',
+    // The live site carries no "website by" credit; confirm before publishing.
+    publish: false,
   },
 ]
+
+/** Case studies cleared for the public site. */
+export const PUBLISHED_CASE_STUDIES = CASE_STUDIES.filter((c) => c.publish)
 
 export const OTHER_WORK = [
   {

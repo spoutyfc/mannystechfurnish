@@ -5,8 +5,8 @@ import { TrackedLink } from './tracked-link'
 /** Sheet label that opens every section, like a drawing-set sheet number. */
 export function SheetLabel({ sheet, children }: { sheet: string; children: ReactNode }) {
   return (
-    <p className="flex items-center gap-3 border-t border-ink pt-3 font-plex text-[0.8125rem] uppercase tracking-[0.08em] text-graphite">
-      <span className="text-signal">{sheet}</span>
+    <p className="flex items-center gap-3 border-t border-white/15 pt-4 font-plex text-xs uppercase tracking-[0.2em] text-graphite">
+      <span className="text-accent">( {sheet} )</span>
       <span aria-hidden="true">·</span>
       <span>{children}</span>
     </p>
@@ -44,7 +44,7 @@ export function PrimaryCta({
       event="cta_click"
       location={location}
       className={cn(
-        'inline-flex min-h-12 items-center justify-center rounded-[2px] bg-signal px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-signal-dark',
+        'inline-flex min-h-12 items-center justify-center gap-2 bg-accent px-8 py-4 text-sm font-semibold uppercase tracking-wider text-black transition-opacity hover:opacity-90',
         className,
       )}
     >
@@ -57,7 +57,7 @@ export function SecondaryLink({ href, children }: { href: string; children: Reac
   return (
     <a
       href={href}
-      className="inline-flex min-h-12 items-center justify-center rounded-[2px] border border-ink px-6 py-3 text-base font-semibold text-ink transition-colors hover:bg-ink hover:text-paper"
+      className="inline-flex min-h-12 items-center justify-center border border-white/30 px-8 py-4 text-sm font-semibold uppercase tracking-wider text-white transition-colors hover:bg-white hover:text-black"
     >
       {children}
     </a>

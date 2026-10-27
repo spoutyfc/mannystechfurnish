@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Archivo, IBM_Plex_Mono, Inter } from 'next/font/google'
+import { Archivo, Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
@@ -12,12 +12,6 @@ const archivo = Archivo({
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
-  display: 'swap',
-})
-const plexMono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  variable: '--font-plex-mono',
-  weight: ['400', '500'],
   display: 'swap',
 })
 
@@ -68,7 +62,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark bg-black ${archivo.variable} ${inter.variable} ${plexMono.variable}`}
+      className={`dark bg-black ${archivo.variable} ${inter.variable}`}
     >
       <body className="bg-black font-sans text-neutral-50 antialiased">
         {children}

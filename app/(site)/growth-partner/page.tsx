@@ -8,7 +8,7 @@ import { BUSINESS_NAME, OFFER, OFFER_EXCLUDED, OFFER_INCLUDED, SITE_URL } from '
 
 const PATH = '/growth-partner'
 const DESCRIPTION =
-  '$1,000 a month, six-month term: website build, hosting, technical SEO, Business Profile review and a new growth asset each month for engineering firms.'
+  '$1,000 a month, six-month term: website build, hosting, technical SEO, Business Profile review, then a new growth asset each month after launch.'
 
 export const metadata: Metadata = {
   title: 'AEC Digital Growth Partner — $1,000/month',
@@ -91,10 +91,18 @@ export default function GrowthPartnerPage() {
               { label: 'Setup fee', value: 'None for the standard website scope' },
               {
                 label: 'Start',
+                value: 'A kickoff date is agreed when you sign. The six-month term and the first payment start at kickoff.',
+              },
+              {
+                label: 'Leaving early',
                 value:
-                  'A kickoff date is agreed when you sign. I run at most two builds at a time, so each one gets full attention; the first payment is due at kickoff.',
+                  'You can end the agreement during the first six months; the remaining months of the term are billed at 50%. Because the build is spread across the term, this is what makes the no-setup-fee price possible.',
               },
               { label: 'After the term', value: 'Month to month at the same fee; 30 days’ written notice to end' },
+              {
+                label: 'Code',
+                value: 'Handed over, with help moving hosting, once the six-month term is paid in full. No buyout fee.',
+              },
               { label: 'Requests', value: 'One active request at a time; replies within two business days' },
               { label: 'Out-of-scope work', value: 'Fixed written quote before work starts; never billed without approval' },
             ]}
@@ -121,6 +129,10 @@ export default function GrowthPartnerPage() {
           a project index with your first project profiles, and contact. One contact form, a sitemap, structured
           data and analytics. Copy is drafted from a kickoff interview and your existing material; you supply
           project photographs. Larger builds are quoted separately before the agreement is signed.
+        </p>
+        <p className="mt-3 max-w-[68ch] text-graphite">
+          Growth assets start after launch, so a six-month term typically adds four or five pages to the launch
+          site. The client sites on the work page are larger than the standard launch scope.
         </p>
       </Section>
 

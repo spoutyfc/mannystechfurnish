@@ -24,8 +24,8 @@ export default function AboutPage() {
         title={`${BUSINESS_NAME} is one developer: ${OWNER_NAME}.`}
         lead={
           <p>
-            I&apos;m a web developer based in the {CONTACT.region}. I design, build and host websites, and I&apos;ve
-            spent much of that work on sites for engineering and construction firms in the Bay Area.
+            I&apos;m a web developer based in the {CONTACT.region}. I design, build and host websites, including
+            live sites for a structural engineering firm and a geotechnical engineering firm in the Bay Area.
           </p>
         }
       />
@@ -39,9 +39,9 @@ export default function AboutPage() {
               builds the site, fixes it when something breaks and sends the monthly report.
             </p>
             <p>
-              I write code by hand on a modern stack, so sites are fast, accessible and not tied to a page-builder
-              subscription. I use AI tools for drafting and checking work, and every page is reviewed by me and
-              approved by you before it goes live.
+              Sites are built in code on a modern stack, so they are fast, accessible and not tied to a page-builder
+              subscription. I use AI tools to help draft code and copy; I review everything, and you approve every
+              page before it goes live.
             </p>
           </div>
           <div className="space-y-4 text-graphite">
@@ -51,8 +51,8 @@ export default function AboutPage() {
               get in touch.
             </p>
             <p>
-              Because I work alone, I limit how many new builds run at the same time. That is a quality rule, not
-              a sales tactic.
+              Because I work alone, new builds are scheduled so that no more than two run at the same time. Your
+              kickoff date is agreed when you sign.
             </p>
           </div>
         </div>

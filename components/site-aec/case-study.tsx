@@ -15,7 +15,7 @@ export function CaseStudySheet({ study, headingLevel = 'h3' }: { study: CaseStud
   const Heading = headingLevel
   return (
     <article id={study.slug} className="grid gap-8 border-t border-rule-strong py-10 lg:grid-cols-[1.1fr_1fr] lg:gap-14">
-      <div className="overflow-hidden rounded-[2px] border border-rule bg-surface">
+      <div className="self-start overflow-hidden rounded-[2px] border border-rule bg-surface">
         <Image
           src={study.image}
           alt={`Screenshot of the ${study.client} website`}

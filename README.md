@@ -27,10 +27,12 @@ It does three jobs. It markets the studio, it captures leads through a bot-prote
 ## What it does
 
 **Public site**
-- `/` is the marketing page. It has the work, services, pricing (Stripe Payment Links), paid add-ons and an FAQ.
-- `/contact` is an inquiry form. The server validates the input, checks it with Turnstile and rate-limits it, then stores it in Postgres and emails both me and the sender.
+- Marketing pages under `app/(site)/` for one offer, the AEC Digital Growth Partner ($1,000/month), aimed at Bay Area engineering and construction firms: `/`, `/engineering-construction`, `/work`, `/growth-partner`, `/process`, `/about`, `/privacy`, `/accessibility`. Shared copy and case-study facts live in `lib/site-content.ts`.
+- `/contact` is a fit-call request form. The server validates the input (including firm, discipline and website), checks Turnstile (required in any production build) and the rate limit, stores it in Postgres and emails both me and the sender.
 - `/pay/[slug]` is a personal invoice page for one client. The price always comes from the plan stored on the server.
-- `/demo/booking` is a working demo of the booking add-on.
+- `/demo/booking` is the old booking add-on demo, kept for existing links and excluded from search.
+
+Research, the capacity model, prospect lists and outreach drafts for the repositioning are in `research/`; QA evidence is in `QA-REPORT.md` and `docs/evidence/`.
 
 **Admin** (`/admin`, gated in middleware and on every handler)
 - An inbox of contact submissions, where each one can be marked new, read or resolved, or deleted.

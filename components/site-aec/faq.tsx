@@ -12,7 +12,15 @@ const FAQS: { q: string; a: ReactNode }[] = [
   },
   {
     q: 'What happens after six months?',
-    a: 'The engagement continues month to month at the same fee, and either side can end it with 30 days’ written notice. If you leave, you keep your domain, content, Google Business Profile and analytics, and the site’s code is handed over.',
+    a: 'The engagement continues month to month at the same fee, and either side can end it with 30 days’ written notice. When you leave you keep your domain, content, Google Business Profile and analytics, and once the six-month term is paid in full the site’s code is handed over.',
+  },
+  {
+    q: 'What if we need to stop during the first six months?',
+    a: 'You can. The remaining months of the initial term are billed at 50%, and you keep your domain, content, Business Profile and analytics either way. The code is handed over once the term is paid in full.',
+  },
+  {
+    q: 'Do you work with our competitors?',
+    a: 'I work with a small number of firms at a time, and I tell you on the fit call if I already work with a firm in your discipline and area, so you can decide.',
   },
   {
     q: 'Can you guarantee rankings or a number of leads?',
