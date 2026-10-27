@@ -1,0 +1,24 @@
+
+> mannystechfurnish@0.1.0 test C:\Users\Dev\Projects\github-polish\mannystechfurnish-aec
+> vitest run
+
+
+ RUN  v3.2.7 C:/Users/Dev/Projects/github-polish/mannystechfurnish-aec
+
+ ✓ lib/__tests__/payment-status.test.ts (11 tests) 2ms
+ ✓ lib/__tests__/request.test.ts (4 tests) 3ms
+ ✓ lib/__tests__/inquiry.test.ts (9 tests) 5ms
+ ✓ lib/__tests__/validation.test.ts (23 tests) 6ms
+ ✓ lib/__tests__/admin-auth.test.ts (11 tests) 9ms
+ ✓ lib/__tests__/rate-limit.test.ts (4 tests) 63ms
+ ✓ lib/__tests__/checkout.test.ts (5 tests) 5ms
+ ✓ app/__tests__/payment-actions.test.ts (9 tests) 6ms
+ ✓ app/__tests__/api-routes.test.ts (25 tests) 17ms
+ ✓ app/__tests__/admin-login.test.ts (7 tests) 201ms
+
+ Test Files  10 passed (10)
+      Tests  108 passed (108)
+   Start at  05:58:26
+   Duration  709ms (transform 349ms, setup 0ms, collect 1.51s, tests 318ms, environment 1ms, prepare 909ms)
+
+

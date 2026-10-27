@@ -1,0 +1,64 @@
+
+> mannystechfurnish@0.1.0 build C:\Users\Dev\Projects\github-polish\mannystechfurnish-aec
+> next build
+
+▲ Next.js 16.4.3 (Turbopack)
+✓ Running next.config.mjs took 12ms
+
+  Creating an optimized production build ...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead.
+
+  To migrate automatically, run:
+  npx @next/codemod@canary middleware-to-proxy .
+
+  Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Compiled successfully in 423ms
+  Running TypeScript ...
+  Finished TypeScript in 1399ms ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/28) ...
+  Generating static pages using 15 workers (7/28) 
+  Generating static pages using 15 workers (14/28) 
+  Generating static pages using 15 workers (21/28) 
+✓ Generating static pages using 15 workers (28/28) in 274ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /about
+├ ○ /accessibility
+├ ○ /admin
+├ ○ /admin-login
+├ ○ /admin/clients
+├ ƒ /api/admin-change-password
+├ ƒ /api/admin-login
+├ ƒ /api/admin-logout
+├ ƒ /api/admin-session
+├ ƒ /api/admin-setup
+├ ƒ /api/admin/send-email
+├ ƒ /api/admin/submissions
+├ ƒ /api/admin/submissions/[id]
+├ ƒ /api/health
+├ ƒ /api/public/contact
+├ ƒ /api/webhooks/stripe
+├ ○ /checkout/success
+├ ○ /contact
+├ ○ /demo/booking
+├ ○ /engineering-construction
+├ ○ /growth-partner
+├ ○ /opengraph-image
+├ ƒ /pay/[slug]
+├ ○ /privacy
+├ ○ /process
+├ ○ /robots.txt
+├ ○ /sitemap.xml
+└ ○ /work
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+

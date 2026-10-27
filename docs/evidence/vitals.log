@@ -1,0 +1,12 @@
+┌─────────┬─────────────────────────────┬───────┬─────┬────────────┐
+│ (index) │ path                        │ lcpMs │ cls │ transferKB │
+├─────────┼─────────────────────────────┼───────┼─────┼────────────┤
+│ 0       │ '/'                         │ 988   │ 0   │ 328        │
+│ 1       │ '/engineering-construction' │ 884   │ 0   │ 306        │
+│ 2       │ '/work'                     │ 956   │ 0   │ 442        │
+│ 3       │ '/growth-partner'           │ 1084  │ 0   │ 312        │
+│ 4       │ '/process'                  │ 992   │ 0   │ 306        │
+│ 5       │ '/about'                    │ 900   │ 0   │ 305        │
+│ 6       │ '/contact'                  │ 944   │ 0   │ 308        │
+└─────────┴─────────────────────────────┴───────┴─────┴────────────┘
+[{"path":"/","lcpMs":988,"cls":0,"transferKB":328},{"path":"/engineering-construction","lcpMs":884,"cls":0,"transferKB":306},{"path":"/work","lcpMs":956,"cls":0,"transferKB":442},{"path":"/growth-partner","lcpMs":1084,"cls":0,"transferKB":312},{"path":"/process","lcpMs":992,"cls":0,"transferKB":306},{"path":"/about","lcpMs":900,"cls":0,"transferKB":305},{"path":"/contact","lcpMs":944,"cls":0,"transferKB":308}]
