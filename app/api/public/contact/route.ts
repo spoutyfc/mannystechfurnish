@@ -43,6 +43,17 @@ export async function POST(request: NextRequest) {
     // Bot protection: verify the Cloudflare Turnstile token server-side. A
     // missing/invalid token is rejected, so the check cannot be bypassed.
     const captcha = await verifyTurnstile(turnstileToken, ip)
+    // A deployed build without the Turnstile secret would turn the form (and its
+    // auto-reply) into an open relay, so refuse rather than skip the check. Local
+    // production builds can opt out explicitly with ALLOW_UNVERIFIED_CONTACT=1.
+    const deployed = process.env.NODE_ENV === 'production' || Boolean(process.env.VERCEL_ENV)
+    if (captcha.notConfigured && deployed && process.env.ALLOW_UNVERIFIED_CONTACT !== '1') {
+      console.error('contact: TURNSTILE_SECRET_KEY is not set in production; rejecting submission')
+      return NextResponse.json(
+        { error: 'The form is temporarily unavailable. Please call or email instead.' },
+        { status: 503 },
+      )
+    }
     if (!captcha.success && !captcha.notConfigured) {
       return NextResponse.json(
         { error: 'Verification failed. Please complete the challenge and try again.' },

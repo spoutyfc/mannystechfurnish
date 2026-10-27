@@ -82,8 +82,10 @@ export function Turnstile({
   }, [renderWidget, siteKey])
 
   if (!siteKey) {
+    // On the public site, say nothing; the server decides whether the check is required.
+    if (theme === 'light') return null
     return (
-      <p className={theme === 'light' ? 'text-sm text-graphite' : 'font-mono text-[11px] uppercase tracking-widest text-amber-400/80'}>
+      <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400/80">
         Bot protection not configured
       </p>
     )

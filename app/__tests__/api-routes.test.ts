@@ -122,6 +122,23 @@ describe('POST /api/public/contact', () => {
     )
   })
 
+  it('refuses submissions in production when Turnstile is not configured', async () => {
+    vi.stubEnv('VERCEL_ENV', 'production')
+    mocks.verifyTurnstile.mockResolvedValue({ success: false, notConfigured: true })
+    const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const res = await contactPOST(jsonRequest('http://localhost/api/public/contact', valid))
+    expect(res.status).toBe(503)
+    expect(mocks.db.insert).not.toHaveBeenCalled()
+    expect(mocks.sendClientConfirmation).not.toHaveBeenCalled()
+    errSpy.mockRestore()
+  })
+
+  it('still accepts submissions outside production when Turnstile is not configured', async () => {
+    mocks.verifyTurnstile.mockResolvedValue({ success: false, notConfigured: true })
+    const res = await contactPOST(jsonRequest('http://localhost/api/public/contact', valid))
+    expect(res.status).toBe(200)
+  })
+
   it('rejects an unknown discipline with 400 and stores nothing', async () => {
     const res = await contactPOST(
       jsonRequest('http://localhost/api/public/contact', { ...valid, discipline: 'Rocket science' }),

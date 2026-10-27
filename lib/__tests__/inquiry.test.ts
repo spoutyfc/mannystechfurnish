@@ -40,6 +40,19 @@ describe('contactSchema fit-call fields', () => {
     expect(contactSchema.safeParse({ ...base, discipline: 'Rocket science' }).success).toBe(false)
   })
 
+  it('adds https:// to a bare domain and rejects non-web schemes', () => {
+    expect(contactSchema.parse({ ...base, website: 'acme.com' }).website).toBe('https://acme.com/')
+    expect(contactSchema.parse({ ...base, website: 'http://acme.com/x' }).website).toBe('http://acme.com/x')
+    expect(contactSchema.safeParse({ ...base, website: 'javascript:alert(1)' }).success).toBe(false)
+    expect(contactSchema.safeParse({ ...base, website: 'not a site' }).success).toBe(false)
+  })
+
+  it('keeps the name and subject on one line so they are safe in email headers', () => {
+    const r = contactSchema.parse({ ...base, name: 'Ada\r\nBcc: x@evil.test', subject: 'Hi\nthere' })
+    expect(r.name).toBe('Ada Bcc: x@evil.test')
+    expect(r.subject).toBe('Hi there')
+  })
+
   it('rejects an over-long firm name and website', () => {
     expect(contactSchema.safeParse({ ...base, firm: 'x'.repeat(201) }).success).toBe(false)
     expect(contactSchema.safeParse({ ...base, website: 'x'.repeat(501) }).success).toBe(false)

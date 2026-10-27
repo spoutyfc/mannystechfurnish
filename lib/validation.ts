@@ -18,18 +18,41 @@ const optionalText = (max: number) =>
 
 const email = z.string().trim().toLowerCase().email().max(254)
 
+/** Values that end up in email headers (subject lines) must stay on one line. */
+const oneLine = (max: number) =>
+  z
+    .string()
+    .trim()
+    .min(1)
+    .max(max)
+    .transform((v) => v.replace(/[\r\n\t]+/g, ' '))
+
+/** A visitor's website: scheme optional ("acme.com"), but only http(s) is accepted. */
+const websiteUrl = optionalText(500).transform((v, ctx) => {
+  if (!v) return undefined
+  const candidate = /^[a-z][a-z0-9+.-]*:/i.test(v) ? v : `https://${v}`
+  try {
+    const url = new URL(candidate)
+    if ((url.protocol === 'http:' || url.protocol === 'https:') && url.hostname.includes('.')) return url.toString()
+  } catch {
+    // fall through to the issue below
+  }
+  ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Enter a website address like acme.com' })
+  return z.NEVER
+})
+
 export const planTypeSchema = z.enum(['option1', 'option2'])
 
 
 export const contactSchema = z.object({
-  name: z.string().trim().min(1).max(200),
+  name: oneLine(200),
   email,
   phone: optionalText(40),
-  subject: z.string().trim().min(1).max(200),
+  subject: oneLine(200),
   message: z.string().trim().min(1).max(5000),
   /** Fit-call details. Optional so older clients of this endpoint keep working. */
   firm: optionalText(200),
-  website: optionalText(500),
+  website: websiteUrl,
   discipline: z.enum(DISCIPLINES).optional(),
   /** Honeypot field. Real users never see or fill it. */
   company: z.string().optional(),
