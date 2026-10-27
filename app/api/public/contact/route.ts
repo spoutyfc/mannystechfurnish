@@ -5,7 +5,7 @@ import { sendOwnerNotification, sendClientConfirmation } from '@/lib/email'
 import { checkContactRateLimit } from '@/lib/rate-limit'
 import { verifyTurnstile } from '@/lib/turnstile'
 import { contactSchema } from '@/lib/validation'
-import { getClientIp } from '@/lib/request'
+import { getClientIp, SHARED_BUCKET } from '@/lib/request'
 
 /** Public inquiries belong to a fixed system user (contact_inquiries has a FK to "user"). */
 const SYSTEM_USER_ID = 'system_public_inquiries'
@@ -40,7 +40,8 @@ export async function POST(request: NextRequest) {
 
     // Bot protection: verify the Cloudflare Turnstile token server-side. A
     // missing/invalid token is rejected, so the check cannot be bypassed.
-    const captcha = await verifyTurnstile(turnstileToken, ip)
+    // Only forward a real address; the shared rate-limit bucket name is not an IP.
+    const captcha = await verifyTurnstile(turnstileToken, ip === SHARED_BUCKET ? undefined : ip)
     if (!captcha.success && !captcha.notConfigured) {
       return NextResponse.json(
         { error: 'Verification failed. Please complete the challenge and try again.' },
