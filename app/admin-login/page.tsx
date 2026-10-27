@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Lock, ArrowRight, Loader2 } from 'lucide-react'
 
 export default function AdminLoginPage() {
@@ -9,6 +10,7 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -29,10 +31,9 @@ export default function AdminLoginPage() {
         return
       }
 
-      // Small delay so the browser stores the cookie before we navigate.
-      setTimeout(() => {
-        window.location.href = '/admin'
-      }, 120)
+      // The session cookie is stored when the fetch resolves, so the middleware
+      // sees it on this navigation.
+      router.replace('/admin')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
       setLoading(false)
