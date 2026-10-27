@@ -5,7 +5,7 @@ import { sendOwnerNotification, sendClientConfirmation } from '@/lib/email'
 import { checkContactRateLimit } from '@/lib/rate-limit'
 import { verifyTurnstile } from '@/lib/turnstile'
 import { contactSchema } from '@/lib/validation'
-import { getClientIp } from '@/lib/request'
+import { getClientIp, SHARED_BUCKET } from '@/lib/request'
 import { composeInquiryMessage } from '@/lib/inquiry'
 
 /** Public inquiries belong to a fixed system user (contact_inquiries has a FK to "user"). */
@@ -42,7 +42,8 @@ export async function POST(request: NextRequest) {
 
     // Bot protection: verify the Cloudflare Turnstile token server-side. A
     // missing/invalid token is rejected, so the check cannot be bypassed.
-    const captcha = await verifyTurnstile(turnstileToken, ip)
+    // Only forward a real address; the shared rate-limit bucket name is not an IP.
+    const captcha = await verifyTurnstile(turnstileToken, ip === SHARED_BUCKET ? undefined : ip)
     // A deployed build without the Turnstile secret would turn the form (and its
     // auto-reply) into an open relay, so refuse rather than skip the check. Local
     // production builds can opt out explicitly with ALLOW_UNVERIFIED_CONTACT=1.
