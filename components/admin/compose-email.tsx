@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { X, Send, Loader2, CheckCircle2 } from 'lucide-react'
 
@@ -26,7 +26,14 @@ export function ComposeEmail({
   const [error, setError] = useState<string | null>(null)
   const [sent, setSent] = useState(false)
 
-  useEffect(() => {
+  // Reset the form whenever the dialog opens or its prefill changes. Adjusting
+  // state during render (instead of in an effect) avoids a second render pass.
+  const [synced, setSynced] = useState<{ open: boolean; prefill: typeof prefill }>({
+    open: false,
+    prefill: undefined,
+  })
+  if (synced.open !== open || synced.prefill !== prefill) {
+    setSynced({ open, prefill })
     if (open) {
       setTo(prefill?.to || '')
       setSubject(prefill?.subject || '')
@@ -35,7 +42,7 @@ export function ComposeEmail({
       setError(null)
       setSent(false)
     }
-  }, [open, prefill])
+  }
 
   if (!open) return null
 
@@ -84,8 +91,9 @@ export function ComposeEmail({
         ) : (
           <form onSubmit={submit} className="space-y-4 px-5 py-5">
             <div>
-              <label className="mb-1 block text-xs uppercase tracking-wider text-neutral-500">To</label>
+              <label htmlFor="compose-to" className="mb-1 block text-xs uppercase tracking-wider text-neutral-500">To</label>
               <input
+                id="compose-to"
                 type="email"
                 required
                 value={to}
@@ -95,8 +103,9 @@ export function ComposeEmail({
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs uppercase tracking-wider text-neutral-500">Subject</label>
+              <label htmlFor="compose-subject" className="mb-1 block text-xs uppercase tracking-wider text-neutral-500">Subject</label>
               <input
+                id="compose-subject"
                 type="text"
                 required
                 maxLength={200}
@@ -107,10 +116,11 @@ export function ComposeEmail({
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs uppercase tracking-wider text-neutral-500">
+              <label htmlFor="compose-heading" className="mb-1 block text-xs uppercase tracking-wider text-neutral-500">
                 Headline <span className="text-neutral-600">(optional, shown large)</span>
               </label>
               <input
+                id="compose-heading"
                 type="text"
                 maxLength={120}
                 value={heading}
@@ -120,8 +130,9 @@ export function ComposeEmail({
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs uppercase tracking-wider text-neutral-500">Message</label>
+              <label htmlFor="compose-message" className="mb-1 block text-xs uppercase tracking-wider text-neutral-500">Message</label>
               <textarea
+                id="compose-message"
                 required
                 rows={6}
                 maxLength={5000}

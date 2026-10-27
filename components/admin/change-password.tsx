@@ -29,8 +29,8 @@ export function ChangePassword({ open, onClose }: { open: boolean; onClose: () =
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    if (next.length < 8) {
-      setError('New password must be at least 8 characters')
+    if (next.length < 12) {
+      setError('New password must be at least 12 characters')
       return
     }
     if (next !== confirm) {
@@ -151,10 +151,11 @@ export function ChangePassword({ open, onClose }: { open: boolean; onClose: () =
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  // Wrapping the control in the label associates them without needing ids.
   return (
-    <div>
-      <label className="mb-2 block text-sm font-medium text-neutral-300">{label}</label>
+    <label className="block">
+      <span className="mb-2 block text-sm font-medium text-neutral-300">{label}</span>
       {children}
-    </div>
+    </label>
   )
 }

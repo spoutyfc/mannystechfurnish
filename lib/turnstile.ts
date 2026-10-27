@@ -46,7 +46,7 @@ export async function verifyTurnstile(
     }
     return { success: Boolean(data.success), errorCodes: data['error-codes'] }
   } catch (err) {
-    console.error('[v0] Turnstile verification request failed:', err)
+    console.error('[turnstile] verification request failed:', err)
     return { success: false, errorCodes: ['internal-error'] }
   }
 }

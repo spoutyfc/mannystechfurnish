@@ -3,10 +3,17 @@
 import { db } from '@/lib/db'
 import { clients } from '@/lib/db/schema'
 import { eq, desc } from 'drizzle-orm'
-import Stripe from 'stripe'
 import { getAdminEmail } from '@/lib/admin-auth'
-import { stripe } from '@/lib/stripe'
-import { STRIPE_PRICES, PLAN_DETAILS, type PlanType } from '@/lib/plans'
+import { getStripe } from '@/lib/stripe'
+import { PLAN_DETAILS, type PlanType } from '@/lib/plans'
+import { buildCheckoutPlan } from '@/lib/checkout'
+import {
+  checkoutRequestSchema,
+  clientIdSchema,
+  createClientSchema,
+  paymentStatusSchema,
+  type CreateClientInput,
+} from '@/lib/validation'
 
 /** Throws if the caller is not an authenticated admin. */
 async function requireAdmin(): Promise<string> {
@@ -26,44 +33,32 @@ function resolveBaseUrl(): string {
   )
 }
 
-export async function createClientCheckoutSession(
-  slug: string,
-  includeCareplan: boolean,
-) {
-  // Public action (the client clicks "pay"), so we look up by slug and trust
-  // only the server-stored plan — the amount can never be tampered with.
-  const found = await db.select().from(clients).where(eq(clients.slug, slug)).limit(1)
+export async function createClientCheckoutSession(slug: string, includeCareplan: boolean) {
+  // Public action (the client clicks "pay"). Inputs are validated, and the
+  // amount comes only from the server-stored plan, so it cannot be tampered with.
+  const input = checkoutRequestSchema.parse({ slug, includeCareplan })
+
+  const found = await db.select().from(clients).where(eq(clients.slug, input.slug)).limit(1)
   if (!found.length) throw new Error('Client not found')
 
   const clientData = found[0]
-  const planType = clientData.planType as PlanType
+  if (clientData.paymentStatus === 'completed') throw new Error('This invoice is already paid')
 
-  const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = []
-
-  if (planType === 'option1') {
-    lineItems.push({ price: STRIPE_PRICES.option1, quantity: 1 })
-    if (includeCareplan) lineItems.push({ price: STRIPE_PRICES.careplan, quantity: 1 })
-  } else {
-    lineItems.push({ price: STRIPE_PRICES.option2_build, quantity: 1 })
-    lineItems.push({ price: STRIPE_PRICES.option2_monthly, quantity: 1 })
-  }
-
-  // option2 always has a recurring item; option1 only when the care plan is added.
-  const isSubscription = planType === 'option2' || includeCareplan
+  const { mode, lineItems } = buildCheckoutPlan(clientData.planType, input.includeCareplan)
   const baseUrl = resolveBaseUrl()
 
-  const session = await stripe.checkout.sessions.create({
-    mode: isSubscription ? 'subscription' : 'payment',
+  const session = await getStripe().checkout.sessions.create({
+    mode,
     line_items: lineItems,
     customer_email: clientData.email,
     success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}/pay/${clientData.slug}?canceled=true`,
     metadata: {
       clientId: String(clientData.id),
-      planType,
-      includeCareplan: includeCareplan.toString(),
+      planType: clientData.planType,
+      includeCareplan: String(input.includeCareplan),
     },
-    ...(isSubscription
+    ...(mode === 'subscription'
       ? { subscription_data: { metadata: { clientId: String(clientData.id) } } }
       : { payment_intent_data: { metadata: { clientId: String(clientData.id) } } }),
   })
@@ -77,30 +72,18 @@ export async function createClientCheckoutSession(
   return { url: session.url }
 }
 
-export async function getClientBySlug(slug: string) {
-  const result = await db.select().from(clients).where(eq(clients.slug, slug)).limit(1)
-  return result.length ? result[0] : null
-}
-
-export async function createClient(data: {
-  name: string
-  email: string
-  phone?: string
-  companyName?: string
-  website?: string
-  projectDescription?: string
-  timeline?: string
-  planType: PlanType
-  includeCareplan?: boolean
-}) {
+export async function createClient(raw: CreateClientInput) {
   await requireAdmin()
+  const data = createClientSchema.parse(raw)
 
-  const baseSlug = data.name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 40) || 'client'
-  const slug = `${baseSlug}-${Math.random().toString(36).slice(2, 7)}`
+  const baseSlug =
+    data.name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 40)
+      .replace(/-+$/g, '') || 'client'
+  const slug = `${baseSlug}-${crypto.randomUUID().slice(0, 8)}`
 
   const [inserted] = await db
     .insert(clients)
@@ -114,7 +97,7 @@ export async function createClient(data: {
       projectDescription: data.projectDescription,
       timeline: data.timeline,
       planType: data.planType,
-      includeCareplan: data.includeCareplan || false,
+      includeCareplan: data.includeCareplan,
       paymentStatus: 'pending',
     })
     .returning({ id: clients.id })
@@ -136,7 +119,7 @@ export async function getDashboardStats() {
 
   // Estimate collected revenue from plan type (server source of truth in PLAN_DETAILS).
   const revenue = paid.reduce((sum, c) => {
-    const plan = PLAN_DETAILS[(c.planType as PlanType)] ?? PLAN_DETAILS.option1
+    const plan = PLAN_DETAILS[c.planType as PlanType] ?? PLAN_DETAILS.option1
     return sum + plan.priceValue
   }, 0)
 
@@ -150,7 +133,8 @@ export async function getDashboardStats() {
 
 export async function deleteClient(clientId: number) {
   await requireAdmin()
-  await db.delete(clients).where(eq(clients.id, clientId))
+  const id = clientIdSchema.parse(clientId)
+  await db.delete(clients).where(eq(clients.id, id))
   return { success: true }
 }
 
@@ -159,9 +143,11 @@ export async function updateClientPaymentStatus(
   status: 'pending' | 'completed' | 'failed',
 ) {
   await requireAdmin()
+  const id = clientIdSchema.parse(clientId)
+  const next = paymentStatusSchema.parse(status)
   await db
     .update(clients)
-    .set({ paymentStatus: status, updatedAt: new Date() })
-    .where(eq(clients.id, clientId))
+    .set({ paymentStatus: next, updatedAt: new Date() })
+    .where(eq(clients.id, id))
   return { success: true }
 }

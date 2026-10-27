@@ -1,0 +1,100 @@
+{
+  "status": "pass",
+  "startedAt": "2026-10-27T05:58:19.4643767-07:00",
+  "finishedAt": "2026-10-27T05:58:33.0938468-07:00",
+  "commit": "a447339",
+  "project": "C:\\Users\\Dev\\Projects\\github-polish\\mannystechfurnish-aec",
+  "steps": [
+    {
+      "name": "env-example",
+      "status": "pass",
+      "command": "",
+      "seconds": 0.0,
+      "detail": "18 documented variables"
+    },
+    {
+      "name": "typecheck",
+      "status": "pass",
+      "command": "pnpm run typecheck",
+      "seconds": 2.7,
+      "detail": "exit 0"
+    },
+    {
+      "name": "lint",
+      "status": "pass",
+      "command": "pnpm run lint",
+      "seconds": 3.3,
+      "detail": "exit 0"
+    },
+    {
+      "name": "format",
+      "status": "skipped",
+      "command": "",
+      "seconds": 0.0,
+      "detail": "no script (looked for: format:check, prettier:check, fmt:check)"
+    },
+    {
+      "name": "test",
+      "status": "pass",
+      "command": "pnpm run test",
+      "seconds": 2.3,
+      "detail": "exit 0"
+    },
+    {
+      "name": "build",
+      "status": "pass",
+      "command": "pnpm run build",
+      "seconds": 5.1,
+      "detail": "exit 0"
+    },
+    {
+      "name": "e2e",
+      "status": "skipped",
+      "command": "",
+      "seconds": 0.0,
+      "detail": "no script (looked for: test:e2e, e2e, playwright)"
+    },
+    {
+      "name": "a11y",
+      "status": "skipped",
+      "command": "",
+      "seconds": 0.0,
+      "detail": "no script (looked for: test:a11y, a11y)"
+    },
+    {
+      "name": "links",
+      "status": "skipped",
+      "command": "",
+      "seconds": 0.0,
+      "detail": "no script (looked for: check:links, links)"
+    },
+    {
+      "name": "secrets",
+      "status": "pass",
+      "command": "",
+      "seconds": 0.0,
+      "detail": "pattern scan of 115 tracked files (install gitleaks for a full scan)"
+    },
+    {
+      "name": "deps-audit",
+      "status": "skipped",
+      "command": "",
+      "seconds": 0.0,
+      "detail": "no package-lock.json"
+    },
+    {
+      "name": "preview-smoke",
+      "status": "skipped",
+      "command": "",
+      "seconds": 0.0,
+      "detail": "no -PreviewUrl given"
+    },
+    {
+      "name": "screenshots",
+      "status": "skipped",
+      "command": "",
+      "seconds": 0.0,
+      "detail": "none yet (run the visual-qa skill for UI projects)"
+    }
+  ]
+}

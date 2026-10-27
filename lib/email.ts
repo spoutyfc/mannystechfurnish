@@ -42,7 +42,7 @@ function shell(inner: string, preheader = '') {
         </td></tr>
         ${inner}
         <tr><td style="padding:24px 36px;border-top:1px solid #1c1c1c;background:#000000;">
-          <p style="color:#777777;font-size:12px;margin:0 0 6px;line-height:1.5;">Manny&#39;s Tech Furnish &mdash; Premium websites that convert.</p>
+          <p style="color:#777777;font-size:12px;margin:0 0 6px;line-height:1.5;">Manny&#39;s Tech Furnish &mdash; Websites and local search for engineering and construction firms.</p>
           <p style="color:#555555;font-size:12px;margin:0;">(925) 278-9059 &nbsp;&bull;&nbsp; mansoor.buspro@gmail.com</p>
         </td></tr>
       </table>
@@ -97,17 +97,11 @@ export async function sendClientConfirmation(p: ContactPayload) {
       <p style="color:${PINK};font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.18em;margin:0 0 10px;">Message Received</p>
       <h1 style="color:#ffffff;font-family:${DISPLAY_FONT};font-size:30px;font-weight:900;line-height:1.05;margin:0 0 16px;text-transform:uppercase;letter-spacing:-0.01em;">Thanks, ${escapeHtml(p.name)}!</h1>
       <p style="color:#cfcfcf;font-size:16px;line-height:1.65;margin:0 0 16px;">
-        I&#39;ve received your message and I&#39;ll get back to you within <strong style="color:#ffffff;">24&ndash;48 hours</strong>.
+        I&#39;ve received your request and I&#39;ll reply within <strong style="color:#ffffff;">two business days</strong> to set a time.
       </p>
-      <p style="color:#9a9a9a;font-size:14px;line-height:1.6;margin:0 0 20px;">Here&#39;s a copy of what you sent:</p>
-      <table role="presentation" width="100%" style="background:#000000;border:1px solid #1f1f1f;border-radius:14px;">
-        <tr><td style="padding:20px 22px;">
-          <p style="color:${PINK};font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;margin:0 0 5px;">What you need</p>
-          <p style="color:#ffffff;font-size:15px;margin:0 0 16px;font-weight:500;">${escapeHtml(p.subject)}</p>
-          <p style="color:${PINK};font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;margin:0 0 5px;">Message</p>
-          <p style="color:#dddddd;font-size:15px;margin:0;line-height:1.65;white-space:pre-wrap;">${escapeHtml(p.message)}</p>
-        </td></tr>
-      </table>
+      <p style="color:#9a9a9a;font-size:14px;line-height:1.6;margin:0 0 20px;">
+        If you didn&#39;t send this request, you can ignore this email.
+      </p>
       <p style="color:#9a9a9a;font-size:14px;line-height:1.6;margin:22px 0 0;">
         In the meantime, feel free to reply to this email or reach me directly at
         <a href="mailto:mansoor.buspro@gmail.com" style="color:${PINK};text-decoration:none;font-weight:600;">mansoor.buspro@gmail.com</a>.
@@ -119,7 +113,9 @@ export async function sendClientConfirmation(p: ContactPayload) {
     from: FROM,
     to: p.email,
     subject: 'Thanks for reaching out — Manny\'s Tech Furnish',
-    html: shell(inner, `Thanks ${p.name} — I'll reply within 24-48 hours.`),
+    // The visitor's message is deliberately not echoed back: an auto-reply that
+    // repeats arbitrary text to any address can be abused to send spam.
+    html: shell(inner, `Thanks ${p.name} — I'll reply within two business days.`),
   })
 }
 

@@ -78,6 +78,17 @@
   --font-sans: var(--font-inter), 'Inter Fallback', system-ui, sans-serif;
   --font-display: var(--font-archivo), 'Archivo Fallback', system-ui, sans-serif;
   --font-mono: var(--font-archivo), monospace;
+  /* Site labels use the brand's Archivo, like the original mono labels. */
+  --font-plex: var(--font-archivo), system-ui, sans-serif;
+  /* Marketing site palette: the brand's black, white and hot-pink accent. */
+  --color-paper: #000000;
+  --color-surface: #0a0a0a;
+  --color-ink: #ffffff;
+  --color-graphite: #c7c7c7;
+  --color-rule: rgb(255 255 255 / 0.15);
+  --color-rule-strong: rgb(255 255 255 / 0.32);
+  --color-signal: var(--accent);
+  --color-signal-dark: var(--accent);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -254,6 +265,61 @@
   .word-reveal-inner {
     transform: none !important;
     opacity: 1 !important;
+    transition: none !important;
+  }
+}
+
+/* ---------- Marketing site (brand theme: black, white, hot pink) ---------- */
+.site {
+  background: #000;
+  color: #fff;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+@media (min-width: 768px) {
+  .site {
+    font-size: 1.125rem;
+  }
+}
+.site :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.site ::selection {
+  background: var(--accent);
+  color: #000;
+}
+.site h1,
+.site h2,
+.site h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+  text-wrap: balance;
+}
+.site h3 {
+  line-height: 1.05;
+}
+.site p {
+  text-wrap: pretty;
+}
+.site .prose-link {
+  color: #fff;
+  text-decoration: underline;
+  text-decoration-color: rgb(255 255 255 / 0.4);
+  text-underline-offset: 4px;
+  transition: color 150ms, text-decoration-color 150ms;
+}
+.site .prose-link:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .site *,
+  .site *::before,
+  .site *::after {
     transition: none !important;
   }
 }

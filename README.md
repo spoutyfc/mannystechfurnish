@@ -1,154 +1,176 @@
-# Manny's Tech Furnish - SaaS Platform
+# Manny's Tech Furnish
 
-A premium, modern tech services platform built with Next.js 16, Neon Postgres, Better Auth, Framer Motion, and Stripe integration.
+The production site and back office for my web development studio: **[mannystechfurnish.com](https://mannystechfurnish.com)**.
 
-## Features
+It does three jobs. It markets a single website-and-local-search offer to engineering and construction firms, it captures leads through a bot-protected contact form, and it gets clients paid through per-client Stripe checkout links that I create from a private admin dashboard.
 
-### Public Site
-- **Landing Page**: Beautiful hero section with glassmorphism design and smooth animations
-- **Portfolio Page**: Showcase completed projects with technologies and links
-- **Services Page**: Display service offerings with flexible pricing options
-- **Contact Page**: Professional inquiry form with real-time submission
-- **Navigation**: Responsive navbar with links throughout the site
+[![CI](https://github.com/spoutyfc/mannystechfurnish/actions/workflows/ci.yml/badge.svg)](https://github.com/spoutyfc/mannystechfurnish/actions/workflows/ci.yml)
 
-### Admin Dashboard
-- **Authentication**: Email/password based with Better Auth (Better than other solutions built-in)
-- **Portfolio Management**: Full CRUD for projects with images, descriptions, and technologies
-- **Services Management**: Manage service offerings with pricing types and icons
-- **Inquiry Tracking**: View, categorize, and manage client inquiries in real-time
-- **Settings**: Configure site settings and Stripe integration details
+![Admin client list with plan, payment status and per-client pay-link actions, plus totals for clients, paid, pending and collected](docs/screenshots/admin-clients.png)
 
-### Technical Stack
-- **Frontend**: Next.js 16 (App Router), React 19, Framer Motion, GSAP
-- **Styling**: Tailwind CSS v4, shadcn/ui components
-- **Authentication**: Better Auth with Neon Postgres
-- **Database**: Neon Postgres with Drizzle ORM
-- **API**: RESTful routes for public portfolio/services data
-- **Animations**: Framer Motion for page transitions and micro-interactions
+| Client invoice page (`/pay/[slug]`) | Admin inbox with an inquiry expanded |
+|---|---|
+| ![Invoice page for a demo client showing the managed plan, its price and a Pay securely button](docs/screenshots/pay-invoice.png) | ![Admin inbox listing three contact submissions, one marked new and one expanded with reply, mark-unread and delete actions](docs/screenshots/admin-inbox.png) |
 
-## Installation
+<sub>The admin and invoice screenshots use seeded demo records (example.com addresses), not real clients. They were taken from a production build running against a throwaway local Postgres.</sub>
 
-### Prerequisites
-- Node.js 18+
-- pnpm (recommended)
-- Neon database URL
-- BETTER_AUTH_SECRET (generate with `openssl rand -base64 32`)
+<details>
+<summary>Marketing home page (desktop and 390px mobile)</summary>
 
-### Setup
+![Home page hero reading "Websites & local search for engineering & construction firms" with a Book a 20-minute fit call button and an at-a-glance offer box](docs/screenshots/home-desktop.png)
 
-1. **Clone and install**:
+<p align="center"><img src="docs/screenshots/home-mobile.png" alt="Home page hero on a 375px-wide phone, with the headline stacked above the fit-call button" width="260"></p>
+</details>
+
+## What's worth looking at
+
+| If you have 2 minutes | Read |
+|---|---|
+| How a payment can never be downgraded, even under concurrent webhooks | [`lib/payment-status.ts`](lib/payment-status.ts), [`app/api/webhooks/stripe/route.ts`](app/api/webhooks/stripe/route.ts) |
+| Why the browser can never choose the price | [`lib/checkout.ts`](lib/checkout.ts), [`app/actions/payment.ts`](app/actions/payment.ts) |
+| A signed session cookie that works in Edge middleware and Node | [`lib/admin-auth.ts`](lib/admin-auth.ts), [`middleware.ts`](middleware.ts) |
+| A rate limiter that degrades instead of failing open | [`lib/rate-limit.ts`](lib/rate-limit.ts), [`lib/request.ts`](lib/request.ts) |
+
+## Stack
+
+| Layer | Choice |
+|---|---|
+| Framework | Next.js 16 (App Router, server actions, route handlers), React 19, TypeScript |
+| Data | Postgres (Neon in production) with Drizzle ORM over `pg` (`lib/db/schema.ts`) |
+| Auth | HMAC-signed admin session cookie (`lib/admin-auth.ts`) and bcrypt password hashes |
+| Payments | Stripe Checkout Sessions for client invoices, and Stripe Payment Links for the public pricing table |
+| Email | Resend, with escaped HTML templates (`lib/email.ts`) |
+| Abuse controls | Cloudflare Turnstile, sliding-window rate limits (Upstash Redis, with an in-process fallback), and a honeypot field |
+| UI | Tailwind CSS v4, OGL (WebGL hero), Framer Motion (booking demo only) |
+| Quality | Vitest, ESLint 9 (next/core-web-vitals and typescript, zero warnings allowed), `tsc --noEmit`, GitHub Actions on Ubuntu |
+| Runtime | Vercel in production. A multi-stage Docker image (Next standalone output, non-root) is also included |
+
+## What it does
+
+**Public site**
+- Marketing pages under `app/(site)/` for one offer, the AEC Digital Growth Partner ($1,000/month), aimed at Bay Area engineering and construction firms: `/`, `/engineering-construction`, `/work`, `/growth-partner`, `/process`, `/about`, `/privacy`, `/accessibility`. Shared copy and case-study facts live in `lib/site-content.ts`.
+- `/contact` is a fit-call request form. The server validates the input (including firm, discipline and website), checks Turnstile (required in any production build) and the rate limit, stores it in Postgres and emails both me and the sender.
+- `/pay/[slug]` is a personal invoice page for one client. The price always comes from the plan stored on the server.
+- `/demo/booking` is the old booking add-on demo, kept for existing links and excluded from search.
+
+Research, the capacity model, prospect lists and outreach drafts for the repositioning are in `research/`; QA evidence is in `QA-REPORT.md` and `docs/evidence/`.
+
+**Admin** (`/admin`, gated in middleware and again on every handler)
+- An inbox of contact submissions, each marked new, read or resolved, or deleted.
+- A composer that sends branded emails to a client through Resend.
+- `/admin/clients` creates a client on a plan, copies their pay link, marks a payment and shows totals collected.
+- Password change, which re-verifies the current password.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  V[Visitor] -->|POST /api/public/contact| C[Contact route]
+  C --> T[Turnstile verify]
+  C --> R[Rate limit]
+  C --> DB[(Postgres)]
+  C --> E[Resend]
+
+  A[Admin] -->|signed cookie| MW[middleware.ts]
+  MW --> AD[/admin pages/]
+  AD -->|server actions + route handlers re-check the cookie| DB
+
+  CL[Client] -->|/pay/slug| P[createClientCheckoutSession]
+  P -->|price ids from lib/plans.ts| S[Stripe Checkout]
+  S -->|signed webhook| W[/api/webhooks/stripe/]
+  W -->|one conditional UPDATE| DB
+```
+
+### Payment flow
+
+1. In the admin dashboard I create a client and pick a plan (`option1` or `option2`). The server generates an unguessable slug.
+2. The client opens `/pay/<slug>`. That page reads only the public fields it needs: name, company, plan and whether it is paid.
+3. **Pay** calls a server action. It validates the slug, refuses if the invoice is already paid, and builds the Stripe line items from stored price ids (`lib/checkout.ts`). The browser never sends an amount.
+4. Stripe calls `/api/webhooks/stripe`. The route verifies the signature, then applies the event:
+   - `checkout.session.completed` marks the client paid only when `payment_status` is `paid` (or `no_payment_required`). Delayed methods such as ACH arrive as `unpaid`, stay pending, and are settled by `checkout.session.async_payment_succeeded` or `async_payment_failed`.
+   - The "never downgrade a paid client" and "only the current session can fail it" rules are part of the `UPDATE ... WHERE` itself, so the check and the write are one atomic statement. A late or concurrent `expired` event cannot overwrite a `completed` row. The tests replay both commit orders of that race.
+   - If the database write fails, the route returns 500 so Stripe retries.
+
+### Data model (tables the app uses)
+
+| Table | Purpose |
+|---|---|
+| `clients` | Invoice recipients: slug, contact details, plan, payment status, Stripe customer, session and subscription ids |
+| `contact_inquiries` | Contact form submissions with a status of `new`, `read` or `resolved` |
+| `admin_users` | Admin email and bcrypt hash, managed with parameterized SQL (not in the Drizzle schema) |
+| `user` | Holds one fixed system row that public inquiries attach to |
+
+The schema file also describes older tables that exist in the production database but are not read by the app.
+
+## Security notes
+
+- **Server-side validation.** Every public input, the admin login and password change, and every admin mutation are parsed with zod (`lib/validation.ts`) before any database, Stripe or email call. Passwords are capped at 200 characters before bcrypt runs.
+- **Admin sessions.** The cookie holds `email.expiry.HMAC-SHA256` and is verified in constant time with Web Crypto, which works in both Edge middleware and Node. It is `httpOnly`, `secure` and `SameSite=Lax`. If no secret is configured, verification throws instead of letting the request through.
+- **Defense in depth.** Middleware guards `/admin/*`, and each admin route handler and server action checks the session again on its own.
+- **Bootstrap endpoint.** `/api/admin-setup` returns 404 unless `ADMIN_SETUP_SECRET` is set. It compares the secret in constant time and requires a password of at least 12 characters.
+- **Login throttling.** 8 attempts per 10 minutes per client. With Upstash configured the window is shared across instances. Without it, or if Redis errors, each server process enforces its own window, which is weaker on serverless but never unlimited. The client IP comes from Vercel's own headers on Vercel, or from `TRUSTED_PROXY_HOPS` entries of `x-forwarded-for` elsewhere. With neither, all clients share one bucket rather than trusting a header anyone can set.
+- **Account enumeration.** Unknown emails are compared against a real bcrypt hash at the same cost (12) as stored hashes, so both paths take about the same time.
+- **Queries.** All SQL goes through Drizzle or tagged `sql` templates, which are parameterized.
+- **Email.** Every value from the user is HTML-escaped before it goes into a template.
+
+## Local setup
+
+Requirements: Node 20.9 or newer, pnpm 10 (`corepack enable`), and a Postgres database.
+
 ```bash
-git clone <repo>
-cd manny-tech-furnish
+corepack enable
 pnpm install
+cp .env.example .env.local   # fill in values; names are documented in the file
+pnpm dev                     # http://localhost:3000
 ```
 
-2. **Environment variables** (`.env.local`):
-```
-DATABASE_URL=postgresql://user:password@host/database
-BETTER_AUTH_SECRET=your-generated-secret
-```
+Turnstile and Upstash are optional: without keys the Turnstile check is skipped and rate limits run in-process. Stripe, Resend and the database are only needed for the flows that use them.
 
-3. **Run development server**:
+To create the first admin, set `ADMIN_SETUP_SECRET` and send a POST to `/api/admin-setup` with the `x-setup-secret` header and an `{ "email", "password" }` body. Unset the secret afterwards.
+
+## Checks
+
 ```bash
-pnpm dev
+pnpm typecheck   # tsc --noEmit
+pnpm lint        # eslint . --max-warnings 0
+pnpm test        # vitest run (95 tests in 9 files)
+pnpm build       # next build (standalone output)
 ```
 
-4. **Open browser**:
-- Public site: http://localhost:3000
-- Sign up: http://localhost:3000/sign-up
-- Admin dashboard: http://localhost:3000/dashboard
+The tests (`lib/__tests__`, `app/__tests__`) cover:
+- validation boundaries, including oversized and malformed login bodies
+- checkout pricing, including rejection of unknown plans
+- webhook transitions: delayed payments, stale sessions, retries, and the completed-versus-expired race
+- rate limiting without Redis and with Redis failing, and IP derivation that ignores spoofed headers
+- forgery, expiry and missing-secret cases for the admin token, and the cookie flags on login
+- unauthenticated calls to every admin route and server action
 
-## Key Pages
+CI (`.github/workflows/ci.yml`) runs all four checks on `ubuntu-latest`, then builds the Docker image and smoke-tests the container's `/api/health` endpoint.
 
-### Public Routes
-- `/` - Landing page with hero, features, CTA
-- `/portfolio` - Portfolio grid of projects
-- `/services` - Service offerings
-- `/contact` - Contact form
+## Docker
 
-### Auth Routes
-- `/sign-in` - Email/password login
-- `/sign-up` - Registration
-- `/dashboard` - Protected overview page
+```bash
+docker build -t mannystechfurnish .
+docker run --env-file .env -e TRUSTED_PROXY_HOPS=1 -p 3000:3000 mannystechfurnish
+```
 
-### Admin Routes (Protected)
-- `/dashboard/portfolio` - Manage portfolio projects
-- `/dashboard/services` - Manage services
-- `/dashboard/inquiries` - View client inquiries
-- `/dashboard/settings` - Site configuration
+The build has three stages: `deps`, `build`, then a slim runtime that runs as the unprivileged `node` user with a `HEALTHCHECK` against `/api/health`. Secrets are injected at runtime, and only `NEXT_PUBLIC_*` values are build arguments. Set `TRUSTED_PROXY_HOPS` to the number of reverse proxies in front of the container.
 
-### Public APIs
-- `GET /api/public/portfolio` - Fetch projects
-- `GET /api/public/services` - Fetch services
-- `POST /api/public/contact` - Submit contact inquiry
+## How it was built
 
-## Database Schema
+The first version was scaffolded with [v0](https://v0.app) and shipped to production. Later work reviewed that code and reworked it in small commits: fixing a forgeable admin cookie, moving pricing to the server, validating all input, making webhook updates atomic, closing an open sign-up endpoint, and deleting the unused generated components and dependencies. `git log` shows each change with its reason.
 
-### Better Auth Tables
-- `user` - User accounts with email verification
-- `session` - Active sessions
-- `account` - OAuth/provider accounts
-- `verification` - Email verification tokens
+## Project layout
 
-### App Tables
-- `portfolio_projects` - Portfolio projects with images and technologies
-- `services` - Service offerings with pricing types
-- `testimonials` - Client testimonials
-- `contact_inquiries` - Client inquiries from contact form
-- `orders` - Customer orders (for Stripe integration)
-- `subscriptions` - Recurring subscriptions
-- `site_settings` - Site configuration and Stripe keys
+```
+app/                 routes, server actions (app/actions), API route handlers (app/api)
+components/site/     marketing page sections and motion primitives
+components/admin/    admin dashboard widgets
+lib/                 db, auth, Stripe, email, validation, pricing, rate limiting and status logic
+scripts/             one-off Stripe Payment Link setup
+docs/screenshots/    images used in this README
+```
 
-## Security Features
+## Author
 
-- Session-based authentication with Better Auth
-- Per-user data scoping (getUserId() pattern)
-- Password hashing by Better Auth
-- CSRF protection
-- Secure cookies with proper SameSite attributes
-- Server-side data validation with Zod
-
-## Next Steps for Deployment
-
-1. **Stripe Integration**:
-   - Add Stripe API keys to `.env.local`
-   - Create Stripe products and prices
-   - Map services to Stripe price IDs in admin settings
-
-2. **Email Notifications**:
-   - Add email service (SendGrid, Resend, etc.)
-   - Send inquiry confirmations to admins
-   - Send order receipts to customers
-
-3. **Deployment**:
-   - Connect GitHub repo to Vercel
-   - Set environment variables in Vercel dashboard
-   - Deploy with `vercel deploy`
-
-4. **Custom Domain**:
-   - Update BETTER_AUTH_URL if using custom domain
-   - Configure DNS records with Vercel
-
-## Performance Notes
-
-- Uses Turbopack for fast builds
-- Optimized images with Next.js Image component
-- Static generation where possible
-- Smooth animations with Framer Motion GPU acceleration
-- Database queries with proper indexing
-
-## Browser Support
-
-- Chrome/Edge 90+
-- Firefox 89+
-- Safari 14+
-- Mobile browsers (responsive design)
-
-## License
-
-Private - Manny's Tech Furnish
-
-## Support
-
-For issues or questions, contact: contact@example.com
+Built and maintained by Mansoor Arif ([@spoutyfc](https://github.com/spoutyfc)).

@@ -245,6 +245,7 @@ export default function AdminClientLinksPage() {
                             <button
                               onClick={() => copyToClipboard(url)}
                               title="Copy payment link"
+                              aria-label={`Copy payment link for ${c.name}`}
                               className="p-2 rounded-lg hover:bg-white/5 text-neutral-400 hover:text-white transition-colors"
                             >
                               {copied === url ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
@@ -254,6 +255,7 @@ export default function AdminClientLinksPage() {
                               target="_blank"
                               rel="noopener noreferrer"
                               title="Open payment page"
+                              aria-label={`Open payment page for ${c.name}`}
                               className="p-2 rounded-lg hover:bg-white/5 text-neutral-400 hover:text-white transition-colors"
                             >
                               <ExternalLink className="w-4 h-4" />
@@ -263,6 +265,7 @@ export default function AdminClientLinksPage() {
                                 onClick={() => handleMarkPaid(c.id)}
                                 disabled={busy === c.id}
                                 title="Mark as paid"
+                              aria-label={`Mark ${c.name} as paid`}
                                 className="p-2 rounded-lg hover:bg-emerald-500/10 text-neutral-400 hover:text-emerald-400 transition-colors"
                               >
                                 <CheckCircle2 className="w-4 h-4" />
@@ -272,6 +275,7 @@ export default function AdminClientLinksPage() {
                               onClick={() => handleDelete(c.id)}
                               disabled={busy === c.id}
                               title="Delete"
+                              aria-label={`Delete ${c.name}`}
                               className="p-2 rounded-lg hover:bg-red-500/10 text-neutral-400 hover:text-red-400 transition-colors"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -347,10 +351,11 @@ function StatCard({ icon, label, value, accent }: { icon: React.ReactNode; label
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  // Wrapping the control in the label associates them without needing ids.
   return (
-    <div>
-      <label className="block text-sm font-medium mb-2 text-neutral-300">{label}</label>
+    <label className="block">
+      <span className="block text-sm font-medium mb-2 text-neutral-300">{label}</span>
       {children}
-    </div>
+    </label>
   )
 }

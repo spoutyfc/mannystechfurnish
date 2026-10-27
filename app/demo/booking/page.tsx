@@ -58,7 +58,7 @@ function buildDays() {
 }
 
 export default function BookingDemoPage() {
-  const days = useMemo(buildDays, [])
+  const days = useMemo(() => buildDays(), [])
   const [dayIndex, setDayIndex] = useState(0)
   const [slot, setSlot] = useState<number | null>(null)
   const [step, setStep] = useState<'pick' | 'details' | 'done'>('pick')
@@ -254,10 +254,11 @@ export default function BookingDemoPage() {
 
                     <div className="mt-6 space-y-4">
                       <div>
-                        <label className="mb-2 block font-mono text-xs uppercase tracking-widest text-white/50">
+                        <label htmlFor="booking-name" className="mb-2 block font-mono text-xs uppercase tracking-widest text-white/50">
                           Your name
                         </label>
                         <input
+                          id="booking-name"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
                           placeholder="Jane Doe"
@@ -265,10 +266,11 @@ export default function BookingDemoPage() {
                         />
                       </div>
                       <div>
-                        <label className="mb-2 block font-mono text-xs uppercase tracking-widest text-white/50">
+                        <label htmlFor="booking-email" className="mb-2 block font-mono text-xs uppercase tracking-widest text-white/50">
                           Email
                         </label>
                         <input
+                          id="booking-email"
                           type="email"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}

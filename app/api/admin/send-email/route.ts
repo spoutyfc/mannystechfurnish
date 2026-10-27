@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     await sendCustomEmail({ to, subject, heading: heading || undefined, body: message })
     return NextResponse.json({ ok: true })
   } catch (err) {
-    console.error('[v0] admin send-email failed:', err)
+    console.error('[admin-send-email] failed:', err)
     return NextResponse.json(
       { error: 'Failed to send. Check that RESEND_API_KEY and your sending domain are configured.' },
       { status: 500 },

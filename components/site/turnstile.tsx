@@ -25,10 +25,12 @@ export function Turnstile({
   onVerify,
   onExpire,
   className = '',
+  theme = 'dark',
 }: {
   onVerify: (token: string) => void
   onExpire?: () => void
   className?: string
+  theme?: 'dark' | 'light'
 }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const widgetIdRef = useRef<string | null>(null)
@@ -40,12 +42,12 @@ export function Turnstile({
     if (widgetIdRef.current) return
     widgetIdRef.current = window.turnstile.render(containerRef.current, {
       sitekey: siteKey,
-      theme: 'dark',
+      theme,
       callback: (token: string) => onVerify(token),
       'expired-callback': () => onExpire?.(),
       'error-callback': () => onExpire?.(),
     })
-  }, [onVerify, onExpire, siteKey])
+  }, [onVerify, onExpire, siteKey, theme])
 
   useEffect(() => {
     if (!siteKey) return
@@ -80,6 +82,8 @@ export function Turnstile({
   }, [renderWidget, siteKey])
 
   if (!siteKey) {
+    // On the public site, say nothing; the server decides whether the check is required.
+    if (theme === 'light') return null
     return (
       <p className="font-mono text-[11px] uppercase tracking-widest text-amber-400/80">
         Bot protection not configured

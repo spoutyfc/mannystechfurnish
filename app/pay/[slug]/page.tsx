@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { getClientBySlug } from '@/app/actions/payment'
+import { getPublicClientBySlug } from '@/lib/clients'
 import { PLAN_DETAILS, type PlanType } from '@/lib/plans'
 import PayClient from './pay-client'
 
@@ -14,12 +14,13 @@ export default async function ClientCheckoutPage({
 }) {
   const { slug } = await params
   const { canceled } = await searchParams
-  const client = await getClientBySlug(slug)
+  const client = await getPublicClientBySlug(slug)
 
   if (!client) notFound()
 
   const planType = client.planType as PlanType
   const plan = PLAN_DETAILS[planType]
+  if (!plan) notFound()
 
   return (
     <PayClient

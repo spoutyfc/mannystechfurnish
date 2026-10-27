@@ -1,0 +1,8 @@
+│ Patched versions    │ >=2.11.0                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ .>next>baseline-browser-mapping                        │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-w5vr-8v7q-w6rv      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+5 vulnerabilities found
+Severity: 1 moderate | 4 high
