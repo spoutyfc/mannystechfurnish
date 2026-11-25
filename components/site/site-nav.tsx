@@ -70,7 +70,7 @@ export function SiteNav() {
             (925) 278-9059
           </span>
           <Magnetic strength={0.3}>
-            <Link href="/contact">
+            <Link href="/start">
               <Button
                 size="sm"
                 className="group rounded-none border-0 bg-accent px-6 font-mono text-xs uppercase tracking-wider text-black hover:opacity-90"
@@ -139,7 +139,7 @@ export function SiteNav() {
 
               <div className="border-t border-white/10 px-6 py-6">
                 <SheetClose asChild>
-                  <Link href="/contact" className="block">
+                  <Link href="/start" className="block">
                     <Button className="h-12 w-full rounded-none border-0 bg-accent font-mono text-xs uppercase tracking-wider text-black hover:opacity-90">
                       Get Started
                     </Button>

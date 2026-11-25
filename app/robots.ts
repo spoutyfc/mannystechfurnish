@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/admin', '/admin/', '/admin-login', '/api/'],
+      disallow: ['/admin', '/admin/', '/admin-login', '/api/', '/pay/'],
     },
     sitemap: 'https://mannystechfurnish.com/sitemap.xml',
   }

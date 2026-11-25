@@ -25,6 +25,7 @@ import {
   X,
   RefreshCw,
   ExternalLink,
+  ClipboardList,
 } from 'lucide-react'
 
 type ClientRow = {
@@ -158,7 +159,7 @@ export default function AdminClientLinksPage() {
     )
   }
 
-  const planLabel = (p: string) => (p === 'option1' ? '$1,899 One-Time' : '$900 + $159/mo')
+  const planLabel = (p: string) => (p === 'option1' ? '$1,899 One-Time' : '$1,299 + $159/mo')
 
   const statusBadge = (status: string | null) => {
     if (status === 'completed')
@@ -187,6 +188,11 @@ export default function AdminClientLinksPage() {
             <Link href="/admin">
               <Button variant="outline" size="sm" className="gap-2 border-neutral-700 bg-transparent">
                 <Inbox className="w-4 h-4" /> Submissions
+              </Button>
+            </Link>
+            <Link href="/admin/intakes">
+              <Button variant="outline" size="sm" className="gap-2 border-neutral-700 bg-transparent">
+                <ClipboardList className="w-4 h-4" /> Briefs
               </Button>
             </Link>
             <Button variant="outline" size="sm" onClick={handleSignOut} className="gap-2 border-neutral-700 bg-transparent">
@@ -319,7 +325,7 @@ export default function AdminClientLinksPage() {
                   className="w-full bg-neutral-900 border border-neutral-700 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-accent"
                 >
                 <option value="option1">Option 1 — $1,899 One-Time</option>
-                <option value="option2">Option 2 — $900 + $159/mo</option>
+                <option value="option2">Option 2 — $1,299 + $159/mo</option>
                 </select>
               </Field>
               <Button type="submit" disabled={generating} className="w-full gap-2 bg-accent text-black hover:opacity-90">

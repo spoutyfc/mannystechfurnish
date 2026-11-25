@@ -150,6 +150,39 @@ export const siteSettings = pgTable('site_settings', {
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
 })
 
+// --- Project Intake (Typeform-style pre-payment questionnaire) --------------
+// Captures the full project brief a client fills out BEFORE Stripe checkout.
+// `id` doubles as the Stripe `client_reference_id` so the webhook can mark the
+// exact brief as paid. Nothing is lost if checkout is abandoned (status stays
+// 'pending'), so the admin still sees the lead + their answers.
+export const projectIntakes = pgTable('project_intakes', {
+  id: text('id').primaryKey(), // also used as Stripe client_reference_id
+  planType: varchar('plan_type', { length: 50 }), // 'option1' | 'option2' | 'undecided'
+  fullName: text('full_name').notNull(),
+  email: text('email').notNull(),
+  phone: text('phone'),
+  company: text('company'),
+  website: text('website'),
+  projectType: text('project_type'), // 'new' | 'redesign' | 'ecommerce' | 'other'
+  industry: text('industry'),
+  goals: text('goals'), // JSON stringified array
+  features: text('features'), // JSON stringified array
+  designStyle: text('design_style'),
+  budget: text('budget'),
+  timeline: text('timeline'),
+  details: text('details'),
+  referral: text('referral'), // how they found us
+  country: text('country'), // international tracking
+  locale: text('locale'),
+  paymentStatus: varchar('payment_status', { length: 50 }).default('pending'), // 'pending' | 'paid' | 'abandoned'
+  amount: integer('amount'), // cents, from Stripe
+  currency: varchar('currency', { length: 10 }),
+  stripeSessionId: text('stripe_session_id'),
+  stripeCustomerId: text('stripe_customer_id'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+})
+
 // --- Client Payment Links ---
 export const clients = pgTable('clients', {
   id: serial('id').primaryKey(),
