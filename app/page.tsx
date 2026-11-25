@@ -123,7 +123,7 @@ const option1Features = [
 ]
 
 const option2Features = [
-  'Custom website build included ($900 setup)',
+  'Custom website build included ($1,299 setup)',
   'Ongoing maintenance & updates handled for you',
   'Hosting fully managed — nothing to set up',
   'Security monitoring & automatic backups',
@@ -595,12 +595,12 @@ export default function Home() {
               </p>
               <h3 className="mt-5 font-display text-3xl font-semibold uppercase">Managed Website Plan</h3>
               <div className="mt-6 flex items-baseline gap-3 font-display text-6xl font-semibold tracking-tight md:text-7xl">
-                $900 <span className="text-3xl text-white/40">+</span>{' '}
+                $1,299 <span className="text-3xl text-white/40">+</span>{' '}
                 <span className="text-accent">$159</span>
                 <span className="font-mono text-sm text-white/55">/mo</span>
               </div>
               <p className="mt-3 font-mono text-xs uppercase tracking-wider text-white/55">
-                3-month minimum — from $1,377 total
+                3-month minimum — from $1,776 total
               </p>
 
               <ul className="mt-10 flex-1 space-y-3">

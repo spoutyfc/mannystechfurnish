@@ -14,7 +14,7 @@
 // Stripe Price IDs (LIVE) — regenerate via scripts/setup-payment-links.mjs
 export const STRIPE_PRICES = {
   option1: 'price_1TwxXDGzcLjrrlAL91bYdaR7', // $1,899 one-time
-  option2_build: 'price_1TwxXEGzcLjrrlALGLFmMEjr', // $900 one-time
+  option2_build: 'price_1UfYxqGzcLjrrlALwscA4tDG', // $1,299 one-time
   option2_monthly: 'price_1TwxXIGzcLjrrlALvVHHf6Pi', // $159/mo
   careplan: 'price_1TwxXIGzcLjrrlALs54NIOT2', // $99/mo
 } as const
@@ -22,7 +22,7 @@ export const STRIPE_PRICES = {
 // No-code Stripe Payment Link URLs (LIVE)
 export const PAYMENT_LINKS = {
   option1: 'https://buy.stripe.com/cNicN50GA0ng01i85a7EQ00',
-  option2: 'https://buy.stripe.com/dRm3cvfBuda2dS84SY7EQ0a', // build + monthly combined
+  option2: 'https://buy.stripe.com/9B6bJ14WQee629q3OU7EQ0b', // $1,299 build + $159/mo combined
   careplan: 'https://buy.stripe.com/bJebJ12OI1rk29q2KQ7EQ08',
 } as const
 
@@ -46,12 +46,12 @@ export const PLAN_DETAILS = {
   option2: {
     title: 'Managed Website Plan',
     subtitle: 'Lower upfront cost, fully managed for you',
-    price: '$900 + $159/mo',
-    priceValue: 900,
+    price: '$1,299 + $159/mo',
+    priceValue: 1299,
     cadence: 'build + monthly',
     paymentLink: PAYMENT_LINKS.option2,
     features: [
-      'Website build included ($900 setup fee)',
+      'Website build included ($1,299 setup fee)',
       'Ongoing maintenance & hosting included',
       'Updates, security & priority support queue',
       'Basic SEO check-ins',

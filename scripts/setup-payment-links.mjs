@@ -14,7 +14,7 @@ const stripe = new Stripe(process.env.STRIPE_ACCESS_TOKEN || process.env.STRIPE_
 // amount in cents
 const ONE_TIME = [
   { key: 'option1', name: 'Complete Digital Asset — Custom Website', amount: 189900 },
-  { key: 'option2_build', name: 'Managed Website — Build Fee', amount: 90000 },
+  { key: 'option2_build', name: 'Managed Website — Build Fee', amount: 129900 },
   { key: 'addon_animations', name: 'Add-on: Advanced Animations & Motion', amount: 19900 },
   { key: 'addon_webgl', name: 'Add-on: 3D / WebGL Hero Experience', amount: 34900 },
   { key: 'addon_booking', name: 'Add-on: Booking & Scheduling System', amount: 24900 },

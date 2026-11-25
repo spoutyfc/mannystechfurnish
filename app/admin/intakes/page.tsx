@@ -40,7 +40,7 @@ const LABELS: Record<string, string> = {
   leads: 'More leads', sell: 'Sell products', credibility: 'Credibility', seo: 'SEO', bookings: 'Bookings', showcase: 'Showcase',
   forms: 'Contact forms', booking: 'Booking', blog: 'Blog/CMS', payments: 'Payments', i18n: 'Multi-language', motion: 'Animations & 3D', analytics: 'Analytics',
   google: 'Google search', referral: 'Referral', social: 'Social media', work: 'Saw our work', other: 'Other',
-  option1: 'Complete Digital Asset ($1,899)', option2: 'Managed Plan ($900 + $159/mo)', undecided: 'Undecided — talk first',
+  option1: 'Complete Digital Asset ($1,899)', option2: 'Managed Plan ($1,299 + $159/mo)', undecided: 'Undecided — talk first',
 }
 
 const label = (v: string | null) => (v ? LABELS[v] ?? v : '')
